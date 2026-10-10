@@ -1,0 +1,55 @@
+:root{--bg:#fff;--text:#3a3a3a;--strong:#111;--line:#aaa;--focus:#666;--muted:#999;--soft:#777;--softer:#888;color-scheme:light;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-synthesis:none;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121212;--text:#d2d2d2;--strong:#fff;--line:#555;--focus:#aaa;--muted:#6f6f6f;--soft:#999;--softer:#8a8a8a;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#121212;--text:#d2d2d2;--strong:#fff;--line:#555;--focus:#aaa;--muted:#6f6f6f;--soft:#999;--softer:#8a8a8a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:688px;padding:128px 24px 40px;margin:0 auto;line-height:1.75}
+h1,h2,h3,p{font:inherit;margin:0}
+h1{font-weight:500;margin-bottom:28px}
+p{margin-bottom:28px}
+a{color:inherit;text-decoration-color:var(--line);text-underline-offset:3px;text-decoration-thickness:1px;transition:color .15s,text-decoration-color .15s}
+a:hover{color:var(--strong);text-decoration-color:var(--strong)}
+a:focus-visible{outline:2px solid var(--focus);outline-offset:5px;border-radius:1px}
+.collections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 32px;margin-top:64px}
+.collections>section:first-child{grid-column:1/-1}
+.collections h2{font-size:14px;line-height:20px;margin-bottom:24px}
+.collections article{margin-bottom:28px}
+.collections h3{margin:0}
+.collections article p{margin:0}
+.contact{margin-top:64px}
+.contact h2{font-size:14px;line-height:20px;margin-bottom:24px}
+.contact p{margin:0}
+footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:12px;line-height:1.75;margin-top:100px}
+.back{display:inline-block;font-size:14px;color:var(--soft);margin-bottom:52px}
+.project h1{margin-bottom:4px}
+.project .category{font-size:14px;color:var(--softer);margin-bottom:44px}
+.project .empty{color:var(--soft)}
+.project footer{margin-top:100px;font-size:14px}
+.project footer a{color:var(--soft)}
+.theme-toggle{position:fixed;top:max(20px,env(safe-area-inset-top));right:24px;z-index:11;font:inherit;font-size:12px;line-height:1.75;color:var(--muted);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;text-decoration-thickness:1px}
+.theme-toggle:hover{color:var(--strong);text-decoration-color:var(--strong)}
+.theme-toggle:focus-visible{outline:2px solid var(--focus);outline-offset:4px;border-radius:1px}
+@media(max-width:600px){main{padding-top:72px;padding-inline:28px}.collections{grid-template-columns:1fr;gap:28px;margin-top:48px}.collections h2{margin-bottom:16px}.collections article:last-child{margin-bottom:0}footer{margin-top:72px}.back{margin-bottom:40px}.project footer{margin-top:72px}}
+@media(prefers-reduced-motion:reduce){a{transition:none}}
+/* Air Atlas project page: the deck, slide by slide. Each slide is a 1920x1080 design scaled with cqw (1 design px = 1/19.2 cqw). */
+.deckpage{max-width:1328px;padding-inline:24px}
+.deckpage .slides{display:flex;flex-direction:column;gap:48px}
+.deckpage .slide{position:relative;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;border-radius:8px;color:#3a3a3a;font-family:Arial,Helvetica,sans-serif;line-height:1.2;-webkit-font-smoothing:antialiased}
+.deckpage .slide:not(.dark){box-shadow:0 0 0 1px #e5e5e5}
+.deckpage .frame{position:absolute;inset:0;box-sizing:border-box}
+.deckpage .frame :is(h1,h2,p){margin:0}
+.deckpage .frame a{text-decoration-color:currentColor}
+.deckpage .frame video,.deckpage .frame img{display:block;max-width:none;background:#0c100e}
+.deckpage .frame .atlas{display:block;background:#0c100e}
+.deckpage .frame .hint,.deckpage #cover .frame :is(h1,p){pointer-events:none}
+.deckpage .cap{display:none}
+.deckpage footer{margin-top:72px}
+@media(max-width:600px){
+.deckpage{padding-inline:24px}
+.deckpage .slides{gap:40px}
+.deckpage .frame :is(h1,h2,p):not(.rows){visibility:hidden}
+.deckpage .cap{display:block;margin-top:16px;font-size:14px;line-height:1.6}
+.deckpage .cap h2{color:var(--strong);font-size:16px;margin-bottom:2px}
+.deckpage .cap p{margin:0 0 8px;color:var(--soft)}
+.deckpage .cap .small{font-size:12px;color:var(--softer)}
+}

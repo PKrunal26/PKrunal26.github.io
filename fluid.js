@@ -806,7 +806,14 @@
       if (!press || press.link !== link || press.cancelled || event.pointerType !== 'touch') return;
       press.going = true;
       const wait = entry.texture ? Math.max(0, config.touch.settleMs - (event.timeStamp - press.start)) : 0;
-      setTimeout(() => { location.href = link.href; }, wait);
+      // A new-tab link leaves this page up, so let the water take the image back.
+      // (The wait is short enough to stay inside the tap's user activation.)
+      setTimeout(() => {
+        if (link.target !== '_blank') { location.href = link.href; return; }
+        open(link.href, '_blank', 'noopener');
+        press = null;
+        hover.entry = null;
+      }, wait);
     });
     link.addEventListener('pointercancel', release);
     // The click that follows the tap is ours; keyboard clicks pass through.

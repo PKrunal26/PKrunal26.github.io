@@ -27,6 +27,10 @@ PROJECTS = {
     "openfoam-studio": dict(file="openfoam-studio.jpg", crop=(250, 111, 1626, 971), dark=True, contrast=1.2, paper=1.0),
     "air-pollution": dict(file="air-pollution.png", crop=(-36, 85, 1132, 815), dark=True, contrast=1.3, paper=1.0),
     "vietnam": dict(file="vietnam.jpg", crop=(0, 41, 2000, 1291), dark=False, contrast=1.15, paper=1.0),
+    # Lucide icons (file-user, linkedin, mail) as coloured strokes on transparent
+    "cv": dict(file="cv-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
+    "linkedin": dict(file="linkedin-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
+    "contact": dict(file="contact-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
 }
 
 

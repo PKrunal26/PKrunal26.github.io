@@ -636,19 +636,27 @@
   let lastFrame = 0;
   let running = false;
 
+  // Interactive demos (data-fluid-quiet) get a faint trail, and none while something is being dragged.
+  function quietness (event) {
+    const target = event.target instanceof Element && event.target.closest('[data-fluid-quiet]');
+    return !target ? 1 : event.buttons ? 0 : 0.1;
+  }
+
   function onMove (event) {
     const x = event.clientX / innerWidth;
     const y = 1 - event.clientY / innerHeight;
-    if (pointer.has) {
+    const quiet = quietness(event);
+    if (pointer.has && quiet) {
       const dx = x - pointer.x;
       const dy = y - pointer.y;
       const dist = Math.hypot(dx * innerWidth / innerHeight, dy);
       if (dist > 0.0002) {
         const steps = Math.min(8, Math.ceil(dist / 0.012));
-        const amount = Math.min(0.3, 0.06 + dist * 4);
+        const amount = Math.min(0.3, 0.06 + dist * 4) * quiet;
+        const force = config.splatForce * quiet;
         for (let i = 1; i <= steps; i++) {
           const t = i / steps;
-          queue.push([pointer.x + dx * t, pointer.y + dy * t, dx * config.splatForce / steps, dy * config.splatForce / steps, amount / Math.sqrt(steps)]);
+          queue.push([pointer.x + dx * t, pointer.y + dy * t, dx * force / steps, dy * force / steps, amount / Math.sqrt(steps)]);
         }
       }
     }

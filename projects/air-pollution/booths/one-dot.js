@@ -103,17 +103,15 @@
     lon: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.25"/><ellipse cx="10" cy="10" rx="3.2" ry="7.25"/></svg>',
   };
   const ns = v => `${Math.abs(v).toFixed(1)}° ${v < 0 ? 'S' : 'N'}`, ew = v => `${Math.abs(v).toFixed(1)}° ${v < 0 ? 'W' : 'E'}`;
+  // One short line of maths per field, no sublines, so the panel never changes height.
   const formula = () => {
     const p = P(), c = plate(p), I = t => `<span style="color:${p.ink}">${t}</span>`;
-    const w1 = p.muted
-      ? `(${I(fx(p.v))} − ${p.muted[0]}) ÷ ${p.muted[1] - p.muted[0]} = ${c.base.toFixed(2)} <span class="od-m">· O₃ barely varies, so it is stretched between its 5th and 99th percentile</span>`
-      : `${I(fx(p.v))} ÷ ${p.range} = ${c.base.toFixed(2)}${p.v > p.range ? ' (capped)' : ''} <span class="od-m">· ${p.range}${p.unit ? ' ' + p.unit : ''} prints as full ink</span>`;
-    return `${w1}<br>× ${p.str} strength = ${c.w.toFixed(2)} → dot size 0.56 × √${c.w.toFixed(2)} = ${c.r.toFixed(2)}`;
+    const w1 = p.muted ? `(${I(fx(p.v))} − ${p.muted[0]}) ÷ ${p.muted[1] - p.muted[0]}` : `${I(fx(p.v))} ÷ ${p.range}`;
+    return `${w1} = ${c.base.toFixed(2)}${p.v > (p.muted ? p.muted[1] : p.range) ? ' (capped)' : ''} × ${p.str} strength = ${c.w.toFixed(2)}<br>dot size 0.56 × √${c.w.toFixed(2)} = ${c.r.toFixed(2)}; the ring is full ink`;
   };
-  const lattice = () => `<br><span class="od-m">The dot snaps to the nearest of 16,000 evenly spaced lattice points (the cross), then shifts to its ${P().name} plate offset.</span>`;
   const TIPS = {
-    lat: () => `${ns(st.lat)}: how far ${st.lat < 0 ? 'south' : 'north'} of the equator. The line is every place at this latitude.${lattice()}`,
-    lon: () => `${ew(st.lon)}: how far ${st.lon < 0 ? 'west' : 'east'} of Greenwich. The line runs pole to pole through every place at this longitude.${lattice()}`,
+    lat: () => `${ns(st.lat)}: how far ${st.lat < 0 ? 'south' : 'north'} of the equator. The line marks every place at this latitude.`,
+    lon: () => `${ew(st.lon)}: how far ${st.lon < 0 ? 'west' : 'east'} of Greenwich. The line marks every place at this longitude.`,
     value: formula,
   };
 
@@ -146,7 +144,10 @@
     };
     const commit = v => { set(Math.max(min(), Math.min(max(), v))); update(); };
     const edit = () => { n.contentEditable = 'true'; n.focus(); getSelection().selectAllChildren(n); };
-    let x0 = null, y0 = 0, v0 = 0, moved = false, kind = '', lastMark = null;
+    let x0 = null, y0 = 0, v0 = 0, moved = false, kind = '', lastMark = null, lastMajor = null;
+    // Index of the ruler tick (every `px`) at or left of the centre notch: ticks sit at k·px − value/step (tiles are
+    // exactly 8px and 40px wide in CSS, so this matches what is drawn).
+    const notch = px => Math.floor((get() / step() + ruler.clientWidth / 2 - .5) / px); // ticks are 1px wide
     r.addEventListener('pointerenter', e => { if (mouse(e)) setActive(key); });
     r.addEventListener('pointerleave', e => { if (mouse(e) && x0 === null && document.activeElement !== n) setActive(null); });
     r.addEventListener('pointerdown', e => {
@@ -161,12 +162,12 @@
         const dy = Math.abs(e.clientY - y0), slop = kind === 'touch' ? 10 : 5;
         if (kind === 'touch' && dy > slop && dy > Math.abs(dx)) { x0 = null; return; } // a scroll, not a scrub
         if (Math.abs(dx) < slop || Math.abs(dx) < dy * 1.3) return;
-        x0 = e.clientX - Math.sign(dx) * slop; lastMark = Math.floor(get() / (step() * 40)); // no jump when the scrub engages
+        x0 = e.clientX; v0 = get(); lastMark = notch(8); lastMajor = notch(40); // start from here, so engaging never jumps
       }
       if (!moved) { moved = true; r.classList.add('dragging'); setActive(key); touched(); dragKind = kind; }
       if (moved) {
         commit(v0 - (e.clientX - x0) * step());
-        if (key === 'value') { const mark = Math.floor(get() / (step() * 40)); if (mark !== lastMark) { lastMark = mark; if (kind === 'touch') haptic(); n.classList.remove('tick'); void n.offsetWidth; n.classList.add('tick'); } }
+        if (key === 'value') { const mark = notch(8); if (mark !== lastMark) { lastMark = mark; if (kind === 'touch') haptic(); if (notch(40) !== lastMajor) { lastMajor = notch(40); n.classList.remove('tick'); void n.offsetWidth; n.classList.add('tick'); } } }
       }
     });
     const release = e => {
@@ -343,6 +344,17 @@
     const guide = active === 'lat' || active === 'lon' ? active : null;
     if (guide) drawGuide(x, W, H, guide);
     if (shown.r > .001) { x.beginPath(); ring(x, smallCircle(shown.lat, shown.lon, shown.r * SPACING)); x.closePath(); x.fillStyle = shown.ink; x.fill(); }
+    if (active === 'value') { // dashed ring = full ink for this pollutant; the dot fills it as the value nears its range
+      const p = P(), full = FULL * Math.sqrt(p.str) * SPACING;
+      x.setLineDash([3, 4]); x.beginPath(); ring(x, smallCircle(shown.lat, shown.lon, full)); x.closePath();
+      x.strokeStyle = '#e4ebd999'; x.lineWidth = 1; x.stroke(); x.setLineDash([]);
+      const e = project(shown.lat, shown.lon + full / Math.cos(shown.lat * DEG));
+      if (e[2]) {
+        const text = p.muted ? `${fx(p.v)} in ${p.muted[0]}–${p.muted[1]} ${p.unit}` : `${fx(p.v)} of ${p.range} ${p.unit}`.trim();
+        x.font = `${Math.max(11, Math.min(14, W / 70))}px -apple-system, BlinkMacSystemFont, sans-serif`; x.fillStyle = '#e4ebd9';
+        x.fillText(text, Math.min(W - x.measureText(text).width - 8, e[0] + 8), e[1] + 4);
+      }
+    }
     const q = project(g.lla, g.llo);
     if (q[2]) {
       x.strokeStyle = '#e4ebd966'; x.lineWidth = 1; x.beginPath();

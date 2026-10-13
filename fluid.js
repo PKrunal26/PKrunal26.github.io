@@ -35,7 +35,10 @@
     cellSize: 2, // CSS px per dither cell; dye has one texel per cell
     idleMs: 6000,
     intent: { dwellMs: 180, maxSpeed: 0.35 }, // hover must settle before an image forms
-    image: { width: 400, height: 250, offsetX: 28, offsetY: 20, formRate: 12, follow: 0.18 }
+    image: { width: 400, height: 250, offsetX: 28, offsetY: 20, formRate: 12, follow: 0.18 },
+    // Touch: a press develops the image above the finger; a tap waits this
+    // long for it to form before following the link.
+    touch: { gap: 36, margin: 24, settleMs: 260, slop: 24, ripple: 0.05 }
   };
 
   const vertex = `
@@ -384,7 +387,7 @@
   // The hovered image sits beside the cursor (flipping sides near the edges)
   // and eases after it, so moving drags the picture through the ink. A link
   // with data-fluid-dock instead docks its image just right of its entry.
-  const hover = { entry: null, dock: null, x: 0, y: 0, placed: false };
+  const hover = { entry: null, dock: null, touch: false, x: 0, y: 0, placed: false };
 
   function dockRect (article) {
     const { width, height } = config.image;
@@ -413,8 +416,18 @@
     const { offsetX, offsetY, formRate, follow } = config.image;
     let { width: iw, height: ih } = config.image;
     let tx, ty;
-    const docked = hover.dock && dockRect(hover.dock);
-    if (docked) {
+    const docked = !hover.touch && hover.dock && dockRect(hover.dock);
+    if (hover.touch) {
+      // Centred in the column, just above the finger so it stays in view;
+      // below it when the finger is too near the top.
+      const { gap, margin } = config.touch;
+      iw = Math.min(iw, innerWidth - margin * 2);
+      ih = iw * config.image.height / config.image.width;
+      const my = (1 - pointer.y) * innerHeight;
+      tx = (innerWidth - iw) / 2;
+      ty = my - gap - ih;
+      if (ty < 12) ty = my + gap;
+    } else if (docked) {
       ({ x: tx, y: ty, w: iw, h: ih } = docked);
     } else {
       const mx = pointer.x * innerWidth;
@@ -643,9 +656,15 @@
   }
 
   function onMove (event) {
-    const x = event.clientX / innerWidth;
-    const y = 1 - event.clientY / innerHeight;
-    const quiet = quietness(event);
+    // Touch goes through the touch events below: pointer events stop as soon
+    // as the page starts to scroll, touch events keep coming.
+    if (event.pointerType === 'touch') return;
+    move(event.clientX, event.clientY, event.timeStamp, quietness(event));
+  }
+
+  function move (clientX, clientY, time, quiet) {
+    const x = clientX / innerWidth;
+    const y = 1 - clientY / innerHeight;
     if (pointer.has && quiet) {
       const dx = x - pointer.x;
       const dy = y - pointer.y;
@@ -661,11 +680,11 @@
       }
     }
     // smoothed cursor speed in CSS px per ms, for hover intent
-    if (pointer.has && event.timeStamp > pointer.time) {
+    if (pointer.has && time > pointer.time) {
       const px = Math.hypot((x - pointer.x) * innerWidth, (y - pointer.y) * innerHeight);
-      pointer.speed += (px / (event.timeStamp - pointer.time) - pointer.speed) * 0.5;
+      pointer.speed += (px / (time - pointer.time) - pointer.speed) * 0.5;
     }
-    pointer.time = event.timeStamp;
+    pointer.time = time;
     pointer.x = x;
     pointer.y = y;
     pointer.has = true;
@@ -700,6 +719,33 @@
   document.addEventListener('mouseleave', () => { pointer.has = false; });
   addEventListener('resize', wake);
 
+  // A finger stirs the water too, including while it scrolls the page. A
+  // touch on open space drops a small ring into it.
+  const touchQuiet = event => quietness({ target: event.target, buttons: 1 }); // a finger is always dragging
+  addEventListener('touchstart', event => {
+    const t = event.touches[0];
+    if (!t || event.touches.length > 1) return;
+    pointer.has = false;
+    move(t.clientX, t.clientY, event.timeStamp, 0);
+    if (touchQuiet(event) < 1 || (event.target instanceof Element && event.target.closest('a, button, input, label'))) return;
+    const x = t.clientX / innerWidth;
+    const y = 1 - t.clientY / innerHeight;
+    const r = 6 / innerHeight;
+    const force = config.splatForce * 0.004;
+    for (let i = 0; i < 8; i++) {
+      const a = i / 8 * Math.PI * 2;
+      const dx = Math.cos(a) * innerHeight / innerWidth;
+      const dy = Math.sin(a);
+      queue.push([x + dx * r, y + dy * r, dx * force, dy * force, config.touch.ripple]);
+    }
+  }, { passive: true });
+  addEventListener('touchmove', event => {
+    const t = event.touches[0];
+    if (t && event.touches.length === 1) move(t.clientX, t.clientY, event.timeStamp, touchQuiet(event));
+  }, { passive: true });
+  addEventListener('touchend', () => { pointer.has = false; }, { passive: true });
+  addEventListener('touchcancel', () => { pointer.has = false; }, { passive: true });
+
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
     // Hover intent: only form the image once the cursor has rested on the
     // link and slowed down, so sweeping across titles stays quiet.
@@ -714,18 +760,67 @@
         }
         hover.entry = entry;
         hover.dock = 'fluidDock' in link.dataset ? link.closest('article') : null;
+        hover.touch = false;
         hover.placed = false;
         wake();
       };
-      link.addEventListener('pointerenter', () => {
+      link.addEventListener('pointerenter', event => {
+        if (event.pointerType === 'touch') return;
         clearTimeout(timer);
         timer = setTimeout(check, config.intent.dwellMs);
       });
-      link.addEventListener('pointerleave', () => {
+      link.addEventListener('pointerleave', event => {
+        if (event.pointerType === 'touch') return;
         clearTimeout(timer);
         hover.entry = null;
       });
     }
   }
+
+  // Touch has no hover, so the press stands in for it: the image starts to
+  // develop above the finger as soon as it lands on a link. A tap lets it
+  // finish forming, then follows the link; holding keeps it up as a preview.
+  // Sliding off or scrolling lets the water take it, and swallows the click.
+  let press = null;
+  const release = () => {
+    if (press && !press.going) { press.cancelled = true; hover.entry = null; }
+  };
+  for (const link of document.querySelectorAll('a[data-fluid]')) {
+    const entry = loadImage(link.dataset.fluid);
+    link.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'touch' || !event.isPrimary) return;
+      press = { link, start: event.timeStamp, x: event.clientX, y: event.clientY, going: false, cancelled: false };
+      pointer.x = event.clientX / innerWidth;
+      pointer.y = 1 - event.clientY / innerHeight;
+      hover.entry = entry;
+      hover.dock = null;
+      hover.touch = true;
+      hover.placed = false;
+      wake();
+    });
+    link.addEventListener('pointermove', event => {
+      if (press && press.link === link && event.pointerType === 'touch' &&
+          Math.hypot(event.clientX - press.x, event.clientY - press.y) > config.touch.slop) release();
+    });
+    link.addEventListener('pointerup', event => {
+      if (!press || press.link !== link || press.cancelled || event.pointerType !== 'touch') return;
+      press.going = true;
+      const wait = entry.texture ? Math.max(0, config.touch.settleMs - (event.timeStamp - press.start)) : 0;
+      setTimeout(() => { location.href = link.href; }, wait);
+    });
+    link.addEventListener('pointercancel', release);
+    // The click that follows the tap is ours; keyboard clicks pass through.
+    link.addEventListener('click', event => {
+      if (event.detail && press && press.link === link && (press.going || press.cancelled)) event.preventDefault();
+    });
+    // Android opens a link menu on a long press; the preview replaces it.
+    link.addEventListener('contextmenu', event => {
+      if (press && press.link === link) event.preventDefault();
+    });
+  }
+  // Coming back from the linked page (back/forward cache) starts clean.
+  addEventListener('pageshow', event => {
+    if (event.persisted) { press = null; hover.entry = null; }
+  });
   if (resize()) render();
 })();

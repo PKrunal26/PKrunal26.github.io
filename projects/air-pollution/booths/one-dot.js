@@ -59,6 +59,43 @@
   canvas.setAttribute('role', 'img');
   frame.prepend(canvas, source);
   frame.append(ui);
+
+  // Full screen: the browser's own when the slide can have it, else (iPhone Safari) a fixed overlay over the page.
+  const fsButton = el('button', 'od-fs');
+  fsButton.type = 'button';
+  fsButton.setAttribute('aria-label', 'Full screen'); fsButton.title = 'Full screen';
+  frame.append(fsButton);
+  let full = false;
+  const fsIcon = on => on
+    ? '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 3v5H3M12 3v5h5M8 17v-5H3M12 17v-5h5"/></svg>'
+    : '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5"/></svg>';
+  fsButton.innerHTML = fsIcon(false);
+  const nativeFull = () => document.fullscreenElement || document.webkitFullscreenElement;
+  function setFull(on) {
+    if (full === on) return;
+    full = on;
+    slide.classList.toggle('od-full', on);
+    document.documentElement.classList.toggle('od-lock', on && !nativeFull());
+    fsButton.innerHTML = fsIcon(on);
+    fsButton.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+    fsButton.title = on ? 'Exit full screen (Esc)' : 'Full screen';
+    vel = null; size = [0, 0]; kick();
+  }
+  fsButton.addEventListener('click', async () => {
+    if (!full) {
+      const request = slide.requestFullscreen || slide.webkitRequestFullscreen;
+      if (request) { // some browsers never settle the request when they refuse it, so give it a moment, then fall back
+        try { await Promise.race([request.call(slide, {navigationUI: 'hide'}), new Promise(r => setTimeout(r, 400))]); } catch {}
+        if (nativeFull() === slide) return;
+      }
+      setFull(true);
+    } else if (nativeFull()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else setFull(false);
+  });
+  const onNative = () => setFull(nativeFull() === slide);
+  document.addEventListener('fullscreenchange', onNative);
+  document.addEventListener('webkitfullscreenchange', onNative);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && full && !nativeFull()) setFull(false); });
   const layout = () => { slide.classList.toggle('od-phone', phone.matches); ui.classList.toggle('od-flow', phone.matches); size = [0, 0]; kick(); context(); };
 
   const ICON = {
@@ -103,23 +140,29 @@
       if (!n.isContentEditable) n.textContent = fmt(get());
       u.textContent = unitOf(get());
       n.setAttribute('aria-valuenow', get());
-      ruler.style.backgroundPositionX = `${-get() / step()}px`;
+      ruler.style.backgroundPositionX = `${get() / step()}px`; // ticks travel with the pointer
     };
     const commit = v => { set(Math.max(min(), Math.min(max(), v))); update(); };
     const edit = () => { n.contentEditable = 'true'; n.focus(); getSelection().selectAllChildren(n); };
-    let x0 = null, v0 = 0, moved = false, kind = '';
+    let x0 = null, y0 = 0, v0 = 0, moved = false, kind = '';
     r.addEventListener('pointerenter', e => { if (mouse(e)) setActive(key); });
     r.addEventListener('pointerleave', e => { if (mouse(e) && x0 === null && document.activeElement !== n) setActive(null); });
     r.addEventListener('pointerdown', e => {
       if (n.isContentEditable || e.button > 0) return;
-      x0 = e.clientX; v0 = get(); moved = false; kind = e.pointerType;
+      x0 = e.clientX; y0 = e.clientY; v0 = get(); moved = false; kind = e.pointerType;
       try { r.setPointerCapture(e.pointerId); } catch {}
     });
     r.addEventListener('pointermove', e => {
       if (x0 === null) return;
       const dx = e.clientX - x0;
-      if (!moved && Math.abs(dx) > 5) { moved = true; r.classList.add('dragging'); setActive(key); touched(); dragKind = kind; }
-      if (moved) commit(v0 + dx * step());
+      if (!moved) {
+        const dy = Math.abs(e.clientY - y0), slop = kind === 'touch' ? 10 : 5;
+        if (kind === 'touch' && dy > slop && dy > Math.abs(dx)) { x0 = null; return; } // a scroll, not a scrub
+        if (Math.abs(dx) < slop || Math.abs(dx) < dy * 1.3) return;
+        x0 = e.clientX - Math.sign(dx) * slop; // no jump when the scrub engages
+      }
+      if (!moved) { moved = true; r.classList.add('dragging'); setActive(key); touched(); dragKind = kind; }
+      if (moved) commit(v0 + (e.clientX - x0) * step());
     });
     const release = e => {
       if (x0 === null) return;
@@ -343,10 +386,11 @@
   let drag = null, pinch = null;
   const touches = new Map();
   canvas.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch' && !full) return; // inline, a finger on the globe scrolls the page
     touches.set(e.pointerId, [e.clientX, e.clientY]);
     if (touches.size === 2) { const [p, q] = [...touches.values()]; pinch = {d: Math.hypot(p[0] - q[0], p[1] - q[1]), zoom: view.zoom}; drag = null; return; }
     drag = {x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon, t: e.timeStamp, px: e.clientX, py: e.clientY};
-    vel = null; canvas.setPointerCapture(e.pointerId); canvas.classList.add('grabbing');
+    vel = null; try { canvas.setPointerCapture(e.pointerId); } catch {} canvas.classList.add('grabbing');
   });
   canvas.addEventListener('pointermove', e => {
     if (touches.has(e.pointerId)) touches.set(e.pointerId, [e.clientX, e.clientY]);

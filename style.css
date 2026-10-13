@@ -134,14 +134,24 @@ footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);fo
 .od-fs svg{width:1.3cqw;height:1.3cqw;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .od-fs:focus-visible{outline:2px solid #d5ddc4;outline-offset:2px}
 @media(hover:hover) and (pointer:fine){.od-fs:hover{color:#e4ebd9;background:#1b221de6}}
-.od-phone .od-fs{right:10px;top:calc(100cqw - 52px);width:40px;height:40px;border-radius:8px}
+.od-phone .od-fs{right:12px;top:12px;width:40px;height:40px;border-radius:8px}
 .od-phone .od-fs svg{width:18px;height:18px}
 .deckpage .slide.od-full{position:fixed;inset:0;z-index:1000;width:auto;height:100vh;height:100dvh;aspect-ratio:auto;border-radius:0;box-shadow:none}
 .od-full .od-globe{touch-action:none}
 .od-phone.od-full .frame{position:absolute;inset:0;display:flex;flex-direction:column}
 .od-phone.od-full .od-globe{flex:1 1 auto;min-height:0;aspect-ratio:auto;height:auto}
-.od-phone.od-full .od-ui{flex:none;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.od-phone.od-full .od-ui{flex:none;padding:0 max(20px,calc(env(safe-area-inset-right) + 12px)) max(20px,calc(env(safe-area-inset-bottom) + 12px)) max(20px,calc(env(safe-area-inset-left) + 12px))}
+.od-phone.od-full .od-chips{margin:0 calc(-1 * max(20px,calc(env(safe-area-inset-left) + 12px)));padding-inline:max(20px,calc(env(safe-area-inset-left) + 12px))}
 .od-phone.od-full .od-tip{min-height:0}
-.od-phone.od-full .od-source{top:calc(14px + env(safe-area-inset-top))}
-.od-phone.od-full .od-fs{top:calc(8px + env(safe-area-inset-top))}
+.od-phone.od-full .od-source{top:max(24px,calc(env(safe-area-inset-top) + 14px));left:max(22px,calc(env(safe-area-inset-left) + 14px))}
+.od-phone.od-full .od-fs{top:max(14px,calc(env(safe-area-inset-top) + 8px));right:max(14px,calc(env(safe-area-inset-right) + 8px))}
 html.od-lock,html.od-lock body{overflow:hidden;overscroll-behavior:none}
+
+/* Air Atlas page: no theme toggle (it sat on the booth's full-screen button); the page follows the system theme. */
+body:has(.deckpage) .theme-toggle{display:none}
+/* Tape-dial feel: a centre notch reads the value; the number flashes at each major ruler mark. */
+.od-ruler::after{content:'';position:absolute;left:50%;top:-30%;bottom:-10%;width:1.5px;margin-left:-.75px;border-radius:1px;background:#e4ebd9;opacity:.35;transition:opacity .2s}
+.od-row.dragging .od-ruler::after{opacity:1}
+.od-n.tick{animation:od-tick .18s ease-out}
+@keyframes od-tick{from{color:#fff;text-shadow:0 0 .6em #e4ebd966}to{color:#e4ebd9;text-shadow:none}}
+@media(prefers-reduced-motion:reduce){.od-n.tick{animation:none}}

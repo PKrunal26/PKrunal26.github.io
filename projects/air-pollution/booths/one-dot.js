@@ -130,7 +130,9 @@
   const touched = () => { if (used) return; used = true; hint.classList.add('gone'); };
 
   // A scrubbable row: drag anywhere on it sideways (mouse or finger), click or tap the number to type, arrow keys step.
-  // The tick ruler along its foot moves 1:1 with the pointer, so it reads as a dial.
+  // It behaves like a tape dial: the tick ruler along its foot moves 1:1 with the pointer, and pulling the tape left
+  // brings higher values to the centre notch (so dragging left increases). The value row also ticks haptically at
+  // every major ruler mark; latitude and longitude tick when the dot reaches a new lattice point instead.
   function scrubRow(key, label, get, set, step, min, max, fmt, unitOf) {
     const r = el('div', 'od-row od-scrub'), lab = el('div', 'od-l'), val = el('div', 'od-val'), n = el('span', 'od-n'), u = el('span', 'od-u'), ruler = el('div', 'od-ruler');
     lab.append(label);
@@ -140,11 +142,11 @@
       if (!n.isContentEditable) n.textContent = fmt(get());
       u.textContent = unitOf(get());
       n.setAttribute('aria-valuenow', get());
-      ruler.style.backgroundPositionX = `${get() / step()}px`; // ticks travel with the pointer
+      ruler.style.backgroundPositionX = `${-get() / step()}px`; // ticks travel with the pointer
     };
     const commit = v => { set(Math.max(min(), Math.min(max(), v))); update(); };
     const edit = () => { n.contentEditable = 'true'; n.focus(); getSelection().selectAllChildren(n); };
-    let x0 = null, y0 = 0, v0 = 0, moved = false, kind = '';
+    let x0 = null, y0 = 0, v0 = 0, moved = false, kind = '', lastMark = null;
     r.addEventListener('pointerenter', e => { if (mouse(e)) setActive(key); });
     r.addEventListener('pointerleave', e => { if (mouse(e) && x0 === null && document.activeElement !== n) setActive(null); });
     r.addEventListener('pointerdown', e => {
@@ -159,10 +161,13 @@
         const dy = Math.abs(e.clientY - y0), slop = kind === 'touch' ? 10 : 5;
         if (kind === 'touch' && dy > slop && dy > Math.abs(dx)) { x0 = null; return; } // a scroll, not a scrub
         if (Math.abs(dx) < slop || Math.abs(dx) < dy * 1.3) return;
-        x0 = e.clientX - Math.sign(dx) * slop; // no jump when the scrub engages
+        x0 = e.clientX - Math.sign(dx) * slop; lastMark = Math.floor(get() / (step() * 40)); // no jump when the scrub engages
       }
       if (!moved) { moved = true; r.classList.add('dragging'); setActive(key); touched(); dragKind = kind; }
-      if (moved) commit(v0 + (e.clientX - x0) * step());
+      if (moved) {
+        commit(v0 - (e.clientX - x0) * step());
+        if (key === 'value') { const mark = Math.floor(get() / (step() * 40)); if (mark !== lastMark) { lastMark = mark; if (kind === 'touch') haptic(); n.classList.remove('tick'); void n.offsetWidth; n.classList.add('tick'); } }
+      }
     });
     const release = e => {
       if (x0 === null) return;

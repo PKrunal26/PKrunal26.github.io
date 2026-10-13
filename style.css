@@ -77,7 +77,8 @@ footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);fo
   background-image:linear-gradient(90deg,#e1e7d566 0 1px,transparent 1px),linear-gradient(90deg,#e1e7d533 0 1px,transparent 1px);background-size:40px 100%,8px 55%;background-repeat:repeat-x;background-position-y:bottom;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent)}
 .od-row.dragging .od-ruler,.od-n:focus-visible~.od-ruler{opacity:1}
-.od-name{display:flex;align-items:center;color:#e4ebd9;font-size:calc(var(--u)*1.1)}
+.od-name{display:flex;align-items:center;color:#94a480;font-size:calc(var(--u)*1.1)}
+.od-name .od-sw{margin:0 calc(var(--u)*.225)} /* ring centred in the icon column; the label gap does the rest */
 .od-chips{display:flex;gap:calc(var(--u)*.35);overflow-x:auto;margin:0 calc(var(--u)*-.35);padding:calc(var(--u)*.35) calc(var(--u)*.7) calc(var(--u)*.6);border-bottom:1px solid #e1e7d514;scrollbar-width:none;overscroll-behavior-x:contain;
   --fade:calc(var(--u)*2);-webkit-mask-image:linear-gradient(90deg,transparent,#000 var(--fade),#000 calc(100% - var(--fade)),transparent);mask-image:linear-gradient(90deg,transparent,#000 var(--fade),#000 calc(100% - var(--fade)),transparent)}
 .od-chips::-webkit-scrollbar{display:none}
@@ -119,7 +120,8 @@ footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);fo
 .od-flow .od-u{font-size:13px}
 .od-flow .od-ruler{left:0;right:0;bottom:5px;height:6px;opacity:.5}
 .od-flow .od-row.dragging .od-ruler{opacity:1}
-.od-flow .od-name{font-size:15px}
+.od-flow .od-name{font-size:14px}
+.od-flow .od-name .od-sw{width:9px;height:9px;margin:0 4.5px}
 .od-flow .od-chips{--fade:20px;gap:6px;margin:0 -16px;padding:4px 16px 12px}
 .od-flow .od-chip{height:36px;padding:0 13px;font-size:14px}
 .od-flow .od-chip .od-sw{width:9px;height:9px;margin-right:8px}
@@ -154,3 +156,5 @@ body:has(.deckpage) .theme-toggle{display:none}
 .od-n.tick{animation:od-tick .18s ease-out}
 @keyframes od-tick{from{color:#fff;text-shadow:0 0 .6em #e4ebd966}to{color:#e4ebd9;text-shadow:none}}
 @media(prefers-reduced-motion:reduce){.od-n.tick{animation:none}}
+.od-hint-touch{display:none}
+@media(pointer:coarse){.od-hint-touch{display:inline}.od-hint-fine{display:none}}

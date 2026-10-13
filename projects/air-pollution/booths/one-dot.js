@@ -53,7 +53,7 @@
   ui.dataset.fluidQuiet = ''; // keeps the page's cursor fluid faint over the panel
   const source = el('div', 'od-source', 'CAMS forecast · 9 Oct 2026, 03:00 UTC');
   const card = el('div', 'od-card'), tip = el('div', 'od-tip'), chips = el('div', 'od-chips');
-  const hint = el('div', 'od-hint', '<span class="od-hint-arrows" aria-hidden="true">‹ ›</span><span>Drag a row sideways, or tap a number to type</span>');
+  const hint = el('div', 'od-hint', '<span class="od-hint-arrows" aria-hidden="true">‹ ›</span><span class="od-hint-fine">Drag a row sideways, or tap a number to type</span><span class="od-hint-touch">Drag a row sideways · two fingers move the globe</span>');
   ui.append(card, hint, tip);
   const canvas = el('canvas', 'od-globe');
   canvas.setAttribute('role', 'img');
@@ -83,7 +83,8 @@
   }
   fsButton.addEventListener('click', async () => {
     if (!full) {
-      const request = slide.requestFullscreen || slide.webkitRequestFullscreen;
+      // Native fullscreen only with a mouse: on phones Android pins a system "drag from the top to exit" banner over it.
+      const request = matchMedia('(pointer: fine)').matches && (slide.requestFullscreen || slide.webkitRequestFullscreen);
       if (request) { // some browsers never settle the request when they refuse it, so give it a moment, then fall back
         try { await Promise.race([request.call(slide, {navigationUI: 'hide'}), new Promise(r => setTimeout(r, 400))]); } catch {}
         if (nativeFull() === slide) return;
@@ -439,6 +440,29 @@
     goal.zoom = Math.max(.8, Math.min(80, goal.zoom * Math.exp(-e.deltaY * .006)));
     kick();
   }, {passive: false});
+
+  // Inline on touch screens: one finger scrolls the page (touch-action: pan-y); two fingers pan and pinch the globe.
+  // Touch events, not pointer events, because only a cancelable touchmove can stop the page scrolling mid-gesture.
+  let duo = null;
+  const pairOf = t => ({x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2, d: Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY)});
+  canvas.addEventListener('touchstart', e => {
+    if (full || e.touches.length !== 2) return;
+    e.preventDefault();
+    duo = {...pairOf(e.touches), lat: view.lat, lon: view.lon, zoom: view.zoom};
+    vel = null; touched();
+  }, {passive: false});
+  canvas.addEventListener('touchmove', e => {
+    if (full || !duo || e.touches.length !== 2) return;
+    e.preventDefault();
+    const now = pairOf(e.touches);
+    view.zoom = goal.zoom = Math.max(.8, Math.min(80, duo.zoom * now.d / Math.max(1, duo.d)));
+    const k = 1 / DEG / (Math.min(canvas.clientWidth, canvas.clientHeight) * .46 * view.zoom);
+    view.lon = goal.lon = wrap(duo.lon - (now.x - duo.x) * k);
+    view.lat = goal.lat = Math.max(-89, Math.min(89, duo.lat + (now.y - duo.y) * k));
+    kick();
+  }, {passive: false});
+  const duoEnd = e => { if (e.touches.length < 2) duo = null; };
+  canvas.addEventListener('touchend', duoEnd); canvas.addEventListener('touchcancel', duoEnd);
 
   new ResizeObserver(() => { size = [0, 0]; kick(); }).observe(canvas);
   layout(); update();

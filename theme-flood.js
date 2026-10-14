@@ -6,7 +6,10 @@
 // sinks a little and thins out; the cursor stirs it just as it stirs the
 // thumbnails. A click treats the space above the screen as a tank of ink:
 // its floor crumbles from right to left and gravity pours the ink down
-// over the page.
+// over the page. The page's letters stand in the flow as they do in
+// fluid.js: a soft repulsion field parts the ink around words and slows it
+// through them, and the dither never sits on a glyph; each stroke flips
+// whole, so text stays readable all the way through.
 //
 // The page is greyscale, so the other theme is almost exactly "invert, then
 // lift by the dark background": white cells blended with `difference` invert
@@ -44,9 +47,11 @@
     pressureDecay: 0.95,
     // gravity is the pull on inked fluid, texels per second squared: a
     // gentle sink for the mist, a pour for the flood.
-    calm: { dissipation: 1.2, curl: 6, stir: 10, gravity: 90 },
+    // repel is how hard letters push the flow away, drag how much they
+    // slow what is already on them (per second).
+    calm: { dissipation: 1.2, curl: 6, stir: 10, gravity: 90, repel: 4400, drag: 18 },
     // The pour: little damping, so the falling ink keeps accelerating.
-    flood: { dissipation: 0.2, curl: 6, stir: 0, gravity: 1500 },
+    flood: { dissipation: 0.2, curl: 6, stir: 0, gravity: 1500, repel: 150000, drag: 60 },
     // Fixed emitters just off-screen along the top and right edges near the
     // corner. Only the soft tail of each reaches the screen, so the mist
     // flows in from the edges; each breathes on its own slow rhythm.
@@ -177,6 +182,19 @@
         float wet = clamp(bilerp(ink, uv, inkTexel).r * 1.5, 0.0, 1.0);
         gl_FragColor = vec4(texture2D(velocity, uv).xy + swirl * strength * wet * dt, 0.0, 1.0);
       }`,
+    // Letters push the flow down the slope of a blurred copy of the text, and
+    // slow what is already on one, as in fluid.js.
+    repel: `
+      uniform sampler2D velocity, field;
+      uniform vec2 fieldTexel;
+      uniform float strength, drag, dt;
+      float f (vec2 p) { return texture2D(field, p).a; } // coverage lives in alpha
+      void main () {
+        vec2 grad = vec2(f(uv + vec2(fieldTexel.x, 0.0)) - f(uv - vec2(fieldTexel.x, 0.0)),
+                         f(uv + vec2(0.0, fieldTexel.y)) - f(uv - vec2(0.0, fieldTexel.y)));
+        vec2 v = texture2D(velocity, uv).xy - grad * strength * dt;
+        gl_FragColor = vec4(v * exp(-drag * f(uv) * dt), 0.0, 1.0);
+      }`,
     // Ink is heavier than the page: inked fluid is pulled down (gl y is up).
     gravity: `
       uniform sampler2D velocity, ink;
@@ -275,19 +293,22 @@
       }`,
     // One fragment per cell.
     display: `
-      uniform sampler2D ink;
+      uniform sampler2D ink, glyphs;
       uniform vec2 resolution;
       float bayer2 (vec2 a) { a = floor(a); return fract(a.x * 0.5 + a.y * a.y * 0.75); }
       float bayer4 (vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
       float bayer8 (vec2 a) { return bayer4(0.5 * a) * 0.25 + bayer2(a); }
       void main () {
         vec2 c = floor(gl_FragCoord.xy);
+        vec2 p = (c + 0.5) / resolution;
         // wide ramp: thin tendrils still show, as sparse dither
-        float level = smoothstep(0.1, 0.8, texture2D(ink, (c + 0.5) / resolution).r);
+        float level = smoothstep(0.1, 0.8, texture2D(ink, p).r);
         // Wrap to the 8x8 tile first: squaring raw cell coordinates loses
         // precision on tall screens and lit stray cells where there was no ink.
         float on = level > 0.0 ? step(bayer8(mod(c, 8.0)) + 0.5 / 64.0, level) : 0.0;
-        gl_FragColor = vec4(on);
+        // Never dithered on a letter: its strokes flip whole once the ink is half there.
+        float letter = step(0.5, texture2D(glyphs, p).a);
+        gl_FragColor = vec4(mix(on, step(0.5, level), letter));
       }`,
     probe: `
       uniform sampler2D ink;
@@ -383,6 +404,97 @@
     probeFBO = createFBO(PROBE_W, PROBE_H, gl.UNSIGNED_BYTE);
     return velocity.read.ok && ink.read.ok && probeFBO.ok ? 'new' : '';
   }
+
+  // Letters: the page's text redrawn glyph by glyph into a mask the size of
+  // the canvas. `glyphs` (sharp, slightly thickened) keeps the dither off
+  // the strokes; `field` (a blurred copy at a quarter size) is the
+  // repulsion field. As in fluid.js.
+  function maskTexture () {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
+    return { texture };
+  }
+  const letters = {
+    glyphs: maskTexture(),
+    field: maskTexture(),
+    canvas: document.createElement('canvas'),
+    fieldCanvas: document.createElement('canvas'),
+    dirty: true
+  };
+
+  function drawLetters (ctx) {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: node => node.data.trim() && !node.parentElement.closest('script, style, [aria-hidden="true"]')
+        ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+    });
+    const range = document.createRange();
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const style = getComputedStyle(node.parentElement);
+      ctx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const descent = ctx.measureText('g').fontBoundingBoxDescent || parseFloat(style.fontSize) * 0.22;
+      const text = node.data;
+      for (let i = 0; i < text.length; i++) {
+        if (!text[i].trim()) continue;
+        range.setStart(node, i);
+        range.setEnd(node, i + 1);
+        const r = range.getBoundingClientRect();
+        if (!r.width || r.bottom < 0 || r.top > innerHeight) continue;
+        ctx.strokeText(text[i], r.left, r.bottom - descent);
+        ctx.fillText(text[i], r.left, r.bottom - descent);
+      }
+    }
+  }
+
+  function upload (target, source) {
+    gl.bindTexture(gl.TEXTURE_2D, target.texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  }
+
+  function updateLetters () {
+    letters.dirty = false;
+    const { canvas: mc, fieldCanvas: fc } = letters;
+    mc.width = cols * config.cell;
+    mc.height = rows * config.cell;
+    const ctx = mc.getContext('2d');
+    ctx.clearRect(0, 0, mc.width, mc.height);
+    ctx.fillStyle = ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1; // a hair of margin around each stroke
+    ctx.lineJoin = 'round';
+    ctx.textBaseline = 'alphabetic';
+    drawLetters(ctx);
+    upload(letters.glyphs, mc);
+
+    // Blur by halving twice, then a touch of filter blur.
+    let src = mc;
+    for (let i = 0; i < 2; i++) {
+      const next = document.createElement('canvas');
+      next.width = Math.max(1, Math.ceil(src.width / 2));
+      next.height = Math.max(1, Math.ceil(src.height / 2));
+      const c = next.getContext('2d');
+      c.imageSmoothingEnabled = true;
+      c.drawImage(src, 0, 0, next.width, next.height);
+      src = next;
+    }
+    fc.width = src.width;
+    fc.height = src.height;
+    const fctx = fc.getContext('2d');
+    fctx.filter = 'blur(0.75px)';
+    fctx.drawImage(src, 0, 0);
+    fctx.filter = 'none';
+    upload(letters.field, fc);
+  }
+
+  const markLetters = () => { letters.dirty = true; };
+  addEventListener('scroll', markLetters, { passive: true });
+  addEventListener('resize', markLetters);
+  if (document.fonts) document.fonts.ready.then(markLetters);
 
   let unit = 0;
   function use (name, texelOf) {
@@ -538,6 +650,16 @@
       velocity.swap();
     }
 
+    u = use('repel', velocity.read);
+    bind(u.velocity, velocity.read);
+    bind(u.field, letters.field);
+    gl.uniform2f(u.fieldTexel, 1 / letters.fieldCanvas.width, 1 / letters.fieldCanvas.height);
+    gl.uniform1f(u.strength, s.feel.repel);
+    gl.uniform1f(u.drag, s.feel.drag);
+    gl.uniform1f(u.dt, dt);
+    draw(velocity.write);
+    velocity.swap();
+
     const pouring = s.pourTime >= 0 ? 1 : 0;
     // the top edge opens where the floor has given way, `breach` after it cracked
     const breached = s.pourTime - config.pour.breach;
@@ -613,6 +735,7 @@
   function render () {
     const u = use('display');
     bind(u.ink, ink.read);
+    bind(u.glyphs, letters.glyphs);
     gl.uniform2f(u.resolution, cols, rows);
     draw(null);
     // Same cells again, tinted, for the lift layer (copied while the GL frame is still current).
@@ -676,6 +799,8 @@
     }
     state.time += dt;
     state.frames++;
+    // Rebuilt before any pass binds textures: the upload rebinds the active unit.
+    if (letters.dirty) updateLetters();
 
     while (strokes.length) {
       const [x, y, dx, dy] = strokes.shift();
@@ -715,6 +840,7 @@
   function start () {
     if (!canvas.isConnected) document.body.append(canvas, lift);
     if (!resize()) return false;
+    letters.dirty = true; // the page may have changed since the last run
     show(true);
     if (!running) {
       running = true;

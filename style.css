@@ -166,3 +166,34 @@ body:has(.deckpage) .theme-toggle{display:none}
 @media(prefers-reduced-motion:reduce){.od-n.tick{animation:none}}
 .od-hint-touch{display:none}
 @media(pointer:coarse){.od-hint-touch{display:inline}.od-hint-fine{display:none}}
+
+/* Air Atlas case study: text sections in page flow between the media cards, project facts, the Directions sketches
+   (booths/directions.js) and media cards (the image centred with room around it, one short title below). Phone: text spans the full width, grids drop to two columns. */
+.deckpage .cs-text{max-width:560px;margin-left:8.3333%;line-height:1.7}
+.deckpage .cs-text h2{font-size:16px;font-weight:500;color:var(--strong);margin:0 0 8px}
+.deckpage .cs-text p{margin:0 0 12px;color:var(--text)}
+.cs-label{font-size:12px;color:var(--muted)}
+.cs-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:-16px 0 0 8.3333%;max-width:83.3333%;font-size:14px;line-height:1.5}
+.cs-facts p{margin:0}
+.cs-rules{margin:0}
+.cs-rules div{display:flex;gap:8px;margin-bottom:6px}
+.cs-rules dt{color:var(--strong);flex:none}
+.cs-rules dd{margin:0;color:var(--soft)}
+.cs-steps{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;width:min(1066px,calc((100vw - 48px) * 0.8333))}
+.cs-steps p{font-size:13px;line-height:1.5;margin:0}
+.cs-steps .cs-label{margin:8px 0 2px}
+.cs-tile{aspect-ratio:4/3;background:#0c100e;border-radius:6px;overflow:hidden}
+.cs-tile canvas{display:block;width:100%;height:100%}
+.deckpage .cs-media{background:#0c100e}
+.cs-media-box{position:absolute;inset:0}
+.deckpage .frame .cs-media-box img{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:auto;height:auto;max-width:66%;max-height:68%;border-radius:0.4cqw}
+.cs-media-title{position:absolute;left:0;right:0;bottom:4.2cqw;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:1.25cqw;color:#c8d4b8}
+@media(max-width:600px){
+.deckpage .cs-text{margin-left:0}
+.cs-facts{grid-template-columns:repeat(2,minmax(0,1fr));margin:0;max-width:none}
+.cs-rules div{display:block}
+.cs-steps{grid-template-columns:repeat(2,minmax(0,1fr));width:auto}
+.deckpage .slide.cs-media{aspect-ratio:4/3}
+.deckpage .frame .cs-media-box img{max-width:88%;max-height:70%;top:44%}
+.cs-media-title{font-size:12px;bottom:10px}
+}

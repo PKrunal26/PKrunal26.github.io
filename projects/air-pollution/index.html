@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Air Atlas — Krunal Prajapati</title>
-  <meta name="description" content="Air Atlas: what is in the air, printed as halftone ink. A personal project by Krunal Prajapati.">
-  <link rel="stylesheet" href="../../style.css?v=21">
+  <meta name="description" content="Air Atlas turns the Copernicus atmosphere forecast into a halftone globe. Each pollutant prints as its own ink, and dot size shows how much is in the air. Drag it around, read any point, or fly to your city.">
+  <link rel="stylesheet" href="../../style.css?v=26">
   <script src="../../theme.js"></script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E">
 </head>
@@ -28,42 +28,39 @@
 </div>
 <div class="cap"><h2>Air Atlas</h2><p>What is in the air, printed as halftone ink.</p><p class="small">Drag the globe to turn it, pinch to zoom. Krunal Prajapati · 2026</p></div>
 </section>
+<section class="cs-facts" aria-label="Project facts">
+<div><p class="cs-label">Role</p><p>Design and code</p></div>
+<div><p class="cs-label">Timeline</p><p>10 days, Oct 2026</p></div>
+<div><p class="cs-label">Data</p><p>Copernicus CAMS via Open-Meteo</p></div>
+<div><p class="cs-label">Status</p><p>Live, updated daily</p></div>
+</section>
+<section class="cs-text"><h2>Why</h2><p>A side project, made for fun. Copernicus publishes a model of the world’s air every day, free, as grids of numbers few people can read. Air Atlas is an experiment in turning them into something you look at.</p><p>It began as <em>Who owns the air?</em>, splitting each city’s pollution by sector. Those numbers were made up, so I dropped them and stayed with the model data. The live site kept the name.</p></section>
 <section class="slide-wrap" aria-label="One value, one dot">
 <div class="slide dark" id="unseen" data-fluid-quiet style="background:#0c100e">
 <div class="frame">
+<div style="position:absolute;left:8.3333cqw;bottom:7.5cqw;width:27.0833cqw;display:flex;flex-direction:column;gap:0.8333cqw;font-family:Arial, Helvetica, sans-serif;pointer-events:none"><h2 style="font-size:1.4583cqw;font-weight:400;line-height:1.3;color:#ECECEC">One value, one dot</h2><p style="font-size:1.25cqw;line-height:1.5;color:#999999">I started with one parameter at a time and asked how to draw it. Here is one value from the forecast as one dot. Change the numbers or the pollutant and watch it change.</p></div>
 <p style="position:absolute;left:8.3333cqw;bottom:3.3333cqw;width:31.25cqw;font-size:1.25cqw;color:#777777">Air Atlas</p>
 <p style="position:absolute;right:8.3333cqw;bottom:3.3333cqw;width:10.4167cqw;font-size:1.25cqw;color:#777777;text-align:right">02</p>
 </div>
 </div>
-<div class="cap"><h2>A lot of public data goes unseen.</h2><p>One value from the Copernicus forecast, printed as one dot. Change the numbers or the pollutant and watch the dot change.</p></div>
+<div class="cap"><h2>One value, one dot</h2><p>I started with one parameter at a time and asked how to draw it. Here is one value from the forecast as one dot. Change the numbers or the pollutant and watch it change.</p></div>
 </section>
-<section class="slide-wrap" aria-label="Halftone globe">
-<div class="slide dark" id="globe" style="background:#0c100e">
-<div class="frame" style="color:#ECECEC;font-family:Arial, Helvetica, sans-serif;padding:6.6667cqw 8.3333cqw 8.3333cqw;display:flex;flex-direction:column;justify-content:end">
-
-<video autoplay muted loop playsinline preload="metadata" poster="media/halftone-globe.jpg" aria-label="The halftone globe turning slowly, amber dots of fine particles over Africa, Europe and Asia" style="position:absolute;right:0;top:0;width:56.25cqw;height:56.25cqw;object-fit:cover"><source src="media/halftone-globe.mp4" type="video/mp4"></video>
-<div style="width:25cqw;display:flex;flex-direction:column;gap:0.8333cqw"><h2 style="font-size:1.4583cqw;font-weight:400;line-height:1.3;color:#ECECEC">Halftone globe</h2><p style="font-size:1.25cqw;line-height:1.5;color:#999999">One moment of the whole atmosphere, printed as ink on a sphere. It moves only when you drag, zoom or search.</p></div>
-<p style="position:absolute;left:8.3333cqw;bottom:3.3333cqw;width:31.25cqw;font-size:1.25cqw;color:#777777">Air Atlas</p>
-
-
-</div>
-</div>
-<div class="cap"><h2>Halftone globe</h2><p>One moment of the whole atmosphere, printed as ink on a sphere. It moves only when you drag, zoom or search.</p></div>
-</section>
+<section class="cs-text"><h2>Directions</h2><p>Then several parameters at once. Each layer needed its own colour, and overlaps had to stay readable. I tried these in order:</p><ol class="cs-steps"><li><div class="cs-tile"><canvas data-sketch="plume" aria-hidden="true"></canvas></div><p class="cs-label">8 Oct</p><p>A plume over one city. Only its opacity was data; the shape was invented.</p></li><li><div class="cs-tile"><canvas data-sketch="shell" aria-hidden="true"></canvas></div><p class="cs-label">9 Oct</p><p>A solid gradient shell, lifted higher where values were high.</p></li><li><div class="cs-tile"><canvas data-sketch="mix" aria-hidden="true"></canvas></div><p class="cs-label">9 Oct</p><p>Several layers mixed into one shell.</p></li><li><div class="cs-tile"><canvas data-sketch="opacity" aria-hidden="true"></canvas></div><p class="cs-label">9 Oct</p><p>Dots of nearly fixed size, value as opacity.</p></li><li><div class="cs-tile"><canvas data-sketch="halftone" aria-hidden="true"></canvas></div><p class="cs-label">10 Oct</p><p>Halftone. Dot size is the value; each layer is its own offset plate.</p></li></ol></section>
 <section class="slide-wrap" aria-label="A screen of dots">
 <div class="slide dark" id="dots" style="background:#0c100e">
 <div class="frame" style="">
 
   <video autoplay muted loop playsinline preload="metadata" poster="media/screen-of-dots.jpg" aria-label="Zooming in until the halftone screen resolves into large individual dots of different sizes" style="position:absolute; top:0; left:0; width:100cqw; height:45cqw;object-fit:cover"><source src="media/screen-of-dots.mp4" type="video/mp4"></video>
   <h2 style="position:absolute; bottom:3.3333cqw; left:8.3333cqw; width:20.8333cqw; font-family:Arial, sans-serif; font-size:1.4583cqw; font-weight:400; line-height:1.3; color:#ececec">A screen of dots</h2>
-  <p style="position:absolute; bottom:3.3333cqw; left:31.25cqw; width:50cqw; font-family:Arial, sans-serif; font-size:1.25cqw; line-height:1.5; color:#999999">Concentration is dot size, misaligned just like comics to create mix of colors without actually mixing colors.</p>
-  <p style="position:absolute; right:8.3333cqw; bottom:3.3333cqw; width:10.4167cqw; font-family:Arial, sans-serif; font-size:1.25cqw; text-align:right; color:#777777">04</p>
+  <p style="position:absolute; bottom:3.3333cqw; left:31.25cqw; width:50cqw; font-family:Arial, sans-serif; font-size:1.25cqw; line-height:1.5; color:#999999">Concentration is dot size, as in halftone print. Zero prints nothing.</p>
+  <p style="position:absolute; right:8.3333cqw; bottom:3.3333cqw; width:10.4167cqw; font-family:Arial, sans-serif; font-size:1.25cqw; text-align:right; color:#777777">03</p>
   
 
 </div>
 </div>
-<div class="cap"><h2>A screen of dots</h2><p>Concentration is dot size, misaligned just like comics to create mix of colors without actually mixing colors.</p></div>
+<div class="cap"><h2>A screen of dots</h2><p>Concentration is dot size, as in halftone print. Zero prints nothing.</p></div>
 </section>
+<section class="cs-text"><h2>Drawing rules</h2><dl class="cs-rules"><div><dt>Size, not opacity.</dt><dd>Dot area matches the value.</dd></div><div><dt>Fixed plates.</dt><dd>Layers never move each other’s dots.</dd></div><div><dt>Quiet background.</dt><dd>Ozone shows only where it departs from its usual level.</dd></div><div><dt>Missing stays missing.</dt><dd>Gaps draw nothing. They are never zero.</dd></div></dl></section>
 <section class="slide-wrap" aria-label="Ink that mixes">
 <div class="slide" id="ink" style="background:#ffffff">
 <div class="frame" style="color:#3A3A3A;font-family:Arial, Helvetica, sans-serif;padding:6.6667cqw 8.3333cqw 8.3333cqw;display:flex;flex-direction:row;align-items:end;gap:3.3333cqw">
@@ -78,6 +75,19 @@
 </div>
 <div class="cap"><h2>Ink that mixes</h2><p>Each pollutant is its own ink plate with a fixed offset. Overlaps mix the same way, whatever order you turn layers on.</p></div>
 </section>
+<section class="slide-wrap" aria-label="Halftone globe">
+<div class="slide dark" id="globe" style="background:#0c100e">
+<div class="frame" style="color:#ECECEC;font-family:Arial, Helvetica, sans-serif;padding:6.6667cqw 8.3333cqw 8.3333cqw;display:flex;flex-direction:column;justify-content:end">
+
+<video autoplay muted loop playsinline preload="metadata" poster="media/halftone-globe.jpg" aria-label="The halftone globe turning slowly, amber dots of fine particles over Africa, Europe and Asia" style="position:absolute;right:0;top:0;width:56.25cqw;height:56.25cqw;object-fit:cover"><source src="media/halftone-globe.mp4" type="video/mp4"></video>
+<div style="width:25cqw;display:flex;flex-direction:column;gap:0.8333cqw"><h2 style="font-size:1.4583cqw;font-weight:400;line-height:1.3;color:#ECECEC">Halftone globe</h2><p style="font-size:1.25cqw;line-height:1.5;color:#999999">One hour of the whole atmosphere, printed on a sphere. Play 48 hours of forecast, or step through monthly averages since August 2022.</p></div>
+<p style="position:absolute;left:8.3333cqw;bottom:3.3333cqw;width:31.25cqw;font-size:1.25cqw;color:#777777">Air Atlas</p>
+<p style="position:absolute;right:8.3333cqw;bottom:3.3333cqw;width:10.4167cqw;font-size:1.25cqw;color:#777777;text-align:right">04</p>
+</div>
+</div>
+<div class="cap"><h2>Halftone globe</h2><p>One hour of the whole atmosphere, printed on a sphere. Play 48 hours of forecast, or step through monthly averages since August 2022.</p></div>
+</section>
+<section class="slide-wrap" aria-label="Monthly history"><div class="slide dark cs-media"><div class="frame"><div class="cs-media-box"><img src="media/time-bar-monthly.jpg" alt="The globe in Monthly mode showing the November 2025 monthly mean: dust over North Africa and Arabia, fine particles and nitrogen dioxide over northern India and China, with the time bar at the bottom." loading="lazy"><div class="cs-media-title">Monthly history</div></div></div></div></section>
 <section class="slide-wrap" aria-label="Read any point">
 <div class="slide dark" id="readout" style="background:#0c100e">
 <div class="frame" style="color:#ECECEC;font-family:Arial, Helvetica, sans-serif;padding:6.6667cqw 8.3333cqw 8.3333cqw;display:flex;flex-direction:row;align-items:end;gap:2.5cqw">
@@ -107,6 +117,12 @@
 </div>
 <div class="cap"><h2>Fly to a city</h2><p>Search 237 cities offline, or type coordinates. The camera arcs around the Earth and lands on the current PM2.5 estimate.</p></div>
 </section>
+<section class="cs-text"><h2>Two models</h2><p>Over Europe the atlas switches to an 11 km regional model. It doesn’t always agree with the 45 km global one: on the day I checked, its dust was about a quarter as high. The readout says which model you’re reading. Below: northern Algeria at close zoom. The small dots are the European model; the large ones, past its edge at 30° N, are the global one.</p></section>
+<section class="slide-wrap" aria-label="The edge of the European model"><div class="slide dark cs-media"><div class="frame"><div class="cs-media-box"><img src="media/two-models-edge.jpg" alt="Northern Algeria at close zoom with the dust layer on: small dots inside the European model’s area, large dots from the global model beyond its southern edge at 30° N." loading="lazy"><div class="cs-media-title">Edge of the European model</div></div></div></div></section>
+<section class="cs-text"><h2>Data study</h2><p>Correlations across all 405,900 cells. Fine particles track carbon monoxide where fires burn, and dust over the Sahara. A hint of smoke versus sand, not source attribution.</p><p><a href="https://pkrunal26.github.io/air-pollution-map/study.html">Read the study</a></p></section>
+<section class="slide-wrap" aria-label="PM2.5 and carbon monoxide"><div class="slide dark cs-media"><div class="frame"><div class="cs-media-box"><img src="media/study-co-map.jpg" alt="World map of 5° tiles from the data study. Orange dots, where fine particles and carbon monoxide rise together, cluster over South and East Asia, Central Africa and South America." loading="lazy"><div class="cs-media-title">PM2.5 × carbon monoxide</div></div></div></div></section>
+<section class="slide-wrap" aria-label="Smoke and dust"><div class="slide dark cs-media"><div class="frame"><div class="cs-media-box"><img src="media/study-fire-dust.jpg" alt="Left: smoke plumes from savanna fires in the southern Congo basin, seen from the ISS. Right: how closely PM2.5 follows carbon monoxide and dust in six regions; it follows CO in fire regions and dust over the Sahara and Sahel." loading="lazy"><div class="cs-media-title">Smoke and dust</div></div></div></div></section>
+<section class="cs-text"><h2>Next</h2><p>Collectible cards for real pollution events, found on the globe by place and month.</p></section>
 <section class="slide-wrap" aria-label="See it live">
 <div class="slide dark" id="close" style="background:#0c100e">
 <div class="frame" style="color:#ECECEC;font-family:Arial, Helvetica, sans-serif;padding:6.6667cqw 8.3333cqw 8.3333cqw;display:flex;flex-direction:column">
@@ -115,13 +131,14 @@
 <p style="position:absolute;left:64.5833cqw;top:6.6667cqw;width:27.0833cqw;font-size:1.25cqw;color:#777777">See it live</p>
 <h2 style="position:absolute;left:64.5833cqw;top:9.375cqw;width:29.1667cqw;font-size:2.2917cqw;font-weight:400;line-height:1.3;color:#ECECEC"><a href="https://pkrunal26.github.io/air-pollution-map/" style="color:#ECECEC">pkrunal26.github.io/<br>air-pollution-map</a></h2>
 <p style="position:absolute;left:64.5833cqw;top:17.7083cqw;width:27.0833cqw;font-size:1.4583cqw;line-height:1.5;color:#999999">Modeled estimates at about 45 km, and 11 km over Europe. Not sensor readings.</p>
-<p style="position:absolute;left:64.5833cqw;bottom:7.5cqw;width:27.0833cqw;font-size:1.25cqw;line-height:1.5;color:#777777">Air: Copernicus Atmosphere Monitoring Service / ECMWF, via Open-Meteo, CC BY 4.0<br>Weather: ECMWF IFS via Open-Meteo<br>Earth: NASA Blue Marble Next Generation</p>
+<p style="position:absolute;left:64.5833cqw;top:23.75cqw;width:27.0833cqw;font-size:1.4583cqw;line-height:1.5;color:#999999">Live as Who Owns the Air?<br><a href="https://pkrunal26.github.io/air-pollution-map/study.html" style="color:#ECECEC">Data study</a></p>
+<p style="position:absolute;left:64.5833cqw;bottom:7.5cqw;width:27.0833cqw;font-size:1.25cqw;line-height:1.5;color:#777777">Air: Copernicus Atmosphere Monitoring Service / ECMWF, via Open-Meteo, CC BY 4.0<br>Weather: ECMWF IFS via Open-Meteo<br>Earth: NASA Blue Marble Next Generation<br>Smoke photo: NASA, ISS crew, public domain</p>
 <p style="position:absolute;left:64.5833cqw;bottom:3.3333cqw;width:27.0833cqw;font-size:1.25cqw;color:#777777">Krunal Prajapati · 2026</p>
 
 
 </div>
 </div>
-<div class="cap"><h2>See it live</h2><p><a href="https://pkrunal26.github.io/air-pollution-map/">pkrunal26.github.io/air-pollution-map</a></p><p>Modeled estimates at about 45 km, and 11 km over Europe. Not sensor readings.</p><p class="small">Air: Copernicus Atmosphere Monitoring Service / ECMWF, via Open-Meteo, CC BY 4.0<br>Weather: ECMWF IFS via Open-Meteo<br>Earth: NASA Blue Marble Next Generation</p></div>
+<div class="cap"><h2>See it live</h2><p><a href="https://pkrunal26.github.io/air-pollution-map/">pkrunal26.github.io/air-pollution-map</a></p><p>Modeled estimates at about 45 km, and 11 km over Europe. Not sensor readings.</p><p>Live as Who Owns the Air? · <a href="https://pkrunal26.github.io/air-pollution-map/study.html">Data study</a></p><p class="small">Air: Copernicus Atmosphere Monitoring Service / ECMWF, via Open-Meteo, CC BY 4.0<br>Weather: ECMWF IFS via Open-Meteo<br>Earth: NASA Blue Marble Next Generation<br>Smoke photo: NASA, ISS crew, public domain</p></div>
 </section>
   </article>
   <footer><a href="../../">All projects</a><a href="../vietnam/">Vietnam Trip</a></footer>
@@ -132,6 +149,7 @@
   }
 </script>
 <script src="booths/one-dot.js?v=21" defer></script>
+<script src="booths/directions.js?v=22" defer></script>
 <script src="../../fluid.js?v=21" defer></script>
 </body>
 </html>

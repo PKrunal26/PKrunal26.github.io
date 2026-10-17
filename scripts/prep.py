@@ -31,6 +31,10 @@ PROJECTS = {
     "cv": dict(file="cv-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
     "linkedin": dict(file="linkedin-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
     "contact": dict(file="contact-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
+    # About me: Tessell mark and IIT Guwahati crest; Bengaluru is its OSM road skeleton (scripts/bengaluru.py)
+    "tessell": dict(file="tessell-logo.png", crop=(-100, -20, 252, 200), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
+    "bengaluru": dict(file="bengaluru-map.png", crop=(-56, -16, 264, 184), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
+    "iitg": dict(file="iitg-logo.png", crop=(-100, -20, 252, 200), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
 }
 
 

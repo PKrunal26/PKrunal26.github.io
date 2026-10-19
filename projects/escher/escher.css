@@ -143,3 +143,24 @@ main.cs{max-width:1168px;padding-inline:40px}
   .cs .next-line{font-size:16px;margin-bottom:24px}
 }
 @media(prefers-reduced-motion:reduce){.cs .next-card img{transition:none}}
+
+/* System design and desktop sections */
+.cs .d-group{fill:none;stroke:var(--line);stroke-dasharray:4 4;opacity:.7}
+.cs .sub{margin-top:120px}
+.cs .sub h3{font-size:20px;margin-bottom:12px}
+.cs .sub .diagram{margin-top:40px}
+.cs .steps{list-style:none;padding:0;margin:48px 0 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;counter-reset:none}
+.cs .steps li{border-top:1px solid var(--strong);padding-top:16px;display:flex;flex-direction:column;gap:6px}
+.cs .steps .n{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cs .steps b{font-weight:500;color:var(--strong)}
+.cs .steps li>span:last-child{font-size:14px;line-height:1.55;color:var(--soft)}
+.cs .cards{margin-top:40px}
+.cs .card{background:var(--panel);border-radius:16px;padding:36px}
+.cs .card h3{font-size:16px;margin-bottom:16px}
+.cs .card ul{margin:0;padding-left:18px;color:var(--soft);font-size:15px;line-height:1.6}
+.cs .card li+li{margin-top:10px}
+.cs code{font-family:'Geist Mono',ui-monospace,monospace;font-size:.88em;background:var(--chip);padding:1px 5px;border-radius:4px;color:var(--strong)}
+.cs #build .stack{margin-top:96px}
+.cs .builds{border-top:1px solid var(--rule);padding-top:48px}
+@media(max-width:900px){.cs .steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}}
+@media(max-width:600px){.cs .sub{margin-top:80px}.cs .steps{grid-template-columns:1fr}.cs .card{padding:24px}}

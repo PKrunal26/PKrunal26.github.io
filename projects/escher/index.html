@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Escher — Krunal Prajapati</title><meta name="description" content="Escher, a work by Krunal Prajapati."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="escher.css?v=4"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Escher — Krunal Prajapati</title><meta name="description" content="Escher, a work by Krunal Prajapati."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="escher.css?v=5"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
 <body><main class="project cs"><nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav><form class="gate" id="gate" hidden><label for="gate-pw">Password</label><input id="gate-pw" type="password" autocomplete="current-password" required><button type="submit">Enter</button><p class="gate-err" id="gate-err" aria-live="polite"></p></form>
 <article id="locked" hidden>
 
@@ -10,7 +10,7 @@
   <dl class="facts">
     <div><dt>Role</dt><dd>Product designer. Built the prototype end to end, and now the frontend of the desktop app.</dd></div>
     <div><dt>Company</dt><dd>Tessell</dd></div>
-    <div><dt>Platforms</dt><dd>Desktop app (Tauri) and web prototype</dd></div>
+    <div><dt>Platforms</dt><dd>Web prototype, Electron desktop build, Tauri app</dd></div>
     <div><dt>Team</dt><dd>Two product designers, 2026</dd></div>
   </dl>
   <div class="stage"><img class="shot" src="media/home.webp" alt="Escher prototype home: a greeting, a composer and suggested questions about the estate." width="1440" height="900"></div>
@@ -98,7 +98,7 @@
     <h2>Ask</h2>
     <p>Type a question and the answer comes back as interface: numbers, tables and cards built for that question, each one citing its source. Reports run in two passes. The first finds the facts and the second writes them up, so the writing can’t claim more than the data shows.</p>
   </div>
-  <figure class="block"><div class="stage"><img class="shot" src="media/ask.webp" alt="An answer about public exposure in prod, with summary cards for internet-reachable buckets, at-risk resources and accounts in scope." width="1440" height="900" loading="lazy"></div><figcaption>An answer starts with the numbers, then the evidence, then what to do next.</figcaption></figure>
+  <figure class="block"><div class="stage"><img class="shot" src="media/ask.webp" alt="A scan answer listing two findings, one critical, with the critical finding open in the canvas showing its evidence and details." width="1440" height="900" loading="lazy"></div><figcaption>The answer ranks what it found. Open a finding and its evidence, severity and owner sit beside the thread.</figcaption></figure>
 </section>
 
 <section id="execute">
@@ -171,16 +171,114 @@
 
 <section id="build">
   <div class="prose">
-    <h2>How it’s built</h2>
-    <p>The prototype runs entirely in the browser against a made-up estate, so anyone can explore it without connecting a real cloud account.</p>
+    <h2>System design</h2>
+    <p>Three layers. The browser composes each turn and renders the answer. A thin API layer talks to models, the estate database and AWS. Every claim in an answer traces back to a row or a command output.</p>
   </div>
+  <div class="diagram">
+    <svg viewBox="0 0 880 380" role="img" aria-label="The browser's chat controller calls three API routes: chat goes to the models, estate tools go to Postgres with pgvector, and the AWS CLI route goes to the user's AWS accounts. The gen-UI renderer and the Repository sit beside the controller in the browser.">
+      <text class="d-s" x="0" y="16">Browser</text><text class="d-s" x="310" y="16">API</text><text class="d-s" x="620" y="16">Services</text>
+      <rect class="d-group" x="-12" y="30" width="284" height="340" rx="16"/>
+      <rect class="d-group" x="298" y="30" width="284" height="340" rx="16"/>
+      <rect class="d-group" x="608" y="30" width="284" height="340" rx="16"/>
+      <rect class="d-key" x="0" y="46" width="260" height="76" rx="12"/><text class="d-key-t" x="20" y="78" font-size="15">Chat controller</text><text class="d-key-t" x="20" y="100" font-size="12" opacity=".7">Prompt, tools, up to 3 rounds</text>
+      <rect class="d-node" x="0" y="158" width="260" height="76" rx="12"/><text class="d-t" x="20" y="190">Gen-UI renderer</text><text class="d-s" x="20" y="212">OpenUI Lang to components</text>
+      <rect class="d-node" x="0" y="270" width="260" height="76" rx="12"/><text class="d-t" x="20" y="302">Repository</text><text class="d-s" x="20" y="324">Versioned stores, migrations</text>
+      <rect class="d-node" x="310" y="46" width="260" height="76" rx="12"/><text class="d-t" x="330" y="78">/api/chat</text><text class="d-s" x="330" y="100">Prompt cache, retry, failover</text>
+      <rect class="d-node" x="310" y="158" width="260" height="76" rx="12"/><text class="d-t" x="330" y="190">Estate tools</text><text class="d-s" x="330" y="212">Query, graph, semantic search</text>
+      <rect class="d-node" x="310" y="270" width="260" height="76" rx="12"/><text class="d-t" x="330" y="302">AWS CLI</text><text class="d-s" x="330" y="324">Read-only, allowlisted</text>
+      <rect class="d-node" x="620" y="46" width="260" height="76" rx="12"/><text class="d-t" x="640" y="78">Claude, OpenRouter</text><text class="d-s" x="640" y="100">Model allowlist</text>
+      <rect class="d-node" x="620" y="158" width="260" height="76" rx="12"/><text class="d-t" x="640" y="190">Postgres + pgvector</text><text class="d-s" x="640" y="212">Estate, findings, embeddings</text>
+      <rect class="d-node" x="620" y="270" width="260" height="76" rx="12"/><text class="d-t" x="640" y="302">AWS accounts</text><text class="d-s" x="640" y="324">Every type, every region</text>
+      <path class="d-line" d="M260 84H310M570 84H620M570 196H620M570 308H620"/>
+      <path class="d-line" d="M285 84V308M285 196H310M285 308H310"/>
+      <path class="d-line" d="M130 122V158M130 234V270"/>
+    </svg>
+  </div>
+
+  <div class="sub">
+    <div class="prose"><h3>One turn</h3><p>A question becomes a short loop of tool calls, then an answer built from what the tools returned.</p></div>
+    <ol class="steps">
+      <li><span class="n">1</span><b>Compose</b><span>The browser builds the prompt and the list of tools the model may call.</span></li>
+      <li><span class="n">2</span><b>Gather</b><span>The model queries the estate, searches it and runs read-only AWS commands, up to three rounds.</span></li>
+      <li><span class="n">3</span><b>Answer</b><span>The reply streams back as OpenUI Lang and renders as cards, tables and charts.</span></li>
+      <li><span class="n">4</span><b>Second pass</b><span>A report or plan opens as its own pass, so the write-up only uses facts already found.</span></li>
+      <li><span class="n">5</span><b>Record</b><span>Findings are created from tool results, never from the model’s prose.</span></li>
+    </ol>
+  </div>
+
+  <div class="sub">
+    <div class="prose"><h3>The estate</h3><p>A scan reads every resource type in every region, then stores the result as history, not a snapshot. Each resource is also embedded, so a question can find it by meaning, not just by name.</p></div>
+    <div class="diagram">
+      <svg viewBox="0 0 880 130" role="img" aria-label="Scan, then ingest, then finalize, then store in Postgres, then embed into pgvector.">
+        <rect class="d-node" x="0" y="10" width="148" height="64" rx="12"/><text class="d-t" x="74" y="47" text-anchor="middle">Scan</text>
+        <rect class="d-node" x="183" y="10" width="148" height="64" rx="12"/><text class="d-t" x="257" y="47" text-anchor="middle">Ingest</text>
+        <rect class="d-node" x="366" y="10" width="148" height="64" rx="12"/><text class="d-t" x="440" y="47" text-anchor="middle">Finalize</text>
+        <rect class="d-node" x="549" y="10" width="148" height="64" rx="12"/><text class="d-t" x="623" y="47" text-anchor="middle">Store</text>
+        <rect class="d-key" x="732" y="10" width="148" height="64" rx="12"/><text class="d-key-t" x="806" y="47" text-anchor="middle" font-size="15">Embed</text>
+        <path class="d-line" d="M148 42H183M331 42H366M514 42H549M697 42H732"/>
+        <text class="d-s" x="74" y="108" text-anchor="middle">Every type × region</text>
+        <text class="d-s" x="257" y="108" text-anchor="middle">Tags, edges, paths</text>
+        <text class="d-s" x="440" y="108" text-anchor="middle">Diff by content hash</text>
+        <text class="d-s" x="623" y="108" text-anchor="middle">Postgres, history kept</text>
+        <text class="d-s" x="806" y="108" text-anchor="middle">bge-small, 384 dims</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="prose"><h3>Safety in code, not in the prompt</h3><p>A role named read-only can still carry write permissions, so the checks live in the API, not in IAM or the system prompt.</p></div>
+    <div class="two cards">
+      <div class="card"><h3>Reads</h3><ul><li>Commands run as an argument list with no shell, so <code>;</code>, pipes and <code>$()</code> mean nothing.</li><li>Only allowlisted read verbs run.</li><li>The profile must exist on the machine, or the call is refused.</li><li>Every call has a timeout and an output cap.</li></ul></div>
+      <div class="card"><h3>Writes</h3><ul><li>The model can only propose a change. Its tool loop has no path to the write endpoint.</li><li>Each step runs only after a person clicks it.</li><li>The first step records the current state, so rollback restores it.</li><li>Model IDs are allowlisted, and the deploy sits behind a signed password cookie.</li></ul></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="num">31</span><p>API routes</p></div>
+    <div class="stat"><span class="num">12</span><p>Database migrations</p></div>
+    <div class="stat"><span class="num">3</span><p>Tool rounds per turn, at most</p></div>
+    <div class="stat"><span class="num">~10%</span><p>Cost of a cached prompt, against reprocessing it</p></div>
+  </div>
+
   <ul class="stack">
-    <li><b>React, Vite</b><span>A client-only web app. The shipping product is a Tauri desktop app built from the same frontend.</span></li>
-    <li><b>Generative UI</b><span>The model answers in OpenUI Lang, which renders as real components rather than text.</span></li>
-    <li><b>Typed stores</b><span>A Repository layer over a seeded estate: signals, findings, plans, runs and playbooks.</span></li>
-    <li><b>pnpm, Turborepo</b><span>One monorepo for the apps and the shared design-system package.</span></li>
-    <li><b>Vercel</b><span>Password-gated deploys, with share links kept in Vercel Blob.</span></li>
+    <li><b>React, Vite</b><span>The frontend, shared by the web prototype, the desktop build and the Tauri app.</span></li>
+    <li><b>Anthropic, OpenRouter</b><span>Native Messages API for prompt caching, with failover to another model when one is down.</span></li>
+    <li><b>Postgres, pgvector</b><span>The estate, findings, reports and alerts, plus embeddings for semantic search.</span></li>
+    <li><b>pnpm, Turborepo</b><span>One monorepo for the apps, the design system and the estate store.</span></li>
+    <li><b>Vercel</b><span>Edge functions, password-gated deploys, share links in Vercel Blob.</span></li>
   </ul>
+</section>
+
+<section id="desktop">
+  <div class="prose">
+    <h2>Desktop app</h2>
+    <p>The web prototype runs on a made-up estate. The Electron build runs the same app against real AWS accounts, with the database, credentials and scans kept on the laptop.</p>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 880 360" role="img" aria-label="Inside the Electron app: the window loads the same web app from a local server, which runs the same API routes against an embedded Postgres and the local AWS CLI. Only model calls leave the laptop.">
+      <text class="d-s" x="0" y="16">On the laptop</text><text class="d-s" x="680" y="16">Network</text>
+      <rect class="d-group" x="-12" y="30" width="636" height="320" rx="16"/>
+      <rect class="d-key" x="0" y="46" width="290" height="76" rx="12"/><text class="d-key-t" x="20" y="78" font-size="15">Window</text><text class="d-key-t" x="20" y="100" font-size="12" opacity=".7">The same web app, unchanged</text>
+      <rect class="d-node" x="322" y="46" width="290" height="76" rx="12"/><text class="d-t" x="342" y="78">Local server</text><text class="d-s" x="342" y="100">The same API routes, one origin</text>
+      <rect class="d-node" x="0" y="158" width="290" height="76" rx="12"/><text class="d-t" x="20" y="190">Embedded Postgres</text><text class="d-s" x="20" y="212">PGlite with pgvector, in WASM</text>
+      <rect class="d-node" x="322" y="158" width="290" height="76" rx="12"/><text class="d-t" x="342" y="190">AWS CLI, Python, boto3</text><text class="d-s" x="342" y="212">Bundled, using local profiles</text>
+      <rect class="d-node" x="0" y="270" width="612" height="64" rx="12"/><text class="d-t" x="20" y="300">OS</text><text class="d-s" x="20" y="320">Keychain for keys · escher:// sign-in links · native alerts · auto-update</text>
+      <rect class="d-node" x="680" y="46" width="200" height="76" rx="12"/><text class="d-t" x="700" y="78">Models</text><text class="d-s" x="700" y="100">Prompts only</text>
+      <rect class="d-node" x="680" y="158" width="200" height="76" rx="12"/><text class="d-t" x="700" y="190">AWS APIs</text><text class="d-s" x="700" y="212">Your accounts</text>
+      <path class="d-line" d="M290 84H322M612 84H680M500 122V158M612 196H680"/>
+      <path class="d-line" d="M400 122V140H145V158"/>
+    </svg>
+  </div>
+  <div class="cols">
+    <div><h3>Real accounts</h3><p>It scans every resource type in every region of a connected account, rescans every six hours and keeps the history.</p></div>
+    <div><h3>Local first</h3><p>The database runs inside the app and keys live in the OS keychain. Only the prompt goes out to the model.</p></div>
+    <div><h3>Native</h3><p>System notifications, Slack and Linear sign-in through <code>escher://</code> links, and updates that install themselves.</p></div>
+  </div>
+  <div class="cols builds">
+    <div><span class="n">Web prototype</span><h3>Demos and design</h3><p>A made-up estate anyone can explore in a browser.</p></div>
+    <div><span class="n">Electron build</span><h3>Real accounts</h3><p>The same app on a laptop, connected to real AWS.</p></div>
+    <div><span class="n">Tauri app</span><h3>The product</h3><p>The shipping desktop app, using this frontend code.</p></div>
+  </div>
 </section>
 
 <section id="process">

@@ -322,6 +322,81 @@ for i, g in enumerate(graders):
 b += '<text class="i-small" x="212" y="200">A number that isn’t in the tool results fails grounding.</text>'
 ILL['eval'] = svg('eval', (880, 210), b, 'A finished turn passes six graders: grounding, citation, parse, shape, absence and reachable. Grounding is marked failed because a number did not appear in the tool results.')
 
+
+# ---------- Gen UI ----------
+b = ''
+b += '<rect x="7" y="27" width="360" height="230" rx="12" fill="url(#d25)"/><rect class="i-fillink" x="0" y="20" width="360" height="230" rx="12"/>'
+code = ['root = Stack([head, kpis, chart, cite])', 'head = TextContent("Prod exposure")', 'kpis = Metric("Internet-reachable", "1 bucket")', 'chart = BarChart(byService, "Exposed")', 'cite = Cite("evidence", "S3 policy")']
+for i, c in enumerate(code):
+    b += f'<text class="i-mono i-onk" x="20" y="{56+i*24}">{c}</text>'
+b += '<rect class="i-fillred" x="20" y="182" width="8" height="14"/>'
+b += '<text class="i-small i-onkm" x="20" y="232">OpenUI Lang, streaming</text>'
+b += '<path class="i-trail" d="M368 135H470"/><path class="i-ink" d="M462 128L472 135L462 142"/>'
+b += '<rect x="487" y="17" width="380" height="250" rx="12" fill="url(#d25)"/><rect class="i-paper i-ink" x="480" y="10" width="380" height="250" rx="12"/>'
+b += '<text class="i-cap" x="500" y="42">Prod exposure</text>'
+b += '<rect class="i-ink" x="500" y="58" width="160" height="64" rx="8" fill="none"/><text class="i-small" x="514" y="80">Internet-reachable</text><text class="i-big" x="514" y="108">1 bucket</text>'
+b += '<rect class="i-ink" x="676" y="58" width="164" height="64" rx="8" fill="none"/><text class="i-small" x="690" y="80">At risk</text><text class="i-big" x="690" y="108">8</text>'
+for j, hh in enumerate([28, 46, 20, 64, 36, 52]):
+    b += f'<rect x="{510+j*54}" y="{212-hh}" width="34" height="{hh}" fill="{"url(#r50)" if j==3 else "url(#d50)"}"/>'
+b += '<path class="i-line" d="M500 212H840"/>'
+b += '<rect class="i-ink" x="500" y="226" width="120" height="22" rx="11" fill="none"/><circle class="i-reddot" cx="514" cy="237" r="4"/><text class="i-small" x="524" y="241">S3 policy</text>'
+ILL['genui'] = svg('genui', (880, 270), b, 'On the left, five lines of OpenUI Lang stream in. On the right, the same answer rendered: a heading, two metric tiles, a bar chart and a citation chip.')
+
+def mini(body, label):
+    return f'<svg class="mini" viewBox="0 0 200 120" role="img" aria-label="{label}">{body}</svg>'
+M = {}
+M['Metric'] = mini('<rect class="i-paper i-ink" x="30" y="24" width="140" height="72" rx="8"/><text class="i-small" x="44" y="48">Monthly cost</text><text class="i-big" x="44" y="80">$41.2k</text><path class="i-red" d="M128 76L140 64L152 70"/>', 'A metric tile')
+M['BarChart'] = mini(''.join(f'<rect x="{36+i*26}" y="{100-h}" width="18" height="{h}" fill="{"url(#r50)" if i==2 else "url(#d50)"}"/>' for i, h in enumerate([30, 48, 70, 40, 56]))+'<path class="i-line" d="M28 100H172"/>', 'A bar chart')
+M['DataGrid'] = mini('<rect class="i-paper i-ink" x="24" y="18" width="152" height="86" rx="6"/><rect x="25" y="19" width="150" height="16" fill="url(#d25)"/>'+''.join(f'<path class="i-line" d="M24 {50+i*16}H176"/>' for i in range(3))+'<path class="i-line" d="M70 18V104M120 18V104"/>', 'A data grid')
+M['HtmlFigure'] = mini('<rect class="i-paper i-ink" x="24" y="18" width="152" height="86" rx="6"/><circle class="i-ink" cx="70" cy="60" r="22" fill="url(#d25)"/><circle class="i-ink" cx="96" cy="60" r="22" fill="url(#r25)"/><path class="i-ink" d="M130 48H160M130 60H154M130 72H158"/>', 'An explanatory figure')
+M['Widget'] = mini('<rect class="i-paper i-ink" x="24" y="18" width="152" height="86" rx="6"/><text class="i-small" x="38" y="42">Retention, days</text><path class="i-line" d="M38 62H162"/><path class="i-ink" d="M38 62H112" stroke-width="3"/><circle class="i-reddot" cx="112" cy="62" r="7"/><text class="i-big" x="38" y="92">$3,120 / mo</text>', 'An interactive calculator')
+M['Cite'] = mini('<path class="i-ink" d="M30 40H170M30 56H150"/><path class="i-ink" d="M30 72H112"/><rect class="i-ink" x="116" y="63" width="64" height="20" rx="10" fill="none"/><circle class="i-reddot" cx="128" cy="73" r="3.5"/><text class="i-tiny" x="137" y="77">source</text>', 'A citation chip in text')
+M['Questionnaire'] = mini(''.join(f'<circle class="i-ink" cx="40" cy="{36+i*24}" r="7" fill="{"url(#r50)" if i==1 else "none"}"/><path class="i-ink" d="M56 {36+i*24}H{150-i*16}"/>' for i in range(3))+'<text class="i-small" x="30" y="112">One question at a time</text>', 'A questionnaire with three options')
+M['Report'] = mini('<rect class="i-paper i-ink" x="56" y="10" width="88" height="104" rx="4"/><rect x="66" y="20" width="50" height="8" fill="url(#d50)"/><path class="i-line" d="M66 38H134M66 46H126"/>'+''.join(f'<rect x="{68+i*14}" y="{86-h}" width="9" height="{h}" fill="url(#d50)"/>' for i, h in enumerate([14, 24, 18, 30]))+'<path class="i-line" d="M66 96H134M66 104H120"/>', 'A report page')
+ILL['minis'] = '<div class="minis">' + ''.join(f'<figure>{v}<figcaption>{k}</figcaption></figure>' for k, v in M.items()) + '</div>'
+
+# Choosing the chart: from the data's shape vs from the reader's question.
+b = '<text class="i-cap" x="20" y="24">Chosen from the data</text><text class="i-cap" x="470" y="24">Chosen from the question</text>'
+b += '<rect class="i-paper i-ink" x="20" y="40" width="390" height="190" rx="12"/>'
+for j, lab in enumerate(['RDS', 'DocDB', 'Redshift', 'OAuth', 'SSH', 'Other']):
+    b += f'<rect x="{46+j*60}" y="150" width="36" height="40" fill="url(#d50)"/><text class="i-tiny" x="{64+j*60}" y="144" text-anchor="middle">1</text><text class="i-tiny" x="{64+j*60}" y="206" text-anchor="middle">{lab}</text>'
+b += '<path class="i-line" d="M36 190H396"/><text class="i-small i-redt" x="36" y="68">Every bar is 1. Nothing is answered.</text>'
+b += '<rect class="i-paper i-ink" x="470" y="40" width="390" height="190" rx="12"/>'
+b += '<text class="i-small" x="494" y="78">Secrets</text><text class="i-huge" x="494" y="140">1,200</text>'
+b += '<rect class="i-fillred" x="494" y="168" width="10" height="10" rx="2"/><text class="i-small" x="512" y="177">0 rotating</text><rect class="i-fillred" x="604" y="168" width="10" height="10" rx="2"/><text class="i-small" x="622" y="177">0 encrypted with KMS</text>'
+b += '<text class="i-small" x="494" y="210">One number and two qualifiers.</text>'
+ILL['chart'] = svg('chart', (880, 240), b, 'Left: a bar chart where all six bars equal one. Right: the same data as a single number with two qualifiers.')
+
+# ---------- Tokens ----------
+b = ''
+def stack(x, base, hist, new, cached):
+    out = ''
+    y = 250
+    parts = [('tools', 22), ('system', 90), ('history', hist), ('new', new)]
+    for name, h in parts:
+        y -= h
+        if name == 'new':
+            fill = 'url(#r50)'
+        elif cached:
+            fill = 'url(#d12)'
+        else:
+            fill = 'url(#d50)'
+        out += f'<rect x="{x}" y="{y}" width="34" height="{h}" fill="{fill}" class="i-cell"/>'
+    return out
+b += '<text class="i-cap" x="0" y="20">Before: each call re-reads everything</text><text class="i-cap" x="460" y="20">After: the shared prefix is read from cache</text>'
+calls = [(0, 10), (10, 12), (22, 10), (32, 14), (46, 10), (56, 12), (68, 12), (80, 10)]
+for i, (h, n) in enumerate(calls):
+    b += stack(i * 48, 0, h, n, False)
+    b += stack(460 + i * 48, 0, h, n, True)
+b += '<path class="i-line" d="M0 250H380M460 250H840"/>'
+b += '<text class="i-tiny" x="0" y="268">8 model calls across one report turn</text><text class="i-tiny" x="460" y="268">Same calls. The dotted part costs 0.1× to read.</text>'
+ly = 296
+b += f'<rect x="0" y="{ly-11}" width="14" height="14" fill="url(#d50)" class="i-cell"/><text class="i-small" x="22" y="{ly}">Re-read in full</text>'
+b += f'<rect x="150" y="{ly-11}" width="14" height="14" fill="url(#d12)" class="i-cell"/><text class="i-small" x="172" y="{ly}">Read from cache</text>'
+b += f'<rect x="310" y="{ly-11}" width="14" height="14" fill="url(#r50)" class="i-cell"/><text class="i-small" x="332" y="{ly}">New this call</text>'
+b += f'<text class="i-tiny" x="460" y="{ly}">Bottom to top: tool schemas, system prompt, conversation, new turn</text>'
+ILL['tokens'] = svg('tokens', (880, 310), b, 'Two charts of eight stacked bars. Before, every bar is solid because each call re-reads tools, system prompt and conversation. After, the shared part is light grey because it is read from cache, and only the new part on top is red.')
+
 html = open(PAGE).read()
 for k, v in ILL.items():
     marker = f'<!--ill:{k}-->'

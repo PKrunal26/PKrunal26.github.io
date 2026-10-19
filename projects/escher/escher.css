@@ -225,3 +225,21 @@ main.cs{max-width:1168px;padding-inline:40px}
 .cs .toolset.key li{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 25%,transparent)}
 @media(max-width:900px){.cs .toolsets{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.cs .toolsets{grid-template-columns:1fr}}
+
+/* Gen UI and tokens */
+.cs .i-onkm{fill:var(--bg);opacity:.6}
+.cs .i-big{font-size:22px;fill:var(--strong);font-weight:500}
+.cs .i-huge{font-size:56px;fill:var(--strong);font-weight:500;letter-spacing:-1px}
+.cs .minis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
+.cs .minis figure{background:var(--panel);border-radius:14px;padding:16px 16px 14px;margin:0}
+.cs .minis svg{display:block;width:100%;height:auto;overflow:visible}
+.cs .minis figcaption{font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;color:var(--strong);margin-top:10px}
+.cs .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px}
+.cs .tier{background:var(--panel);border-radius:16px;padding:0 28px 28px;overflow:hidden}
+.cs .tier-bar{display:block;height:24px;margin:0 -28px 24px}
+.cs .t-a .tier-bar{background:conic-gradient(var(--strong) 25%,transparent 0 50%,var(--strong) 0 75%,transparent 0) 0 0/8px 8px;opacity:.14}
+.cs .t-b .tier-bar{background:conic-gradient(var(--strong) 25%,transparent 0 50%,var(--strong) 0 75%,transparent 0) 0 0/4px 4px;opacity:.35}
+.cs .t-c .tier-bar{background:conic-gradient(var(--red) 25%,transparent 0 50%,var(--red) 0 75%,transparent 0) 0 0/4px 4px}
+.cs .tier ul{margin:12px 0 0;padding-left:18px;color:var(--soft);font-size:14px;line-height:1.55}
+.cs .tier li+li{margin-top:8px}
+@media(max-width:900px){.cs .minis{grid-template-columns:repeat(2,minmax(0,1fr))}.cs .tiers{grid-template-columns:1fr}}

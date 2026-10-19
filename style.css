@@ -197,3 +197,10 @@ body:has(.deckpage) .theme-toggle{display:none}
 .deckpage .frame .cs-media-box img{max-width:88%;max-height:70%;top:44%}
 .cs-media-title{font-size:12px;bottom:10px}
 }
+.gate{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;color:var(--soft)}
+.gate[hidden]{display:none}
+.gate input{font:inherit;color:var(--strong);background:none;border:0;border-bottom:1px solid var(--line);padding:4px 0;width:180px;outline:none;transition:border-color .15s}
+.gate input:focus{border-color:var(--strong)}
+.gate button{font:inherit;color:var(--soft);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.gate button:hover{color:var(--strong)}
+.gate-err{flex-basis:100%;margin:0;font-size:12px;color:var(--muted);min-height:1em}

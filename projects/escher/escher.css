@@ -1,0 +1,145 @@
+/* Escher case study. Wide page, narrow text. Uses the site's colour variables from style.css plus a few of its own. */
+:root{--rule:#e7e7e4;--panel:#f7f7f5;--chip:#efefec;--red:#fa504a}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--rule:#2a2a2a;--panel:#1a1a1a;--chip:#222}}
+:root[data-theme=dark]{--rule:#2a2a2a;--panel:#1a1a1a;--chip:#222}
+
+main.cs{max-width:1168px;padding-inline:40px}
+.cs .back{margin-bottom:96px}
+.cs article{line-height:1.7}
+.cs section{margin-top:200px}
+.cs .prose{max-width:640px}
+.cs h2{font-size:32px;line-height:1.25;font-weight:500;color:var(--strong);letter-spacing:-.01em;margin-bottom:24px}
+.cs h3{font-size:16px;font-weight:500;color:var(--strong);margin-bottom:6px}
+.cs .prose p,.cs .lede{font-size:18px;color:var(--text)}
+.cs .small{font-size:13px;color:var(--muted);line-height:1.6}
+.cs figure{margin:0}
+.cs figcaption{font-size:14px;color:var(--soft);margin-top:16px;max-width:640px}
+
+/* Hero */
+.cs .hero{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.cs .mark{width:56px;height:56px;border-radius:12px;display:block;margin-bottom:40px}
+.cs h1{font-size:72px;line-height:1;font-weight:500;letter-spacing:-.03em;color:var(--strong);margin-bottom:28px}
+.cs .lede{font-size:24px;line-height:1.45;max-width:720px;color:var(--text);margin-bottom:72px}
+.cs .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;border-top:1px solid var(--rule);padding-top:28px;margin-bottom:96px}
+.cs .facts dt{font-size:13px;color:var(--muted);margin-bottom:6px}
+.cs .facts dd{margin:0;font-size:15px;line-height:1.55;color:var(--strong)}
+
+/* Screens */
+.cs .shot{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--rule);background:var(--panel)}
+.cs .stage{background:var(--panel);border-radius:20px;padding:56px}
+.cs .stage .shot{box-shadow:0 1px 2px #0000000a,0 16px 48px -12px #0000001f}
+.cs .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.cs .block{margin-top:72px}
+
+/* Numbers */
+.cs .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;margin-top:64px}
+.cs .stats.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cs .stat{border-top:1px solid var(--strong);padding-top:20px}
+.cs .num{display:block;font-size:56px;line-height:1;font-weight:500;letter-spacing:-.03em;color:var(--strong);margin-bottom:16px;font-variant-numeric:tabular-nums}
+.cs .stat p{font-size:15px;line-height:1.5;color:var(--text);margin:0}
+.cs .stat .src{display:block;font-size:12px;color:var(--muted);margin-top:8px}
+
+/* Three-up text cards */
+.cs .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;margin-top:72px}
+.cs .cols p{font-size:15px;line-height:1.6;color:var(--soft);margin:0}
+.cs .cols .n{display:block;font-size:13px;color:var(--muted);margin-bottom:14px;font-variant-numeric:tabular-nums}
+.cs .pull{font-size:28px;line-height:1.4;color:var(--strong);max-width:820px;margin-top:96px;font-weight:400;letter-spacing:-.01em}
+
+/* Roles */
+.cs .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:40px;padding:0;list-style:none}
+.cs .chips li{font-size:14px;padding:6px 14px;border-radius:999px;background:var(--chip);color:var(--strong)}
+.cs .chips li:first-child{background:var(--strong);color:var(--bg)}
+
+/* Diagrams */
+.cs .diagram{background:var(--panel);border-radius:20px;padding:56px 40px;margin-top:64px}
+.cs .diagram svg{display:block;width:100%;height:auto;max-width:880px;margin:0 auto;overflow:visible}
+.cs svg text{font-family:Arial,Helvetica,sans-serif}
+.cs .d-node{fill:var(--bg);stroke:var(--rule)}
+.cs .d-key{fill:var(--strong)}
+.cs .d-key-t{fill:var(--bg)}
+.cs .d-t{fill:var(--strong);font-size:15px}
+.cs .d-s{fill:var(--muted);font-size:12px}
+.cs .d-line{stroke:var(--line);fill:none;stroke-width:1.25}
+.cs .d-red{stroke:var(--red);fill:none;stroke-width:1.5}
+.cs .d-redt{fill:var(--red);font-size:12px}
+
+/* Sketch strip */
+.cs .strip{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-top:64px;padding-bottom:20px;scrollbar-width:thin}
+.cs .strip figure{flex:0 0 min(560px,80%);scroll-snap-align:start}
+.cs .strip figcaption{margin-top:12px}
+.cs .strip figcaption b{font-weight:500;color:var(--strong)}
+
+/* Design system */
+.cs .swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:16px;margin-top:64px}
+.cs .sw{height:96px;border-radius:12px;border:1px solid var(--rule)}
+.cs .swatches p{font-size:13px;line-height:1.45;color:var(--strong);margin:10px 0 0}
+.cs .swatches small{display:block;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.cs .type{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:24px}
+.cs .type div{background:var(--panel);border-radius:16px;padding:40px}
+.cs .type .g{font-family:'Geist',Arial,sans-serif;font-size:56px;line-height:1;color:var(--strong);letter-spacing:-.02em}
+.cs .type .gm{font-family:'Geist Mono',ui-monospace,monospace;font-size:40px;line-height:1.2;color:var(--strong)}
+.cs .type p{font-size:13px;color:var(--muted);margin:20px 0 0}
+
+/* Stack */
+.cs .stack{list-style:none;padding:0;margin:64px 0 0;border-top:1px solid var(--rule)}
+.cs .stack li{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;padding:24px 0;border-bottom:1px solid var(--rule)}
+.cs .stack b{font-weight:500;color:var(--strong)}
+.cs .stack span{color:var(--soft)}
+
+.cs .learned .cols p{font-size:16px}
+.cs footer{margin-top:200px}
+
+@media(max-width:900px){
+  .cs .facts,.cs .stats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}
+  .cs .swatches{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .cs .stage{padding:24px}
+}
+@media(max-width:600px){
+  main.cs{padding-inline:20px}
+  .cs .back{margin-bottom:56px}
+  .cs section{margin-top:120px}
+  .cs h1{font-size:48px}
+  .cs .lede{font-size:19px;margin-bottom:48px}
+  .cs h2{font-size:26px}
+  .cs .prose p{font-size:17px}
+  .cs .facts{grid-template-columns:1fr 1fr;gap:24px;margin-bottom:56px}
+  .cs .num{font-size:40px}
+  .cs .stats,.cs .stats.three{grid-template-columns:1fr 1fr;gap:28px 20px}
+  .cs .cols,.cs .two,.cs .type{grid-template-columns:1fr;gap:32px}
+  .cs .pull{font-size:22px;margin-top:64px}
+  .cs .stage{padding:12px;border-radius:14px}
+  .cs .shot{border-radius:8px}
+  .cs .diagram{padding:24px 12px;border-radius:14px;overflow-x:auto}
+  .cs .diagram svg{min-width:560px}
+  .cs .strip{margin-inline:-20px;padding-inline:20px}
+  .cs .strip figure{flex-basis:85%}
+  .cs .swatches{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cs .type div{padding:28px}
+  .cs .type .g{font-size:44px}
+  .cs .type .gm{font-size:26px}
+  .cs .stack li{grid-template-columns:1fr;gap:4px}
+  .cs footer{margin-top:120px}
+}
+
+/* Next project hook: the whole card is the link. Dark like the Air Atlas page it leads to. */
+.cs .next{margin-top:200px}
+.cs .next-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:40px;background:#0b0f0e;border-radius:20px;overflow:hidden;text-decoration:none;color:#e4ebd9;padding-left:64px;transition:transform .3s ease}
+.cs .next-card:hover{color:#e4ebd9}
+.cs .next-card:hover .next-go{color:#fff;text-decoration-color:#fff}
+.cs .next-card img{display:block;width:100%;height:auto;transition:transform .6s ease;-webkit-mask-image:linear-gradient(to right,transparent,#000 18%);mask-image:linear-gradient(to right,transparent,#000 18%)}
+.cs .next-card:hover img{transform:scale(1.03)}
+.cs .next-text{display:flex;flex-direction:column;padding:64px 0}
+.cs .next-label{font-size:13px;color:#94a480;margin-bottom:20px}
+.cs .next-title{font-size:56px;line-height:1;font-weight:500;letter-spacing:-.03em;color:#fff;margin-bottom:20px}
+.cs .next-line{font-size:18px;line-height:1.5;color:#c9d1bf;margin-bottom:40px}
+.cs .next-go{font-size:15px;color:#e4ebd9;text-decoration:underline;text-decoration-color:#e1e7d566;text-underline-offset:4px}
+.cs footer{margin-top:72px}
+@media(max-width:600px){
+  .cs .next{margin-top:120px}
+  .cs .next-card{grid-template-columns:1fr;padding-left:0;gap:0;border-radius:14px}
+  .cs .next-text{padding:32px 24px 8px}
+  .cs .next-card img{-webkit-mask-image:linear-gradient(transparent,#000 18%);mask-image:linear-gradient(transparent,#000 18%)}
+  .cs .next-title{font-size:40px}
+  .cs .next-line{font-size:16px;margin-bottom:24px}
+}
+@media(prefers-reduced-motion:reduce){.cs .next-card img{transition:none}}

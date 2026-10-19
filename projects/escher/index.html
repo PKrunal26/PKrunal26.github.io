@@ -1,3 +1,235 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Escher — Krunal Prajapati</title><meta name="description" content="Escher, a work by Krunal Prajapati."><link rel="stylesheet" href="../../style.css"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
-<body><main class="project"><nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav><article><h1>Escher</h1><p class="category">Work</p><p class="empty">Project notes coming soon.</p></article><footer><a href="../../">All projects</a><a href="../openfoam-studio/">OpenFOAM Studio</a></footer></main><script src="../../fluid.js" defer></script></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Escher — Krunal Prajapati</title><meta name="description" content="Escher, a work by Krunal Prajapati."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="escher.css?v=4"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<body><main class="project cs"><nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav><form class="gate" id="gate" hidden><label for="gate-pw">Password</label><input id="gate-pw" type="password" autocomplete="current-password" required><button type="submit">Enter</button><p class="gate-err" id="gate-err" aria-live="polite"></p></form>
+<article id="locked" hidden>
+
+<header class="hero">
+  <img class="mark" src="media/logo.png" alt="" width="56" height="56">
+  <h1>Escher</h1>
+  <p class="lede">An AI interface for running a cloud estate. Ask about cost, security or reliability, and get an answer you can check and act on.</p>
+  <dl class="facts">
+    <div><dt>Role</dt><dd>Product designer. Built the prototype end to end, and now the frontend of the desktop app.</dd></div>
+    <div><dt>Company</dt><dd>Tessell</dd></div>
+    <div><dt>Platforms</dt><dd>Desktop app (Tauri) and web prototype</dd></div>
+    <div><dt>Team</dt><dd>Two product designers, 2026</dd></div>
+  </dl>
+  <div class="stage"><img class="shot" src="media/home.webp" alt="Escher prototype home: a greeting, a composer and suggested questions about the estate." width="1440" height="900"></div>
+</header>
+
+<section id="problem">
+  <div class="prose">
+    <h2>The problem</h2>
+    <p>Companies were forecast to spend $723 billion on public cloud in 2025, and nearly a third of it is wasted. When something breaks, the answer is spread across a dozen consoles, runbooks and people’s heads. AI can answer fast, but no engineer will put an answer they can’t check on call.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="num">$723B</span><p>Public cloud spend forecast for 2025</p><span class="src">Gartner</span></div>
+    <div class="stat"><span class="num">29%</span><p>Of cloud spend estimated to be wasted</p><span class="src">Flexera, 2026</span></div>
+    <div class="stat"><span class="num">84%</span><p>Of organisations call managing cloud spend their top challenge</p><span class="src">Flexera, 2025</span></div>
+    <div class="stat"><span class="num">60%+</span><p>Of outages cost $100K or more</p><span class="src">Uptime Institute, 2022</span></div>
+  </div>
+  <div class="cols">
+    <div><h3>Scattered</h3><p>Cost, security and performance data live in separate tools, each with its own console.</p></div>
+    <div><h3>Untrusted</h3><p>A confident paragraph from a model isn’t evidence. Without sources, it can’t be acted on.</p></div>
+    <div><h3>Manual</h3><p>Fixes are still written by hand in Python, Bash and Terraform, one incident at a time.</p></div>
+  </div>
+  <p class="pull">The data to fix all of this already exists. Nothing connects it, checks it and acts on it safely.</p>
+</section>
+
+<section id="audience">
+  <div class="prose">
+    <h2>Who it’s for</h2>
+    <p>A staff-level SRE who owns production reliability and writes the runbooks today. Their test is simple: would I put this on call?</p>
+    <p>The same estate answers different questions for seven roles.</p>
+  </div>
+  <ul class="chips" aria-label="Roles"><li>SRE</li><li>Admin</li><li>SecOps</li><li>DevOps</li><li>FinOps</li><li>Platform</li><li>Compliance</li></ul>
+</section>
+
+<section id="model">
+  <div class="prose">
+    <h2>The model</h2>
+    <p>Every cloudops task is one of five steps: Design, Develop, Detect, Debug, Deploy. Building something new and fixing something broken both end at Deploy.</p>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 880 300" role="img" aria-label="Design leads to Develop, Detect leads to Debug, and both paths end at Deploy.">
+      <text class="d-s" x="0" y="14">Build what should exist</text>
+      <text class="d-s" x="0" y="296">Fix what went wrong</text>
+      <rect class="d-node" x="0" y="32" width="170" height="60" rx="12"/><text class="d-t" x="85" y="67" text-anchor="middle">Design</text>
+      <rect class="d-node" x="250" y="32" width="170" height="60" rx="12"/><text class="d-t" x="335" y="67" text-anchor="middle">Develop</text>
+      <rect class="d-node" x="0" y="208" width="170" height="60" rx="12"/><text class="d-t" x="85" y="243" text-anchor="middle">Detect</text>
+      <rect class="d-node" x="250" y="208" width="170" height="60" rx="12"/><text class="d-t" x="335" y="243" text-anchor="middle">Debug</text>
+      <rect class="d-key" x="660" y="120" width="190" height="60" rx="12"/><text class="d-key-t" x="755" y="155" text-anchor="middle" font-size="15">Deploy</text>
+      <path class="d-line" d="M170 62H250M170 238H250"/>
+      <path class="d-line" d="M420 62C560 62 540 150 660 150M420 238C560 238 540 150 660 150"/>
+    </svg>
+  </div>
+  <div class="cols">
+    <div><span class="n">Reactive</span><h3>An alert arrives with context</h3><p>The signal comes already linked to the resources, owners and history around it.</p></div>
+    <div><span class="n">Interactive</span><h3>Ask anything</h3><p>Plain-language questions, answered from the live estate.</p></div>
+    <div><span class="n">Proactive</span><h3>Escher proposes the work</h3><p>It watches for drift and suggests fixes before anyone asks.</p></div>
+  </div>
+</section>
+
+<section id="principles">
+  <div class="prose"><h2>Principles</h2></div>
+  <div class="cols">
+    <div><span class="n">01</span><h3>Grounded</h3><p>Every claim cites live estate data. Missing data is said plainly, never filled in.</p></div>
+    <div><span class="n">02</span><h3>Safe</h3><p>Fixes are plans you can read like a diff, with approval, dry run and rollback.</p></div>
+    <div><span class="n">03</span><h3>Earned trust</h3><p>Automation moves from shadow to live on evidence. One switch pulls it all back.</p></div>
+  </div>
+</section>
+
+<section id="sketches">
+  <div class="prose">
+    <h2>Sketches</h2>
+    <p>Ideas from stakeholders became HTML sketches people could click, long before they reached the prototype. There are 24 of them, from the knowledge base to what happens when the model goes down.</p>
+  </div>
+  <div class="strip" tabindex="0" aria-label="Sketches, scroll sideways">
+    <figure><img class="shot" src="media/sk-turn-journey.webp" alt="Turn journey sketch: five concepts for one Escher turn." width="1440" height="900" loading="lazy"><figcaption><b>Turn journey.</b> Five ways to show the wait between a question and its answer.</figcaption></figure>
+    <figure><img class="shot" src="media/sk-execution-in-chat.webp" alt="Execution in chat sketch: a storyline of a plan running inside the thread." width="1440" height="900" loading="lazy"><figcaption><b>Execution in chat.</b> A plan that runs inside the conversation.</figcaption></figure>
+    <figure><img class="shot" src="media/sk-design-mode.webp" alt="Design mode sketch: the four nouns, tool, skill, playbook and agent." width="1440" height="900" loading="lazy"><figcaption><b>Design mode.</b> Tools, skills, playbooks and agents in one library.</figcaption></figure>
+    <figure><img class="shot" src="media/sk-kb-as-chat.webp" alt="Knowledge base as a chat sketch." width="1440" height="900" loading="lazy"><figcaption><b>Knowledge base.</b> Company documents you can ask questions of.</figcaption></figure>
+    <figure><img class="shot" src="media/sk-notifications.webp" alt="Notifications sketch: one inbox grouped by what needs you." width="1440" height="900" loading="lazy"><figcaption><b>Notifications.</b> One page, grouped by what needs you.</figcaption></figure>
+    <figure><img class="shot" src="media/sk-model-failover.webp" alt="Model failover sketch: the composer when the model is down." width="1440" height="900" loading="lazy"><figcaption><b>Model failover.</b> What the composer does when a model is down.</figcaption></figure>
+  </div>
+</section>
+
+<section id="ask">
+  <div class="prose">
+    <h2>Ask</h2>
+    <p>Type a question and the answer comes back as interface: numbers, tables and cards built for that question, each one citing its source. Reports run in two passes. The first finds the facts and the second writes them up, so the writing can’t claim more than the data shows.</p>
+  </div>
+  <figure class="block"><div class="stage"><img class="shot" src="media/ask.webp" alt="An answer about public exposure in prod, with summary cards for internet-reachable buckets, at-risk resources and accounts in scope." width="1440" height="900" loading="lazy"></div><figcaption>An answer starts with the numbers, then the evidence, then what to do next.</figcaption></figure>
+</section>
+
+<section id="execute">
+  <div class="prose">
+    <h2>Plan and execute</h2>
+    <p>A fix arrives as a plan with its blast radius and risk shown up front. You read the change like a diff, approve it, and watch each step run, with a record of why every step happened.</p>
+  </div>
+  <figure class="block"><div class="stage"><img class="shot" src="media/plan.webp" alt="A plan in the canvas: three steps, a blast radius of two resources, low risk, and a dependency graph." width="1440" height="900" loading="lazy"></div><figcaption>The plan: steps, impact and the resources it touches.</figcaption></figure>
+  <div class="two block">
+    <figure><img class="shot" src="media/changeset.webp" alt="The change set: three Python files, one per plan step." width="1440" height="900" loading="lazy"><figcaption>The change set: one file per step, sourced from a tested playbook.</figcaption></figure>
+    <figure><img class="shot" src="media/execute.webp" alt="The execution: three steps, each with a time and a pass mark, and the output log." width="1440" height="900" loading="lazy"><figcaption>The run: every step timed, logged and checked afterwards.</figcaption></figure>
+  </div>
+</section>
+
+<section id="design-mode">
+  <div class="prose">
+    <h2>Design mode</h2>
+    <p>Operators write playbooks by talking them through instead of scripting them. Imported runbooks become playbooks too, and each one keeps its success rate and evidence.</p>
+  </div>
+  <div class="two block">
+    <figure><img class="shot" src="media/design.webp" alt="Design mode home: 17 published playbooks, 4 drafts, 96% average success, 4 that need attention." width="1440" height="900" loading="lazy"><figcaption>The library at a glance.</figcaption></figure>
+    <figure><img class="shot" src="media/playbook.webp" alt="A playbook: S3 lifecycle policy, Terraform, four steps, 17 of 18 successful runs." width="1440" height="900" loading="lazy"><figcaption>A playbook with its steps, runs and blast radius.</figcaption></figure>
+  </div>
+</section>
+
+<section id="agents">
+  <div class="prose">
+    <h2>Agents</h2>
+    <p>Agents start as drafts, run in shadow until their results earn trust, then go live one playbook at a time. One switch drops every agent back to propose-only.</p>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 880 190" role="img" aria-label="Agents move from Draft to Shadow to Live. A break-glass switch returns all of them to propose-only.">
+      <rect class="d-node" x="0" y="20" width="200" height="72" rx="12"/><text class="d-t" x="100" y="52" text-anchor="middle">Draft</text><text class="d-s" x="100" y="72" text-anchor="middle">Defined, not running</text>
+      <rect class="d-node" x="340" y="20" width="200" height="72" rx="12"/><text class="d-t" x="440" y="52" text-anchor="middle">Shadow</text><text class="d-s" x="440" y="72" text-anchor="middle">Watches and proposes</text>
+      <rect class="d-key" x="680" y="20" width="200" height="72" rx="12"/><text class="d-key-t" x="780" y="52" text-anchor="middle" font-size="15">Live</text><text class="d-key-t" x="780" y="72" text-anchor="middle" font-size="12" opacity=".7">Acts, with approval</text>
+      <path class="d-line" d="M200 56H340M540 56H680"/>
+      <text class="d-s" x="270" y="46" text-anchor="middle">review</text><text class="d-s" x="610" y="46" text-anchor="middle">scorecard</text>
+      <path class="d-red" d="M780 92V150H100V92" stroke-dasharray="4 4"/>
+      <text class="d-redt" x="440" y="174" text-anchor="middle">Break glass: every agent back to propose-only</text>
+    </svg>
+  </div>
+  <figure class="block"><div class="stage"><img class="shot" src="media/agents.webp" alt="The agents page: seven agents with their stage, what they do and when they last acted." width="1440" height="900" loading="lazy"></div></figure>
+</section>
+
+<section id="system">
+  <div class="prose">
+    <h2>Design system</h2>
+    <p>One token file builds CSS variables, a Tailwind theme and typed tokens, and every app reads from it. Change a colour once and every app picks it up.</p>
+  </div>
+  <div class="swatches">
+    <div><div class="sw" style="background:#1d1c1b"></div><p>Ink<small>#1D1C1B</small></p></div>
+    <div><div class="sw" style="background:#f8f8f7"></div><p>Paper<small>#F8F8F7</small></p></div>
+    <div><div class="sw" style="background:#eaeae7"></div><p>Stone<small>#EAEAE7</small></p></div>
+    <div><div class="sw" style="background:#fa504a"></div><p>Escher<small>#FA504A</small></p></div>
+    <div><div class="sw" style="background:#0265dc"></div><p>Action<small>#0265DC</small></p></div>
+    <div><div class="sw" style="background:#007c0f"></div><p>Success<small>#007C0F</small></p></div>
+    <div><div class="sw" style="background:#e8c600"></div><p>Warning<small>#E8C600</small></p></div>
+    <div><div class="sw" style="background:#d31510"></div><p>Danger<small>#D31510</small></p></div>
+  </div>
+  <div class="type">
+    <div><span class="g">Aa</span><p>Geist. Interface and reading text.</p></div>
+    <div><span class="gm">exit 0 · 1.1s</span><p>Geist Mono. Code, IDs and logs.</p></div>
+  </div>
+  <div class="stats three">
+    <div class="stat"><span class="num">89</span><p>Semantic tokens: colour, space, radius, type, shadow</p></div>
+    <div class="stat"><span class="num">1</span><p>Source file, built into CSS, Tailwind and TypeScript</p></div>
+    <div class="stat"><span class="num">0</span><p>Changes needed in each app when a token changes</p></div>
+  </div>
+</section>
+
+<section id="build">
+  <div class="prose">
+    <h2>How it’s built</h2>
+    <p>The prototype runs entirely in the browser against a made-up estate, so anyone can explore it without connecting a real cloud account.</p>
+  </div>
+  <ul class="stack">
+    <li><b>React, Vite</b><span>A client-only web app. The shipping product is a Tauri desktop app built from the same frontend.</span></li>
+    <li><b>Generative UI</b><span>The model answers in OpenUI Lang, which renders as real components rather than text.</span></li>
+    <li><b>Typed stores</b><span>A Repository layer over a seeded estate: signals, findings, plans, runs and playbooks.</span></li>
+    <li><b>pnpm, Turborepo</b><span>One monorepo for the apps and the shared design-system package.</span></li>
+    <li><b>Vercel</b><span>Password-gated deploys, with share links kept in Vercel Blob.</span></li>
+  </ul>
+</section>
+
+<section id="process">
+  <div class="prose">
+    <h2>How we worked</h2>
+    <p>One repo, with one set of rules for people and AI agents: an agent roster, issue-first changes and a decision log that stops settled debates from reopening. Vision became sketches, approved sketches became the prototype, and the prototype’s code moves into the app.</p>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 880 130" role="img" aria-label="Vision becomes a sketch, then the prototype, then the Tauri app.">
+      <rect class="d-node" x="0" y="10" width="170" height="64" rx="12"/><text class="d-t" x="85" y="47" text-anchor="middle">Vision</text>
+      <rect class="d-node" x="236" y="10" width="170" height="64" rx="12"/><text class="d-t" x="321" y="47" text-anchor="middle">Sketch</text>
+      <rect class="d-node" x="472" y="10" width="170" height="64" rx="12"/><text class="d-t" x="557" y="47" text-anchor="middle">Prototype</text>
+      <rect class="d-key" x="708" y="10" width="172" height="64" rx="12"/><text class="d-key-t" x="794" y="47" text-anchor="middle" font-size="15">Tauri app</text>
+      <path class="d-line" d="M170 42H236M406 42H472M642 42H708"/>
+      <text class="d-s" x="85" y="108" text-anchor="middle">Stakeholder ideas</text>
+      <text class="d-s" x="321" y="108" text-anchor="middle">Clickable HTML</text>
+      <text class="d-s" x="557" y="108" text-anchor="middle">Working, demoable</text>
+      <text class="d-s" x="794" y="108" text-anchor="middle">Shipped frontend</text>
+    </svg>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="num">573</span><p>Commits since May 2026</p></div>
+    <div class="stat"><span class="num">395</span><p>Of them mine</p></div>
+    <div class="stat"><span class="num">170+</span><p>Decisions logged</p></div>
+    <div class="stat"><span class="num">24</span><p>Sketches</p></div>
+  </div>
+</section>
+
+<section id="outcome">
+  <div class="prose">
+    <h2>Outcome</h2>
+    <p>Tessell uses the prototype to demo Escher to potential customers and investors. Its frontend code moves straight into the Tauri app, so the prototype works as a spec as well as a demo.</p>
+  </div>
+</section>
+
+<section id="learned" class="learned">
+  <div class="prose"><h2>What I learned</h2></div>
+  <div class="cols">
+    <div><h3>A bigger role</h3><p>I started as a product designer making a prototype. Now I build the frontend of the desktop app as well.</p></div>
+    <div><h3>A different process</h3><p>Design happens in working code instead of static mockups. The sketch, the prototype and the shipped frontend are the same material.</p></div>
+    <div><h3>A faster pace</h3><p>Ideas go from sketch to something people can click in days, not weeks.</p></div>
+  </div>
+</section>
+
+<section id="next" class="next">
+  <a class="next-card" href="../air-pollution/" data-fluid="../../thumbs/air-pollution.png">
+    <span class="next-text"><span class="next-label">Next project</span><span class="next-title">Air Atlas</span><span class="next-line">What is in the air, printed as halftone ink.</span><span class="next-go">Read the case study →</span></span>
+    <img src="../air-pollution/media/halftone-globe.jpg" alt="" width="960" height="960" loading="lazy">
+  </a>
+</section>
+
+</article><footer><a href="../../">All projects</a></footer></main><script>(function(){var H='94668a7ec0b87a711617ff06f1744eeb529351c8cc4d50e9a45430d8095d11b0',K='escher-ok',g=document.getElementById('gate'),a=document.getElementById('locked'),i=document.getElementById('gate-pw'),e=document.getElementById('gate-err');function open(){g.hidden=true;g.style.display="none";a.hidden=false}var ok=false;try{ok=sessionStorage.getItem(K)===H}catch(_){}if(ok){open();return}g.hidden=false;i.focus();g.addEventListener('submit',function(v){v.preventDefault();crypto.subtle.digest('SHA-256',new TextEncoder().encode(i.value)).then(function(b){var h=Array.from(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('');if(h===H){try{sessionStorage.setItem(K,H)}catch(_){}open()}else{e.textContent='Wrong password.';i.select()}})})})();</script><script src="../../fluid.js" defer></script></body></html>

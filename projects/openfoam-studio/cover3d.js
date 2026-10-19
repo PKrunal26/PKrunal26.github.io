@@ -8,6 +8,7 @@ const stage = document.getElementById('stage');
 const cv = document.getElementById('cover3d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const BASE = 'media/wind/';
+const cover = { top: 0, vh: innerHeight, e: 0 }; // where the story sits, shared with the frame loop
 
 if (story && stage && cv) init();
 
@@ -18,7 +19,7 @@ async function init() {
     renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
   } catch (e) {
     stage.classList.add('no-gl');
-    wireSteps((i) => anims.start(i));
+    wireSteps((i) => anims.start(i), () => anims.arm());
     return;
   }
   renderer.setClearColor(0x000000, 0);
@@ -212,11 +213,25 @@ async function init() {
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
-    const cr = card.getBoundingClientRect(), tr = timeline.getBoundingClientRect();
-    if (narrow) camera.setViewOffset(W, H, 0, H / 2 - (56 + cr.top - r.top) / 2, W, H);
-    else camera.setViewOffset(W, H, -Math.min(W * 0.2, (cr.right - r.left) * 0.5), (H - (tr.top - r.top)) / 2 - 12, W, H);
-    camera.updateProjectionMatrix();
+    offKey = '';
     kick();
+  }
+  // Keep the subject clear of the card and, before the stage pins, inside the part
+  // of it that's on screen. The card moves as the stage widens, so this runs per frame.
+  let offKey = '';
+  function frameOffset(clipX) {
+    const top = Math.max(0, cover.top);
+    const shown = Math.max(120, Math.min(H, cover.vh - top));
+    const lift = (H - shown) / 2;
+    let ox, oy;
+    if (narrow) { ox = 0; oy = H / 2 - (56 + card.offsetTop) / 2; }
+    else { ox = -Math.min(W * 0.25, (card.offsetLeft + card.offsetWidth + W - clipX) / 2 - W / 2); oy = (H - timeline.offsetTop) / 2 - 12; }
+    oy += lift;
+    const key = ox.toFixed(1) + ',' + oy.toFixed(1);
+    if (key === offKey) return;
+    offKey = key;
+    camera.setViewOffset(W, H, ox, oy, W, H);
+    camera.updateProjectionMatrix();
   }
   new ResizeObserver(size).observe(stage);
 
@@ -349,7 +364,7 @@ async function init() {
     stage.classList.add('failed');
   }
 
-  wireSteps(setStep);
+  wireSteps(setStep, () => anims.arm(), kick);
   size();
 
 
@@ -371,7 +386,11 @@ async function init() {
     } else if (step === 5 && !touched && !reduce) {
       cam.th += dt * 0.04; busy = true;
     }
-    const rr = cam.r * Math.max(1, Math.min(2, 1.5 / (W / H)));
+    // Before it pins, the stage is clipped to the page column: back off to fit that width.
+    const clipX = narrow ? 0 : (1 - cover.e) * Math.max(0, (W - Math.min(W - 80, 1168)) / 2);
+    const fit = Math.min(1.8, W / Math.max(200, W - 2 * clipX));
+    frameOffset(clipX);
+    const rr = cam.r * Math.max(0.88, Math.min(2, 1.35 / (W / H))) * fit;
     const cp = Math.cos(cam.ph);
     camera.position.set(cam.t.x + rr * cp * Math.sin(cam.th), cam.t.y + rr * Math.sin(cam.ph), cam.t.z + rr * cp * Math.cos(cam.th));
     camera.lookAt(cam.t);
@@ -411,7 +430,7 @@ async function init() {
       tmp.copy(tg.pos).project(camera);
       const x = (tmp.x * 0.5 + 0.5) * W, y = (-tmp.y * 0.5 + 0.5) * H;
       tg.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
-      tg.el.classList.toggle('on', ready && tg.steps.includes(step) && tmp.z < 1 && x > 0 && x < W && y > 40 && y < H);
+      tg.el.classList.toggle('on', ready && tg.steps.includes(step) && tmp.z < 1 && x > 0 && x < W && y > 84 && y < H - 60);
     });
     q.copy(camera.quaternion).invert();
     Object.entries(AX).forEach(([k, a]) => {
@@ -426,13 +445,22 @@ async function init() {
 }
 
 // ── Steps: the scroll position picks one; the timeline jumps to one.
-function wireSteps(onStep) {
+function wireSteps(onStep, onArm, onScroll = () => {}) {
   const chips = [...stage.querySelectorAll('.s-time button')];
   const panes = [...stage.querySelectorAll('.st')];
   const n = panes.length;
-  let cur = -1;
+  let cur = -1, armed = false;
   function update() {
     const r = story.getBoundingClientRect();
+    const vh = innerHeight;
+    // The stage grows from an inset card to edge to edge as it reaches the top.
+    const e = Math.max(0, Math.min(1, 1 - r.top / (vh * 0.55)));
+    cover.top = r.top; cover.vh = vh; cover.e = e;
+    onScroll();
+    stage.style.setProperty('--e', e.toFixed(3));
+    document.documentElement.classList.toggle('cover-full', e > 0.97 && r.bottom > vh * 0.6);
+    // Nothing plays until the reader has scrolled the cover into place.
+    if (!armed && r.top < vh * 0.08) { armed = true; onArm(); }
     const span = story.offsetHeight - stage.offsetHeight;
     const p = Math.max(0, Math.min(0.9999, -r.top / Math.max(1, span)));
     const i = Math.floor(p * n), local = p * n - i;
@@ -452,16 +480,19 @@ function wireSteps(onStep) {
   }));
   addEventListener('scroll', update, { passive: true });
   addEventListener('resize', update);
+  // Layout can shift under a still page (fonts, images): re-check then too.
+  new ResizeObserver(update).observe(document.body);
   update();
 }
 
 // ── Card animations: typing, file list, counter, convergence chart.
 function makeStepAnims() {
   const DUR = [2.8, 3.0, 1.4, 1.0, 4.2, 1];
-  let timer = 0, cur = -1, conv = null, frames = [];
+  let timer = 0, cur = -1, conv = null, frames = [], armed = reduce;
   const promptEl = stage.querySelector('[data-type="prompt"]');
   const promptText = promptEl ? promptEl.dataset.text : '';
   const files = [...stage.querySelectorAll('.st-files li')];
+  const bot = stage.querySelector('.st-msg.bot');
   const dictLines = [...stage.querySelectorAll('.st-code li')];
   const counters = [...stage.querySelectorAll('[data-count]')];
   const cc = stage.querySelector('#conv3d');
@@ -482,7 +513,7 @@ function makeStepAnims() {
     const it = conv.it, i0 = 50, i1 = it[it.length - 1];
     const xOf = (x) => Lp + (x - i0) / (i1 - i0) * (w - Lp - Rp);
     const yOf = (v) => Tp + (hi - Math.log10(v)) / (hi - lo) * (h - Tp - Bp);
-    g.font = '10px "Geist Mono", ui-monospace, monospace';
+    g.font = '11px Geist, Arial, sans-serif';
     g.lineWidth = 1;
     for (let e = hi; e >= lo; e--) {
       const y = Math.round(yOf(Math.pow(10, e))) + 0.5;
@@ -516,6 +547,7 @@ function makeStepAnims() {
       promptEl.textContent = promptText.slice(0, Math.round(promptText.length * q));
       promptEl.classList.toggle('typing', q < 1);
       files.forEach((f, k) => f.classList.toggle('on', p > 0.55 + k * 0.032));
+      if (bot) bot.classList.toggle('on', p > 0.5);
     } else if (i === 1) {
       dictLines.forEach((li, k) => li.classList.toggle('on', p >= (k / dictLines.length) * 0.9));
     } else if (i === 2) {
@@ -533,6 +565,7 @@ function makeStepAnims() {
     start(i) {
       cur = i;
       cancelAnimationFrame(timer);
+      if (i === 0 && !armed) { render(0, 0); return; }
       const t0 = performance.now();
       const tick = (now) => {
         if (cur !== i) return;
@@ -542,6 +575,7 @@ function makeStepAnims() {
       timer = requestAnimationFrame(tick);
     },
     progress(el) { return reduce ? 1 : Math.min(1, el / DUR[+(stage.dataset.step || 0)]); },
+    arm() { if (armed) return; armed = true; if (cur === 0) this.start(0); },
     setConv(c, f) { conv = c; frames = f; if (cur === 4) this.start(4); },
   };
 }

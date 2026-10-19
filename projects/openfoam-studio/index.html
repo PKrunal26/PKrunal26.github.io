@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenFOAM Studio — Krunal Prajapati</title><meta name="description" content="OpenFOAM Studio: describe a CFD simulation in plain English, and the app writes the case, runs OpenFOAM in Docker and checks the result."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="openfoam-studio.css?v=12"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenFOAM Studio — Krunal Prajapati</title><meta name="description" content="OpenFOAM Studio: describe a CFD simulation in plain English, and the app writes the case, runs OpenFOAM in Docker and checks the result."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="openfoam-studio.css?v=17"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
 <body><main class="project of">
 <nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav>
 
@@ -25,7 +25,7 @@
     <canvas id="cover3d" tabindex="0" role="img" aria-label="A 3D view of the windAroundBuildings case: a block of about 25 buildings in a 350 by 280 metre domain. Use arrow keys to rotate and plus or minus to zoom."></canvas>
     <div class="tags" id="tags" aria-hidden="true"></div>
     <div class="s-top">
-      <p class="s-case"><span class="s-dot"></span><b>windAroundBuildings</b><span class="s-meta">foamRun · incompressibleFluid · k-epsilon · OpenFOAM 13</span></p>
+      <p class="s-case"><span class="s-dots" aria-hidden="true"><i></i><i></i><i></i></span><b>windAroundBuildings</b><span class="s-meta"><span>foamRun</span><span>k-epsilon</span><span>185,237 cells</span><span>OpenFOAM 13</span></span></p>
       <div class="ctrl">
         <button type="button" data-zoom="out" aria-label="Zoom out"><span class="ic" data-ic="magnifying-glass-minus"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M152,112a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h64A8,8,0,0,1,152,112Zm77.66,117.66a8,8,0,0,1-11.32,0l-50.06-50.07a88.11,88.11,0,1,1,11.31-11.31l50.07,50.06A8,8,0,0,1,229.66,229.66ZM112,184a72,72,0,1,0-72-72A72.08,72.08,0,0,0,112,184Z"/></svg></span></button>
         <button type="button" data-zoom="in" aria-label="Zoom in"><span class="ic" data-ic="magnifying-glass-plus"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M152,112a8,8,0,0,1-8,8H120v24a8,8,0,0,1-16,0V120H80a8,8,0,0,1,0-16h24V80a8,8,0,0,1,16,0v24h24A8,8,0,0,1,152,112Zm77.66,117.66a8,8,0,0,1-11.32,0l-50.06-50.07a88.11,88.11,0,1,1,11.31-11.31l50.07,50.06A8,8,0,0,1,229.66,229.66ZM112,184a72,72,0,1,0-72-72A72.08,72.08,0,0,0,112,184Z"/></svg></span></button>
@@ -34,20 +34,17 @@
     </div>
     <div class="card">
       <div class="st on" role="tabpanel">
-        <p class="st-k">Step 1 · Prompt</p>
         <p class="st-h">One sentence in</p>
         <p class="st-p">In the app, a case starts as plain English. The assistant turns it into the files OpenFOAM reads.</p>
         <div class="st-msg"><span>You</span><p data-type="prompt" data-text="Wind around a block of buildings at 10 m/s, 3D, steady, k-epsilon turbulence">Wind around a block of buildings at 10 m/s, 3D, steady, k-epsilon turbulence</p></div>
         <div class="st-msg bot"><span>Case files</span><ul class="st-files"><li>0/U</li><li>0/p</li><li>0/k</li><li>0/epsilon</li><li>0/nut</li><li>constant/physicalProperties</li><li>constant/momentumTransport</li><li>constant/geometry/buildings.obj</li><li>system/blockMeshDict</li><li>system/snappyHexMeshDict</li><li>system/controlDict</li><li>system/fvSchemes</li><li>system/fvSolution</li></ul></div>
       </div>
       <div class="st" role="tabpanel" inert>
-        <p class="st-k">Step 2 · system/blockMeshDict</p>
         <p class="st-h">A box to start from</p>
-        <p class="st-p">The mesh starts as one block, 350 × 280 × 140 m, split into 25 × 20 × 10 cells.</p>
-        <ol class="st-code"><li><span class="k">backgroundMesh</span></li><li>{</li><li>    xMin   <span class="nm">-20</span>;   xMax  <span class="nm">330</span>;</li><li>    yMin   <span class="nm">-50</span>;   yMax  <span class="nm">230</span>;</li><li>    zMin     <span class="nm">0</span>;   zMax  <span class="nm">140</span>;</li><li>    xCells  <span class="nm">25</span>;   yCells <span class="nm">20</span>;   zCells <span class="nm">10</span>;</li><li>}</li><li></li><li><span class="k">vertices</span></li><li>(</li><li>    ($xMin $yMin $zMin)  ($xMax $yMin $zMin)</li><li>    ($xMax $yMax $zMin)  ($xMin $yMax $zMin)</li><li>    <span class="c">// … and the same four at zMax</span></li><li>);</li><li></li><li><span class="k">blocks</span></li><li>(</li><li>    hex <span class="nm">(0 1 2 3 4 5 6 7)</span></li><li>        <span class="nm">($xCells $yCells $zCells)</span></li><li>);</li><li></li><li><span class="k">boundary</span></li><li>(</li><li>    inlet         { type <span class="nm">patch</span>;    }</li><li>    outlet        { type <span class="nm">patch</span>;    }</li><li>    ground        { type <span class="nm">wall</span>;     }</li><li>    frontAndBack  { type <span class="nm">symmetry</span>; }</li><li>);</li></ol>
+        <p class="st-p">The mesh starts as one block, 350 × 280 × 140&nbsp;m, split into 25 × 20 × 10 cells.</p>
+        <div class="st-win"><p class="st-tab">system/blockMeshDict</p><ol class="st-code"><li><span class="k">backgroundMesh</span></li><li>{</li><li>    xMin   <span class="nm">-20</span>;   xMax  <span class="nm">330</span>;</li><li>    yMin   <span class="nm">-50</span>;   yMax  <span class="nm">230</span>;</li><li>    zMin     <span class="nm">0</span>;   zMax  <span class="nm">140</span>;</li><li>    xCells  <span class="nm">25</span>;   yCells <span class="nm">20</span>;   zCells <span class="nm">10</span>;</li><li>}</li><li></li><li><span class="k">vertices</span></li><li>(</li><li>    ($xMin $yMin $zMin)  ($xMax $yMin $zMin)</li><li>    ($xMax $yMax $zMin)  ($xMin $yMax $zMin)</li><li>    <span class="c">// … and the same four at zMax</span></li><li>);</li><li></li><li><span class="k">blocks</span></li><li>(</li><li>    hex <span class="nm">(0 1 2 3 4 5 6 7)</span></li><li>        <span class="nm">($xCells $yCells $zCells)</span></li><li>);</li><li></li><li><span class="k">boundary</span></li><li>(</li><li>    inlet         { type <span class="nm">patch</span>;    }</li><li>    outlet        { type <span class="nm">patch</span>;    }</li><li>    ground        { type <span class="nm">wall</span>;     }</li><li>    frontAndBack  { type <span class="nm">symmetry</span>; }</li><li>);</li></ol></div>
       </div>
       <div class="st" role="tabpanel" inert>
-        <p class="st-k">Step 3 · snappyHexMesh</p>
         <p class="st-h">The buildings cut in</p>
         <p class="st-p">snappyHexMesh removes the buildings from the box and splits the cells around them into smaller ones.</p>
         <dl class="st-rows">
@@ -58,21 +55,19 @@
         </dl>
       </div>
       <div class="st" role="tabpanel" inert>
-        <p class="st-k">Step 4 · 0/, constant/</p>
         <p class="st-h">The physics</p>
         <p class="st-p">Each patch gets a boundary condition, and the air gets a viscosity and a turbulence model.</p>
         <dl class="st-rows sw">
-          <div><dt><i style="--c:#5b8cff"></i>inlet</dt><dd>U fixedValue (10 0 0) m/s</dd></div>
-          <div><dt><i style="--c:#45c79b"></i>outlet</dt><dd>p totalPressure 0</dd></div>
-          <div><dt><i style="--c:#ffb54c"></i>buildings</dt><dd>U noSlip, wall functions</dd></div>
-          <div><dt><i style="--c:#8e9ab8"></i>ground</dt><dd>U noSlip, wall functions</dd></div>
-          <div><dt><i style="--c:#c58cff"></i>top, sides</dt><dd>symmetry</dd></div>
+          <div><dt><i style="--c:#5b8cff"></i>inlet</dt><dd class="code">U fixedValue (10 0 0) m/s</dd></div>
+          <div><dt><i style="--c:#45c79b"></i>outlet</dt><dd class="code">p totalPressure 0</dd></div>
+          <div><dt><i style="--c:#ffb54c"></i>buildings</dt><dd class="code">U noSlip, wall functions</dd></div>
+          <div><dt><i style="--c:#8e9ab8"></i>ground</dt><dd class="code">U noSlip, wall functions</dd></div>
+          <div><dt><i style="--c:#c58cff"></i>top, sides</dt><dd class="code">symmetry</dd></div>
           <div><dt>nu</dt><dd>1.5e-05 m²/s, air</dd></div>
-          <div><dt>Turbulence</dt><dd>RAS kEpsilon</dd></div>
+          <div><dt>Turbulence</dt><dd class="code">RAS kEpsilon</dd></div>
         </dl>
       </div>
       <div class="st" role="tabpanel" inert>
-        <p class="st-k">Step 5 · foamRun</p>
         <p class="st-h">Solving</p>
         <p class="st-p">The steady solver ran 500 iterations and saved the fields every 50. The slice is the wind speed 5 m above the ground at each save.</p>
         <div class="st-legend"><span style="--c:#7aa2ff">U</span><span style="--c:#ffb54c">p</span><span style="--c:#45c79b">k</span><em>change per iteration</em></div>
@@ -80,7 +75,6 @@
         <dl class="st-read"><div><dt>Iteration</dt><dd data-r="it">50</dd></div><div><dt>U</dt><dd data-r="U">–</dd></div><div><dt>p</dt><dd data-r="p">–</dd></div><div><dt>k</dt><dd data-r="k">–</dd></div></dl>
       </div>
       <div class="st" role="tabpanel" inert>
-        <p class="st-k">Step 6 · Results</p>
         <p class="st-h">Streamlines</p>
         <p class="st-p">Wind speeds up over the roofs and round the corners, then slows and circles in the streets and behind the tallest blocks.</p>
         <div class="st-bar"><i></i><span>0</span><span>|U| m/s</span><span>16</span></div>
@@ -871,7 +865,7 @@ FOAM exiting
 </div>
 <footer><a href="../../">All projects</a></footer>
 </main>
-<script type="module" src="cover3d.js?v=5"></script>
+<script type="module" src="cover3d.js?v=14"></script>
 <script src="flow.js?v=3" defer></script>
 <script src="interact.js" defer></script>
 <script src="../../fluid.js" defer></script>

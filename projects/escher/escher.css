@@ -164,3 +164,45 @@ main.cs{max-width:1168px;padding-inline:40px}
 .cs .builds{border-top:1px solid var(--rule);padding-top:48px}
 @media(max-width:900px){.cs .steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}}
 @media(max-width:600px){.cs .sub{margin-top:80px}.cs .steps{grid-template-columns:1fr}.cs .card{padding:24px}}
+
+/* Illustrations: ink lines, 2px dithered fills (patterns in the hidden .defs svg), Escher red as the one accent. */
+.cs .defs{position:absolute;width:0;height:0;overflow:hidden}
+.cs .dk{fill:var(--strong)}
+.cs .dr{fill:var(--red)}
+.cs .art{margin:64px 0 0;background:var(--panel);border-radius:20px;padding:48px 40px}
+.cs .art svg{display:block;width:100%;height:auto;max-width:880px;margin:0 auto;overflow:visible}
+.cs .ico{display:block;width:100%;max-width:320px;height:auto;margin-bottom:28px;background:var(--panel);border-radius:16px;overflow:visible}
+.cs .art text,.cs .ico text{font-family:Arial,Helvetica,sans-serif}
+.cs .i-ink{stroke:var(--strong);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.cs .i-ink:not([fill]){fill:none}
+.cs .i-paper{fill:var(--bg)}
+.cs .i-paper.i-ink{fill:var(--bg)}
+.cs .i-line{stroke:var(--line);stroke-width:1;fill:none}
+.cs .i-red{stroke:var(--red);stroke-width:1.75;fill:none;stroke-linecap:round}
+.cs .i-dot{fill:var(--line)}
+.cs .i-reddot{fill:var(--red)}
+.cs .i-trail{stroke:var(--red);stroke-width:1.5;fill:none;stroke-dasharray:2 7;stroke-linecap:round}
+.cs .i-trail-s{stroke:var(--red);stroke-width:1.5;fill:none;stroke-dasharray:2 6;stroke-linecap:round}
+.cs .i-q{font-size:28px;fill:var(--red);font-weight:500}
+.cs .i-mono{font-family:'Geist Mono',ui-monospace,monospace!important;font-size:11px;fill:var(--strong)}
+.cs .i-mono-l{font-family:'Geist Mono',ui-monospace,monospace!important;font-size:34px;fill:var(--strong)}
+.cs .i-small{font-size:12px;fill:var(--soft)}
+.cs .i-cap{font-size:14px;fill:var(--strong)}
+.cs .i-badge{font-size:10px;fill:#fff;font-weight:700}
+.cs .i-tag{fill:var(--bg);stroke:var(--rule)}
+.cs .i-tag-key{fill:var(--strong)}
+.cs .i-tag-t{font-size:13px;fill:var(--strong)}
+.cs .i-tag-kt{font-size:13px;fill:var(--bg)}
+.cs .i-paper-s{fill:none}
+@media(max-width:600px){.cs .art{padding:20px 12px;border-radius:14px;margin-top:40px}.cs .ico{max-width:none}}
+.cs .i-fillred{fill:var(--red)}
+.cs .i-fillink{fill:var(--strong)}
+.cs .i-redt{fill:var(--red)}
+
+/* Motion: illustrations ease in once as they scroll into view; the red trails drift slowly. Off for reduced motion. */
+.reveal .cs .art svg,.reveal .cs .ico{opacity:0;transform:translateY(12px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal .cs .art.in svg,.reveal .cs .ico.in{opacity:1;transform:none}
+.cs .i-trail,.cs .i-trail-s{animation:trail 9s linear infinite}
+@keyframes trail{to{stroke-dashoffset:-90}}
+@media(prefers-reduced-motion:reduce){.reveal .cs .art svg,.reveal .cs .ico{opacity:1;transform:none;transition:none}.cs .i-trail,.cs .i-trail-s{animation:none}}
+@media(max-width:600px){.cs .art{padding:16px 6px}}

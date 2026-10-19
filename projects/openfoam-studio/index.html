@@ -1,3 +1,800 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenFOAM Studio — Krunal Prajapati</title><meta name="description" content="OpenFOAM Studio, a personal project by Krunal Prajapati."><link rel="stylesheet" href="../../style.css"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
-<body><main class="project"><nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav><article><h1>OpenFOAM Studio</h1><p class="category">Personal project</p><p class="empty">Project notes coming soon.</p></article><footer><a href="../../">All projects</a><a href="../air-pollution/">Air Atlas</a></footer></main><script src="../../fluid.js" defer></script></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenFOAM Studio — Krunal Prajapati</title><meta name="description" content="OpenFOAM Studio: describe a CFD simulation in plain English, and the app writes the case, runs OpenFOAM in Docker and checks the result."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="openfoam-studio.css?v=4"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<body><main class="project of">
+<nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav>
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk" d="M0 1L9 5L0 9Z"/></marker>
+<marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-a" d="M0 1L9 5L0 9Z"/></marker>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-r" d="M0 1L9 5L0 9Z"/></marker>
+</defs></svg>
+
+<div class="layout">
+<aside class="toc" aria-label="On this page">
+  <ol>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#audience">Who it’s for</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#model">The model</a></li>
+    <li><a href="#principles">Principles</a></li>
+    <li><a href="#describe">Describe</a></li>
+    <li><a href="#inspect">Inspect</a></li>
+    <li><a href="#run">Run</a></li>
+    <li><a href="#recover">Recover</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#setup">Setup</a></li>
+  </ol>
+  <p class="toc-h">System design</p>
+  <ol>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#agent">Agent loop</a></li>
+    <li><a href="#knowledge">Knowledge</a></li>
+    <li><a href="#sandbox">Sandbox</a></li>
+    <li><a href="#recovery">Recovery</a></li>
+    <li><a href="#storage">Storage and streams</a></li>
+    <li><a href="#pipeline">Results pipeline</a></li>
+    <li><a href="#stack">Stack and release</a></li>
+  </ol>
+  <p class="toc-h">Proof</p>
+  <ol>
+    <li><a href="#validation">Validation</a></li>
+    <li><a href="#process">How I worked</a></li>
+    <li><a href="#outcome">Outcome</a></li>
+    <li><a href="#learned">What I learned</a></li>
+  </ol>
+</aside>
+
+<article>
+
+<header class="hero">
+  <h1>OpenFOAM Studio</h1>
+  <p class="lede">A desktop app for running CFD simulations. Describe the flow in plain English, and it writes the case, runs the real OpenFOAM solver and checks the result.</p>
+  <dl class="facts">
+    <div><dt>Role</dt><dd>Design, frontend and backend, solo</dd></div>
+    <div><dt>Type</dt><dd>Personal project, open source (MIT)</dd></div>
+    <div><dt>Platforms</dt><dd>macOS and Windows desktop app</dd></div>
+    <div><dt>Built</dt><dd>April to July 2026</dd></div>
+  </dl>
+  <figure class="plate hero-plate">
+    <div class="flow" id="flow" data-fluid-quiet>
+      <canvas id="flow-field" aria-hidden="true"></canvas>
+      <canvas id="flow-trails" role="img" aria-label="Velocity field of a lid-driven cavity at Reynolds number 100. Particles circle in one large clockwise vortex under the moving lid."></canvas>
+      <span class="lid">Lid · 1 m/s →</span>
+      <span class="probe" id="probe" aria-hidden="true"></span>
+    </div>
+    <dl class="sheet">
+      <div><dt>Prompt</dt><dd>“Lid-driven cavity, Re=100, 2D, incompressible, run for 10 seconds”</dd></div>
+      <div><dt>Files written</dt><dd>8</dd></div>
+      <div><dt>Mesh</dt><dd>20 × 20 cells</dd></div>
+      <div><dt>Solver</dt><dd>foamRun · incompressibleFluid</dd></div>
+      <div><dt>Time steps</dt><dd>2,000 in 17 s</dd></div>
+      <div><dt>Final residual</dt><dd>Ux 5.0e-9</dd></div>
+      <div><dt>Exit</dt><dd class="ok">0</dd></div>
+    </dl>
+  </figure>
+  <p class="cap">The velocity field from that run, read from the case’s output files. Particles follow the solved flow. Move the cursor through it to stir the flow and read the velocity at any point.</p>
+</header>
+
+<blockquote class="quote">
+  <p>“Whatever job you end up doing, find a way to contribute to the field you graduated in.”</p>
+  <footer>Prof. Gautam Barua, former Director, IIT Guwahati, at our graduation tea party</footer>
+</blockquote>
+
+<section id="problem">
+  <div class="prose">
+    <h2>Problem</h2>
+    <p>OpenFOAM is one of the most capable CFD solvers there is, and one of the hardest to use. A case is a tree of hand-edited text files with no schema, and when a run fails, <code>FOAM FATAL ERROR</code> says something broke but rarely why.</p>
+    <p>I first hit this during my bachelor’s thesis, then saw students in a CFD course get stuck the same way. I work in product design now, and this project is my way back into that field.</p>
+  </div>
+  <figure class="diagram" data-fluid-quiet>
+    <svg viewBox="0 0 880 330" class="patches" id="patches" role="img" aria-label="Three case files. blockMeshDict names the patches movingWall, fixedWalls and frontAndBack. 0/U uses the same names. 0/p has a typo, movingwall, and the solver stops with a fatal error.">
+      <rect class="n" x="0" y="0" width="260" height="214" rx="10"/>
+      <text class="t" x="20" y="30">system/blockMeshDict</text>
+      <path class="l" d="M0 46H260"/>
+      <text class="tm" x="20" y="74">boundary</text>
+      <text class="tm" x="20" y="96">(</text>
+      <text class="tm a" x="40" y="118" data-patch="moving">movingWall</text>
+      <text class="tm a" x="40" y="146" data-patch="fixed">fixedWalls</text>
+      <text class="tm a" x="40" y="174" data-patch="front">frontAndBack</text>
+      <text class="tm" x="20" y="198">);</text>
+
+      <rect class="n" x="310" y="0" width="260" height="214" rx="10"/>
+      <text class="t" x="330" y="30">0/U</text>
+      <path class="l" d="M310 46H570"/>
+      <text class="tm" x="330" y="74">boundaryField</text>
+      <text class="tm" x="330" y="96">{</text>
+      <text class="tm a" x="350" y="118" data-patch="moving">movingWall</text>
+      <text class="tm a" x="350" y="146" data-patch="fixed">fixedWalls</text>
+      <text class="tm a" x="350" y="174" data-patch="front">frontAndBack</text>
+      <text class="tm" x="330" y="198">}</text>
+
+      <rect class="n" x="620" y="0" width="260" height="214" rx="10"/>
+      <text class="t" x="640" y="30">0/p</text>
+      <path class="l" d="M620 46H880"/>
+      <text class="tm" x="640" y="74">boundaryField</text>
+      <text class="tm" x="640" y="96">{</text>
+      <text class="tm r" x="660" y="118" data-patch="moving" id="typo">movingwall</text>
+      <text class="tm a" x="660" y="146" data-patch="fixed">fixedWalls</text>
+      <text class="tm a" x="660" y="174" data-patch="front">frontAndBack</text>
+      <text class="tm" x="640" y="198">}</text>
+
+      <path class="la pl" data-patch="moving" d="M150 114H346"/>
+      <path class="la pl" data-patch="fixed" d="M150 142H346M460 142H656"/>
+      <path class="la pl" data-patch="front" d="M168 170H346M478 170H656"/>
+      <path class="lr pl" data-patch="moving" id="typo-link" d="M460 114H656" stroke-dasharray="4 5"/>
+      <g id="typo-err">
+        <circle class="dot-r" cx="748" cy="114" r="4"/>
+        <path class="lr" d="M748 118V262"/>
+        <rect class="n-r" x="0" y="262" width="880" height="60" rx="10"/>
+        <text class="tm r" x="20" y="290">--&gt; FOAM FATAL ERROR:</text>
+        <text class="tm" x="20" y="310">Cannot find patchField entry for movingWall</text>
+      </g>
+      <g id="typo-ok" opacity="0">
+        <rect class="n-ok" x="0" y="262" width="880" height="60" rx="10"/>
+        <text class="tm ok" x="20" y="290">[foamRun exited with code 0]</text>
+        <text class="tm" x="20" y="310">Every patch matches, so the run goes through.</text>
+      </g>
+    </svg>
+    <div class="fig-bar"><button class="fbtn" id="typo-btn" type="button" aria-pressed="false">Fix the typo</button><span class="hint">Hover a patch name to follow it across files.</span></div>
+    <figcaption>Every field file has to name the same patches as the mesh. One wrong letter stops the run.</figcaption>
+  </figure>
+  <div class="cols">
+    <div><h3>Manual</h3><p>Every case starts by copying a tutorial and editing <code>blockMeshDict</code>, <code>fvSchemes</code> and <code>fvSolution</code> by hand.</p></div>
+    <div><h3>Fragile</h3><p>One wrong patch name or a Windows line ending breaks a case without a clear message.</p></div>
+    <div><h3>Opaque</h3><p>Solver logs are long, and a fix means knowing which of hundreds of keywords to change.</p></div>
+  </div>
+  <p class="pull">The hard part is the tooling, not the physics.</p>
+</section>
+
+<section id="audience">
+  <div class="prose">
+    <h2>Who it’s for</h2>
+    <p>Engineers who understand fluid dynamics but don’t want to become OpenFOAM configuration specialists.</p>
+  </div>
+  <div class="cols">
+    <div><span class="n">Primary</span><h3>Mechanical and aerospace engineers</h3><p>They know the physics. They want a case running in minutes, with files they can still check.</p></div>
+    <div><span class="n">Secondary</span><h3>Researchers</h3><p>Quick sweeps across Reynolds number, geometry or model, without boilerplate case files for each run.</p></div>
+    <div><span class="n">Not for</span><h3>Meshing and CAD</h3><p>GUI mesh generation and CAD import are a different problem, and out of scope.</p></div>
+  </div>
+</section>
+
+<section id="research">
+  <div class="prose">
+    <h2>Research</h2>
+    <p>Before building the agent, I read four papers on LLMs for CFD: MetaOpenFOAM, Foam-Agent 2.0, ChatCFD and CFDLLMBench. All four landed on the same loop: plan, generate, run, review. The review step mattered most.</p>
+  </div>
+  <div class="bars">
+    <div class="bars-group">
+      <h3>MetaOpenFOAM <span>pass@1</span></h3>
+      <div class="bar"><span class="bl">Full system</span><span class="bt"><i class="key" style="width:85%"></i></span><span class="bv">85%</span></div>
+      <div class="bar"><span class="bl">Without reviewer</span><span class="bt"><i style="width:27.5%"></i></span><span class="bv">27.5%</span></div>
+      <div class="bar"><span class="bl">Without retrieval</span><span class="bt"><i style="width:0%"></i></span><span class="bv">0%</span></div>
+    </div>
+    <div class="bars-group">
+      <h3>Foam-Agent 2.0 <span>success rate</span></h3>
+      <div class="bar"><span class="bl">Reviewer + file order</span><span class="bt"><i class="key" style="width:88.2%"></i></span><span class="bv">88.2%</span></div>
+      <div class="bar"><span class="bl">Reviewer only</span><span class="bt"><i style="width:86.4%"></i></span><span class="bv">86.4%</span></div>
+      <div class="bar"><span class="bl">File order only</span><span class="bt"><i style="width:56.4%"></i></span><span class="bv">56.4%</span></div>
+      <div class="bar"><span class="bl">Neither</span><span class="bt"><i style="width:48.2%"></i></span><span class="bv">48.2%</span></div>
+    </div>
+  </div>
+  <p class="src">MetaOpenFOAM (arXiv 2407.21320), Foam-Agent 2.0 (arXiv 2509.18178), ChatCFD (arXiv 2506.02019), CFDLLMBench (arXiv 2509.20374).</p>
+  <div class="stats three">
+    <div class="stat"><span class="num">57.5</span><p>Points lost in MetaOpenFOAM when the reviewer is removed</p></div>
+    <div class="stat"><span class="num">6–7</span><p>Files in a typical case, each depending on others</p></div>
+    <div class="stat"><span class="num">300–600</span><p>Lines across those files</p></div>
+  </div>
+</section>
+
+<section id="model">
+  <div class="prose">
+    <h2>The model</h2>
+    <p>Every simulation goes through five steps. If a run fails, review sends it back with a fix.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 210" role="img" aria-label="Plan, Generate, Run, Review and Validate in a row. A dashed red line returns from Review to Generate, at most three times.">
+      <rect class="n" x="0" y="30" width="150" height="72" rx="10"/><text class="t" x="75" y="62" text-anchor="middle">Plan</text><text class="ts" x="75" y="82" text-anchor="middle">Classify the case</text>
+      <rect class="n" x="182" y="30" width="150" height="72" rx="10"/><text class="t" x="257" y="62" text-anchor="middle">Generate</text><text class="ts" x="257" y="82" text-anchor="middle">Files, in order</text>
+      <rect class="n" x="364" y="30" width="150" height="72" rx="10"/><text class="t" x="439" y="62" text-anchor="middle">Run</text><text class="ts" x="439" y="82" text-anchor="middle">In Docker</text>
+      <rect class="n" x="546" y="30" width="150" height="72" rx="10"/><text class="t" x="621" y="62" text-anchor="middle">Review</text><text class="ts" x="621" y="82" text-anchor="middle">Read the log</text>
+      <rect class="nk" x="728" y="30" width="152" height="72" rx="10"/><text class="tk" x="804" y="62" text-anchor="middle">Validate</text><text class="tk2" x="804" y="82" text-anchor="middle">Mesh and benchmark</text>
+      <path class="l" d="M150 66H178M332 66H360M514 66H542M696 66H724" marker-end="url(#ah)"/>
+      <path class="lr" d="M621 102V160H257V106" stroke-dasharray="5 5" marker-end="url(#ar)"/>
+      <text class="ts r" x="439" y="182" text-anchor="middle">Fix and re-run, at most 3 times</text>
+    </svg>
+  </figure>
+</section>
+
+<section id="principles">
+  <div class="prose"><h2>Principles</h2></div>
+  <div class="cols four">
+    <div>
+      <svg class="glyph" viewBox="0 0 120 72" aria-hidden="true"><rect class="n" x="10" y="8" width="62" height="56" rx="6"/><path class="l" d="M20 24H60M20 34H52M20 44H58"/><circle class="la" cx="82" cy="40" r="16"/><path class="la" d="M94 52L108 66"/></svg>
+      <h3>Inspectable</h3><p>The AI writes dictionaries, not results. Every file is open in the editor before it runs.</p>
+    </div>
+    <div>
+      <svg class="glyph" viewBox="0 0 120 72" aria-hidden="true"><rect class="n" x="10" y="12" width="100" height="48" rx="6"/><path class="la" d="M22 48C40 48 44 24 60 24S82 40 98 40"/><path class="l" d="M22 52H98"/></svg>
+      <h3>Real solver</h3><p>No surrogate model and no predicted flow. <code>blockMesh</code>, <code>foamRun</code> and <code>foamToVTK</code> run in a container.</p>
+    </div>
+    <div>
+      <svg class="glyph" viewBox="0 0 120 72" aria-hidden="true"><path class="l" d="M14 60H106"/><circle class="dot" cx="26" cy="22" r="4"/><circle class="dot" cx="46" cy="34" r="4"/><circle class="dot" cx="66" cy="44" r="4"/><circle class="dot" cx="86" cy="50" r="4"/><path class="la" d="M20 18C40 30 60 44 100 52"/></svg>
+      <h3>Correct, not just running</h3><p>A case that converges to the wrong answer is worse than one that fails loudly.</p>
+    </div>
+    <div>
+      <svg class="glyph" viewBox="0 0 120 72" aria-hidden="true"><rect class="n" x="20" y="10" width="80" height="50" rx="6"/><path class="l" d="M8 66H112"/><rect class="nk" x="44" y="24" width="32" height="22" rx="3"/><path class="la" d="M50 24V18A10 10 0 0 1 70 18V24"/></svg>
+      <h3>Local</h3><p>Everything runs on your machine, and the agent never gets a raw shell.</p>
+    </div>
+  </div>
+</section>
+
+<section id="describe">
+  <div class="prose">
+    <h2>Describe</h2>
+    <p>Type a case in plain English. The agent writes the case files in dependency order, so the patch names in the mesh match every boundary condition. Follow-up messages change only the files that need it.</p>
+  </div>
+  <div class="map" data-fluid-quiet>
+    <p class="hint map-hint">Hover a highlighted phrase to see where it ends up.</p>
+    <p class="map-prompt"><mark data-i="1" tabindex="0">Lid-driven cavity</mark>, <mark data-i="2" tabindex="0">Re=100</mark>, <mark data-i="3" tabindex="0">2D</mark>, incompressible, <mark data-i="4" tabindex="0">run for 10 seconds</mark></p>
+    <div class="map-cards">
+      <div class="mc" data-i="1"><span class="mi">1</span><p class="mf">0/U</p><pre>movingWall
+{
+    type   fixedValue;
+    value  uniform (1 0 0);
+}</pre><p class="mn">The lid moves at 1 m/s.</p></div>
+      <div class="mc" data-i="2"><span class="mi">2</span><p class="mf">constant/physicalProperties</p><pre>viscosityModel  constant;
+nu  0.001 [m^2/s];</pre><p class="mn">ν = U·L / Re = 1 × 0.1 / 100.</p></div>
+      <div class="mc" data-i="3"><span class="mi">3</span><p class="mf">system/blockMeshDict</p><pre>frontAndBack
+{
+    type  empty;
+    ...
+}</pre><p class="mn">One cell deep, front and back ignored.</p></div>
+      <div class="mc" data-i="4"><span class="mi">4</span><p class="mf">system/controlDict</p><pre>endTime   10;
+deltaT    0.005;</pre><p class="mn">2,000 time steps.</p></div>
+    </div>
+  </div>
+  <figure class="block">
+    <div class="win">
+      <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-title">Lid-driven cavity, Re=100, 2D, incompressible, run for 10 seconds</span><span class="w-chip">foamRun</span><span class="w-sp"></span><span class="w-btn">Generate</span><span class="w-btn pri">▶ Run</span></div>
+      <div class="w-body three">
+        <nav class="w-files" aria-label="Case files">
+      <p class="w-h">Files</p>
+      <ul>
+        <li class="d">system</li>
+        <li class="f">blockMeshDict</li>
+        <li class="f on">controlDict</li>
+        <li class="f">fvSchemes</li>
+        <li class="f">fvSolution</li>
+        <li class="d">constant</li>
+        <li class="f">momentumTransport</li>
+        <li class="f">physicalProperties</li>
+        <li class="d">0</li>
+        <li class="f">p</li>
+        <li class="f">U</li>
+        <li class="d shut">Time output (50)</li>
+      </ul>
+    </nav>
+        <div class="w-main">
+          <div class="w-tabs"><span class="w-tab on">controlDict</span></div>
+          <p class="w-path">system/controlDict</p>
+          <ol class="w-code"><li><span class="k">application</span>     <span class="v">foamRun</span>;</li><li><span class="k">solver</span>          <span class="v">incompressibleFluid</span>;</li><li></li><li><span class="k">startFrom</span>       <span class="v">startTime</span>;</li><li><span class="k">startTime</span>       <span class="nm">0</span>;</li><li><span class="k">stopAt</span>          <span class="v">endTime</span>;</li><li class="chg"><span class="k">endTime</span>         <span class="nm">5</span>;<span class="was">was 10</span></li><li><span class="k">deltaT</span>          <span class="nm">0.005</span>;</li><li><span class="k">writeControl</span>    <span class="v">timeStep</span>;</li><li><span class="k">writeInterval</span>   <span class="nm">200</span>;</li></ol>
+        </div>
+        <aside class="w-chat">
+          <p class="w-h">Assistant</p>
+          <div class="msg you"><span>You</span><p>Lid-driven cavity, Re=100, 2D, incompressible, run for 10 seconds</p></div>
+          <div class="msg bot"><span>Assistant</span><p>Wrote 8 files. blockMesh, checkMesh and a short foamRun ran cleanly.</p>
+            <ul class="w-files-list"><li>0/U</li><li>0/p</li><li>constant/physicalProperties</li><li>constant/momentumTransport</li><li>system/blockMeshDict</li><li>system/controlDict</li><li>system/fvSchemes</li><li>system/fvSolution</li></ul></div>
+          <div class="msg you"><span>You</span><p>Now only run for half the time</p></div>
+          <div class="msg bot"><span>Assistant</span><p>Updated 1 file: <code>system/controlDict</code>. endTime 10 → 5.</p></div>
+          <div class="w-compose"><span>Describe the simulation…</span><span class="w-send">Send</span></div>
+        </aside>
+      </div>
+    </div>
+    <figcaption>A follow-up changes one line in one file, and the editor shows which.</figcaption>
+  </figure>
+</section>
+
+<section id="inspect">
+  <div class="prose">
+    <h2>Inspect</h2>
+    <p>The layout borrows from code editors: file tree on the left, editor in the middle, chat on the right. Files open as the agent writes them, and a Parameters tab turns the main values into fields you can edit without touching syntax.</p>
+  </div>
+  <div class="two block">
+    <figure>
+      <div class="win">
+        <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-tab on">U</span><span class="w-sp"></span><span class="w-mut">0/U</span></div>
+        <div class="w-main pad"><ol class="w-code"><li><span class="k">dimensions</span>      <span class="nm">[0 1 -1 0 0 0 0]</span>;</li><li><span class="k">internalField</span>   <span class="v">uniform</span> <span class="nm">(0 0 0)</span>;</li><li></li><li><span class="k">boundaryField</span></li><li>{</li><li>    <span class="p">movingWall</span></li><li>    {</li><li>        <span class="k">type</span>            <span class="v">fixedValue</span>;</li><li>        <span class="k">value</span>           <span class="v">uniform</span> <span class="nm">(1 0 0)</span>;</li><li>    }</li><li>    <span class="p">fixedWalls</span></li><li>    {</li><li>        <span class="k">type</span>            <span class="v">noSlip</span>;</li><li>    }</li><li>    <span class="p">frontAndBack</span></li><li>    {</li><li>        <span class="k">type</span>            <span class="v">empty</span>;</li><li>    }</li><li>}</li></ol></div>
+      </div>
+      <figcaption>Every generated file, open in a real code editor.</figcaption>
+    </figure>
+    <figure>
+      <div class="win">
+        <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-tab on">Parameters</span><span class="w-sp"></span><span class="w-mut">Reload</span></div>
+        <div class="w-main pad"><div class="w-form">
+            <div class="w-group"><p class="w-gh">system/controlDict<span class="w-save">Save</span></p>
+              <div class="w-grid"><label><span>Application<i>application</i></span><b>foamRun</b></label><label><span>Solver<i>solver</i></span><b>incompressibleFluid</b></label><label><span>Start time<i>startTime</i></span><b>0</b></label><label><span>End time<i>endTime</i></span><b>10</b></label><label><span>Time step<i>deltaT</i></span><b>0.005</b></label><label><span>Write interval<i>writeInterval</i></span><b>200</b></label></div></div>
+            <div class="w-group"><p class="w-gh">constant/physicalProperties<span class="w-save">Save</span></p>
+              <div class="w-grid"><label><span>Viscosity model<i>viscosityModel</i></span><b>constant</b></label><label><span>Kinematic viscosity<i>nu</i></span><b>0.001<em>m²/s</em></b></label></div></div>
+            <div class="w-group"><p class="w-gh">constant/momentumTransport<span class="w-save">Save</span></p>
+              <div class="w-grid"><label><span>Simulation type<i>simulationType</i></span><b>laminar</b></label></div></div>
+          </div></div>
+      </div>
+      <figcaption>The same values as form fields, written back to the files on save.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="run">
+  <div class="prose">
+    <h2>Run</h2>
+    <p>Runs happen inside an OpenFOAM 13 container, with the log and a residual chart streaming live. Each run is saved to a history you can reopen.</p>
+  </div>
+  <figure class="block">
+    <div class="win run">
+      <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-title">Lid-driven cavity, Re=100, 2D, incompressible, run for 10 seconds</span><span class="w-chip">foamRun</span><span class="w-sp"></span><span class="w-btn">Generate</span><span class="w-btn pri">▶ Run</span></div>
+      <div class="w-body two-col">
+        <nav class="w-runs" aria-label="Runs">
+          <p class="w-h">Runs</p>
+          <div class="w-run on"><p><i class="okd"></i>Success<span>17.3 s</span></p><code>342d3523 · blockMesh 0 · foamRun 0</code></div>
+          <div class="w-run"><p><i class="okd"></i>Success<span>17.6 s</span></p><code>292b69ae · blockMesh 0 · foamRun 0</code></div>
+          <div class="w-run"><p><i class="okd"></i>Success<span>17.3 s</span></p><code>af997c90 · blockMesh 0 · foamRun 0</code></div>
+        </nav>
+        <div class="w-main">
+          <div class="w-tabs"><span class="w-tab on">Logs</span><span class="w-tab">Results</span></div>
+          <p class="w-status"><i class="okd"></i>Done<span>blockMesh=0 · foamToVTK=0 · foamRun=0</span></p>
+          <ol class="w-log"><li class="cmd" style="--i:0">&gt; blockMesh -case /cavity</li><li class="ok" style="--i:1">[blockMesh exited with code 0]</li><li class="cmd" style="--i:2">&gt; foamRun -case /cavity</li><li style="--i:3">Courant Number mean: 0.222277 max: 0.836407</li><li class="t" style="--i:4">Time = 10s</li><li style="--i:5">smoothSolver:  Solving for Ux, Initial residual = 4.98332e-09</li><li style="--i:6">smoothSolver:  Solving for Uy, Initial residual = 7.54293e-09</li><li style="--i:7">DICPCG:  Solving for p, Initial residual = 1.68815e-07</li><li style="--i:8">ExecutionTime = 0.956191 s  ClockTime = 1 s</li><li style="--i:9">End</li><li class="ok" style="--i:10">[foamRun exited with code 0]</li></ol>
+        </div>
+      </div>
+    </div>
+    <figcaption>The last lines of the hero run. Every command, its output and its exit code stream in as they happen.</figcaption>
+  </figure>
+  <figure class="chart hov" id="res-chart" data-fluid-quiet>
+    <div class="legend"><span class="k-ux">Ux</span><span class="k-uy">Uy</span><span class="k-p">p</span></div>
+    <div class="plot"><div class="readout" id="res-read" hidden></div><!--fig:residuals--><svg viewBox="0 0 880 300" role="img" aria-label="Initial residuals for Ux, Uy and p over 2000 time steps, falling from 1 to below 1e-5 on a log scale."><path class="c-grid" d="M60 256.0H860"/><text class="c-tick" x="50" y="260.0" text-anchor="end">1e-10</text><path class="c-grid" d="M60 232.4H860"/><path class="c-grid" d="M60 208.8H860"/><text class="c-tick" x="50" y="212.8" text-anchor="end">1e-8</text><path class="c-grid" d="M60 185.2H860"/><path class="c-grid" d="M60 161.6H860"/><text class="c-tick" x="50" y="165.6" text-anchor="end">1e-6</text><path class="c-grid" d="M60 138.0H860"/><path class="c-grid" d="M60 114.4H860"/><text class="c-tick" x="50" y="118.4" text-anchor="end">1e-4</text><path class="c-grid" d="M60 90.8H860"/><path class="c-grid" d="M60 67.2H860"/><text class="c-tick" x="50" y="71.2" text-anchor="end">1e-2</text><path class="c-grid" d="M60 43.6H860"/><path class="c-grid" d="M60 20.0H860"/><text class="c-tick" x="50" y="24.0" text-anchor="end">1e0</text><text class="c-tick" x="60.0" y="276" text-anchor="middle">0</text><text class="c-tick" x="260.1" y="276" text-anchor="middle">500</text><text class="c-tick" x="460.2" y="276" text-anchor="middle">1000</text><text class="c-tick" x="660.3" y="276" text-anchor="middle">1500</text><text class="c-tick" x="860.0" y="276" text-anchor="middle">2000</text><polyline class="c-p" points="60.0,20.0 61.6,41.0 63.2,47.5 64.8,51.4 66.4,54.4 68.0,56.9 69.6,58.6 71.2,60.1 72.8,61.5 74.4,62.6 76.0,63.7 77.6,64.7 79.2,65.8 80.8,66.7 82.4,67.8 84.0,68.7 85.6,69.3 87.2,70.5 88.8,71.4 90.4,72.2 92.0,73.0 93.6,73.9 95.2,74.7 96.8,75.4 98.4,76.1 100.0,76.3 101.6,77.0 103.2,78.0 104.8,78.9 106.4,79.5 108.0,79.7 109.6,80.6 111.2,81.1 112.8,81.9 114.4,82.5 116.0,83.1 117.6,83.5 119.2,84.3 120.8,84.9 122.4,85.4 124.0,86.0 125.6,86.5 127.2,87.1 128.8,87.7 130.4,88.2 132.0,88.8 133.6,89.3 135.2,89.9 136.8,90.4 138.4,90.9 140.0,91.2 141.6,92.0 143.2,92.2 144.8,93.0 146.4,93.6 148.0,94.1 149.6,94.7 151.2,95.2 152.8,95.8 154.4,96.3 156.0,96.6 157.6,97.3 159.2,97.9 160.9,98.4 162.5,98.9 164.1,99.5 165.7,99.8 167.3,100.5 168.9,101.1 170.5,101.6 172.1,102.2 173.7,102.7 175.3,103.2 176.9,103.8 178.5,104.3 180.1,104.8 181.7,105.4 183.3,105.9 184.9,106.4 186.5,107.0 188.1,107.5 189.7,108.1 191.3,108.6 192.9,109.1 194.5,109.7 196.1,110.2 197.7,111.1 199.3,111.6 200.9,112.1 202.5,113.4 204.1,113.9 205.7,114.5 207.3,115.0 208.9,115.5 210.5,116.0 212.1,116.5 213.7,117.1 215.3,117.6 216.9,118.1 218.5,118.6 220.1,119.1 221.7,119.6 223.3,120.1 224.9,120.6 226.5,121.2 228.1,121.5 229.7,122.3 231.3,122.8 232.9,123.2 234.5,123.9 236.1,124.3 237.7,124.8 239.3,125.5 240.9,125.9 242.5,126.3 244.1,127.1 245.7,127.3 247.3,127.9 248.9,128.5 250.5,129.0 252.1,129.4 253.7,129.8 255.3,130.4 256.9,130.9 258.5,131.5 260.1,131.9 261.7,132.6 263.3,133.2 264.9,133.7 266.5,134.1 268.1,125.3 269.7,125.7 271.3,126.1 272.9,146.1 274.5,146.4 276.1,145.3 277.7,147.5 279.3,147.5 280.9,147.6 282.5,146.6 284.1,148.5 285.7,148.6 287.3,149.0 288.9,149.5 290.5,148.1 292.1,149.8 293.7,150.4 295.3,149.4 296.9,150.2 298.5,150.7 300.1,149.8 301.7,150.8 303.3,151.7 304.9,151.8 306.5,153.3 308.1,153.2 309.7,153.2 311.3,153.9 312.9,154.7 314.5,155.1 316.1,151.1 317.7,153.7 319.3,156.0 320.9,156.8 322.5,154.0 324.1,154.3 325.7,155.9 327.3,154.1 328.9,155.9 330.5,154.0 332.1,155.7 333.7,155.9 335.3,156.8 336.9,157.3 338.5,157.7 340.1,158.0 341.7,158.4 343.3,158.7 344.9,157.5 346.5,158.9 348.1,157.7 349.7,158.5 351.3,158.0 352.9,157.2 354.5,159.3 356.1,157.7 357.7,157.2 359.3,160.0 361.0,157.8 362.6,157.3 364.2,160.6 365.8,157.2 367.4,156.9 369.0,156.9 370.6,157.9 372.2,153.7 373.8,155.9 375.4,156.6 377.0,159.3 378.6,155.3 380.2,156.3 381.8,157.3 383.4,160.0 385.0,162.1 386.6,161.5 388.2,158.3 389.8,161.7 391.4,158.8 393.0,162.2 394.6,157.3 396.2,163.2 397.8,158.7 399.4,157.3 401.0,161.4 402.6,160.8 404.2,158.0 405.8,158.7 407.4,157.1 409.0,159.3 410.6,159.0 412.2,157.1 413.8,160.9 415.4,159.2 417.0,157.6 418.6,157.7 420.2,158.3 421.8,158.8 423.4,159.1 425.0,159.5 426.6,159.8 428.2,160.3 429.8,160.8 431.4,161.3 433.0,161.7 434.6,162.6 436.2,157.0 437.8,160.3 439.4,162.8 441.0,158.4 442.6,161.2 444.2,159.3 445.8,162.0 447.4,163.8 449.0,161.2 450.6,161.2 452.2,163.0 453.8,159.6 455.4,160.1 457.0,163.7 458.6,160.6 460.2,161.4 461.8,164.8 463.4,161.6 465.0,163.5 466.6,160.8 468.2,162.3 469.8,161.6 471.4,162.9 473.0,160.8 474.6,162.5 476.2,159.7 477.8,161.4 479.4,166.4 481.0,160.6 482.6,166.9 484.2,162.3 485.8,158.7 487.4,161.0 489.0,159.2 490.6,158.7 492.2,167.9 493.8,162.2 495.4,160.0 497.0,162.7 498.6,161.7 500.2,163.5 501.8,163.5 503.4,163.0 505.0,162.6 506.6,165.1 508.2,162.2 509.8,162.0 511.4,164.7 513.0,162.0 514.6,161.8 516.2,164.2 517.8,161.1 519.4,168.7 521.0,162.2 522.6,161.7 524.2,163.9 525.8,164.4 527.4,163.5 529.0,163.3 530.6,163.6 532.2,163.6 533.8,163.7 535.4,164.0 537.0,164.1 538.6,164.0 540.2,164.4 541.8,164.6 543.4,164.8 545.0,165.2 546.6,165.7 548.2,165.8 549.8,166.0 551.4,166.8 553.0,166.9 554.6,167.0 556.2,167.3 557.8,160.0 559.4,158.7 561.1,159.7 562.7,160.3 564.3,160.8 565.9,161.5 567.5,161.9 569.1,161.5 570.7,162.4 572.3,163.7 573.9,164.2 575.5,164.9 577.1,165.7 578.7,166.1 580.3,167.0 581.9,167.6 583.5,160.5 585.1,159.2 586.7,159.9 588.3,160.5 589.9,160.8 591.5,161.6 593.1,162.0 594.7,162.5 596.3,164.0 597.9,164.8 599.5,165.1 601.1,165.4 602.7,166.0 604.3,166.9 605.9,167.4 607.5,160.4 609.1,159.5 610.7,160.3 612.3,161.2 613.9,161.8 615.5,161.6 617.1,162.8 618.7,164.2 620.3,164.8 621.9,165.6 623.5,166.5 625.1,160.2 626.7,159.1 628.3,160.3 629.9,160.9 631.5,161.2 633.1,162.0 634.7,162.1 636.3,162.6 637.9,164.4 639.5,165.3 641.1,165.9 642.7,167.3 644.3,160.0 645.9,158.9 647.5,159.5 649.1,160.3 650.7,160.9 652.3,161.6 653.9,162.4 655.5,163.8 657.1,164.7 658.7,165.7 660.3,166.3 661.9,167.2 663.5,167.9 665.1,160.4 666.7,159.3 668.3,160.4 669.9,161.6 671.5,162.2 673.1,164.0 674.7,165.1 676.3,165.6 677.9,166.0 679.5,167.5 681.1,168.0 682.7,160.4 684.3,159.9 685.9,161.0 687.5,161.8 689.1,162.5 690.7,164.1 692.3,164.6 693.9,165.3 695.5,166.2 697.1,166.7 698.7,160.3 700.3,159.7 701.9,160.7 703.5,161.6 705.1,162.4 706.7,163.9 708.3,164.4 709.9,165.3 711.5,166.1 713.1,166.7 714.7,160.4 716.3,159.8 717.9,160.7 719.5,161.9 721.1,162.6 722.7,163.9 724.3,164.6 725.9,165.6 727.5,166.3 729.1,167.6 730.7,160.2 732.3,159.5 733.9,160.5 735.5,161.8 737.1,162.3 738.7,163.6 740.3,164.5 741.9,165.4 743.5,166.1 745.1,167.1 746.7,161.0 748.3,159.9 749.9,161.1 751.5,162.4 753.1,164.0 754.7,164.6 756.3,165.6 757.9,166.5 759.5,167.8 761.2,160.1 762.8,159.8 764.4,160.7 766.0,162.0 767.6,162.7 769.2,164.1 770.8,164.8 772.4,165.9 774.0,166.6 775.6,168.1 777.2,160.5 778.8,159.9 780.4,161.0 782.0,162.3 783.6,164.1 785.2,164.7 786.8,165.6 788.4,166.7 790.0,168.0 791.6,160.1 793.2,159.8 794.8,160.9 796.4,162.0 798.0,162.9 799.6,164.5 801.2,165.1 802.8,166.1 804.4,167.1 806.0,160.2 807.6,159.5 809.2,160.9 810.8,161.9 812.4,162.7 814.0,164.7 815.6,165.3 817.2,166.1 818.8,167.2 820.4,160.5 822.0,159.3 823.6,160.9 825.2,162.1 826.8,162.7 828.4,164.7 830.0,165.8 831.6,166.4 833.2,167.9 834.8,159.9 836.4,159.0 838.0,160.2 839.6,161.7 841.2,162.3 842.8,164.1 844.4,165.5 846.0,166.3 847.6,166.9 849.2,160.3 850.8,159.4 852.4,160.3 854.0,161.7 855.6,162.7 857.2,164.3 858.8,165.6 860.0,179.4"/><polyline class="c-uy" points="60.0,20.1 61.6,46.8 63.2,55.7 64.8,60.6 66.4,64.1 68.0,66.9 69.6,69.2 71.2,71.3 72.8,73.2 74.4,74.9 76.0,76.5 77.6,78.0 79.2,79.3 80.8,80.7 82.4,81.9 84.0,83.2 85.6,84.3 87.2,85.5 88.8,86.6 90.4,87.7 92.0,88.8 93.6,89.9 95.2,91.0 96.8,92.1 98.4,93.1 100.0,94.2 101.6,95.3 103.2,96.4 104.8,97.5 106.4,98.5 108.0,99.6 109.6,100.7 111.2,101.8 112.8,102.9 114.4,103.9 116.0,105.0 117.6,106.1 119.2,107.2 120.8,108.3 122.4,109.3 124.0,110.4 125.6,111.5 127.2,112.6 128.8,113.7 130.4,114.7 132.0,115.8 133.6,116.8 135.2,117.9 136.8,118.9 138.4,120.0 140.0,121.1 141.6,122.1 143.2,123.2 144.8,124.2 146.4,125.3 148.0,126.3 149.6,127.4 151.2,128.4 152.8,129.5 154.4,130.6 156.0,131.7 157.6,132.7 159.2,133.8 160.9,134.8 162.5,135.9 164.1,137.0 165.7,137.9 167.3,138.7 168.9,139.5 170.5,140.3 172.1,141.1 173.7,141.9 175.3,142.5 176.9,143.5 178.5,144.3 180.1,144.9 181.7,145.8 183.3,146.8 184.9,147.6 186.5,148.4 188.1,148.9 189.7,150.1 191.3,150.9 192.9,151.5 194.5,152.3 196.1,153.3 197.7,154.2 199.3,155.0 200.9,155.8 202.5,156.7 204.1,157.4 205.7,158.2 207.3,159.1 208.9,159.8 210.5,160.7 212.1,161.5 213.7,161.0 215.3,161.8 216.9,163.9 218.5,163.8 220.1,165.4 221.7,166.4 223.3,167.2 224.9,168.1 226.5,168.9 228.1,169.6 229.7,170.5 231.3,171.4 232.9,172.0 234.5,172.9 236.1,173.7 237.7,174.5 239.3,175.3 240.9,176.2 242.5,177.0 244.1,177.8 245.7,178.6 247.3,179.4 248.9,180.2 250.5,181.0 252.1,181.9 253.7,182.5 255.3,183.6 256.9,184.0 258.5,185.1 260.1,186.0 261.7,186.3 263.3,187.8 264.9,187.9 266.5,188.6 268.1,189.3 269.7,190.4 271.3,191.5 272.9,191.6 274.5,192.9 276.1,193.7 277.7,193.6 279.3,194.5 280.9,194.8 282.5,195.7 284.1,198.1 285.7,198.7 287.3,196.8 288.9,200.4 290.5,201.1 292.1,201.2 293.7,199.6 295.3,199.9 296.9,200.6 298.5,201.1 300.1,201.5 301.7,202.1 303.3,203.0 304.9,203.7 306.5,202.9 308.1,203.3 309.7,204.2 311.3,205.7 312.9,206.8 314.5,206.1 316.1,202.7 317.7,204.3 319.3,205.7 320.9,205.3 322.5,205.8 324.1,207.2 325.7,208.5 327.3,208.4 328.9,204.8 330.5,205.7 332.1,204.7 333.7,211.5 335.3,207.9 336.9,209.3 338.5,210.7 340.1,205.2 341.7,206.9 343.3,206.5 344.9,208.5 346.5,209.8 348.1,209.3 349.7,205.7 351.3,205.5 352.9,206.3 354.5,208.1 356.1,209.7 357.7,204.0 359.3,206.0 361.0,205.3 362.6,212.1 364.2,208.3 365.8,210.4 367.4,205.1 369.0,206.6 370.6,206.2 372.2,207.5 373.8,209.9 375.4,203.9 377.0,205.5 378.6,207.4 380.2,207.2 381.8,209.7 383.4,203.7 385.0,205.2 386.6,207.4 388.2,207.2 389.8,209.8 391.4,203.8 393.0,205.4 394.6,205.5 396.2,207.0 397.8,209.7 399.4,203.5 401.0,205.3 402.6,207.6 404.2,207.5 405.8,210.3 407.4,204.9 409.0,206.6 410.6,212.0 412.2,208.7 413.8,209.0 415.4,204.9 417.0,206.9 418.6,212.2 420.2,208.8 421.8,203.5 423.4,205.5 425.0,205.6 426.6,207.2 428.2,209.9 429.8,204.2 431.4,205.9 433.0,213.2 434.6,208.7 436.2,209.0 437.8,205.5 439.4,207.0 441.0,206.8 442.6,209.9 444.2,204.2 445.8,206.6 447.4,211.3 449.0,208.0 450.6,208.6 452.2,205.2 453.8,207.2 455.4,206.6 457.0,209.4 458.6,204.1 460.2,206.5 461.8,211.6 463.4,207.9 465.0,210.6 466.6,206.1 468.2,213.0 469.8,208.0 471.4,210.1 473.0,205.6 474.6,213.2 476.2,208.4 477.8,210.3 479.4,205.5 481.0,212.8 482.6,208.3 484.2,208.6 485.8,204.7 487.4,207.3 489.0,207.3 490.6,210.3 492.2,205.6 493.8,205.1 495.4,206.5 497.0,209.7 498.6,204.1 500.2,206.5 501.8,211.4 503.4,208.2 505.0,208.9 506.6,205.6 508.2,205.5 509.8,206.7 511.4,209.6 513.0,204.3 514.6,206.8 516.2,206.3 517.8,208.9 519.4,204.0 521.0,207.3 522.6,207.0 524.2,209.2 525.8,203.6 527.4,206.5 529.0,212.2 530.6,208.8 532.2,208.7 533.8,205.5 535.4,212.8 537.0,208.5 538.6,203.3 540.2,205.4 541.8,206.1 543.4,207.8 545.0,208.7 546.6,205.2 548.2,204.8 549.8,212.8 551.4,209.8 553.0,204.1 554.6,206.4 556.2,211.5 557.8,208.5 559.4,203.7 561.1,206.3 562.7,206.4 564.3,207.7 565.9,210.9 567.5,206.5 569.1,211.3 570.7,207.9 572.3,210.2 573.9,205.8 575.5,213.5 577.1,208.5 578.7,208.6 580.3,205.4 581.9,212.7 583.5,208.5 585.1,203.3 586.7,205.5 588.3,213.2 589.9,208.9 591.5,204.0 593.1,206.7 594.7,211.6 596.3,208.5 597.9,203.9 599.5,206.6 601.1,206.1 602.7,208.8 604.3,203.8 605.9,207.3 607.5,207.2 609.1,209.5 610.7,203.9 612.3,206.9 613.9,206.8 615.5,210.0 617.1,204.7 618.7,207.3 620.3,207.3 621.9,210.4 623.5,205.8 625.1,205.6 626.7,207.1 628.3,210.3 629.9,205.9 631.5,212.8 633.1,208.1 634.7,208.4 636.3,203.7 637.9,214.6 639.5,209.5 641.1,203.4 642.7,206.2 644.3,211.8 645.9,209.1 647.5,203.6 649.1,205.9 650.7,213.6 652.3,209.3 653.9,204.3 655.5,206.9 657.1,206.4 658.7,209.5 660.3,204.4 661.9,207.0 663.5,206.6 665.1,209.3 666.7,203.9 668.3,207.3 669.9,207.0 671.5,209.4 673.1,203.8 674.7,206.8 676.3,206.7 677.9,209.7 679.5,204.4 681.1,207.2 682.7,207.2 684.3,210.4 685.9,205.8 687.5,212.6 689.1,208.0 690.7,209.0 692.3,206.0 693.9,212.9 695.5,208.1 697.1,208.5 698.7,205.8 700.3,213.2 701.9,208.2 703.5,208.6 705.1,205.4 706.7,212.8 708.3,208.7 709.9,208.5 711.5,205.2 713.1,205.8 714.7,207.4 716.3,208.5 717.9,204.6 719.5,207.1 721.1,207.1 722.7,210.2 724.3,205.6 725.9,205.4 727.5,206.9 729.1,210.2 730.7,205.9 732.3,212.7 733.9,208.0 735.5,208.4 737.1,205.6 738.7,213.2 740.3,208.3 741.9,208.5 743.5,205.3 745.1,212.7 746.7,208.6 748.3,203.3 749.9,205.6 751.5,213.3 753.1,209.1 754.7,204.1 756.3,206.8 757.9,211.9 759.5,208.9 761.2,204.3 762.8,207.0 764.4,206.6 766.0,209.3 767.6,203.9 769.2,207.3 770.8,207.1 772.4,209.5 774.0,203.9 775.6,206.9 777.2,206.8 778.8,209.9 780.4,204.7 782.0,207.4 783.6,207.4 785.2,210.6 786.8,206.0 788.4,212.9 790.0,208.2 791.6,209.2 793.2,206.3 794.8,211.0 796.4,207.7 798.0,210.2 799.6,206.0 801.2,213.5 802.8,208.5 804.4,208.9 806.0,205.7 807.6,213.2 809.2,209.1 810.8,203.6 812.4,206.1 814.0,211.7 815.6,208.8 817.2,203.8 818.8,206.4 820.4,211.5 822.0,208.7 823.6,203.9 825.2,206.6 826.8,206.2 828.4,208.9 830.0,204.2 831.6,207.6 833.2,207.4 834.8,209.9 836.4,205.2 838.0,212.6 839.6,208.3 841.2,203.3 842.8,205.5 844.4,213.2 846.0,209.0 847.6,204.2 849.2,207.0 850.8,206.5 852.4,209.2 854.0,204.7 855.6,205.8 857.2,206.9 858.8,209.5 860.0,211.7"/><polyline class="c-ux" points="60.0,20.0 61.6,49.2 63.2,58.4 64.8,63.7 66.4,67.4 68.0,70.3 69.6,72.6 71.2,74.6 72.8,76.3 74.4,77.8 76.0,79.2 77.6,80.5 79.2,81.7 80.8,82.9 82.4,84.0 84.0,85.2 85.6,86.3 87.2,87.4 88.8,88.4 90.4,89.5 92.0,90.5 93.6,91.6 95.2,92.6 96.8,93.7 98.4,94.8 100.0,95.8 101.6,96.9 103.2,98.0 104.8,99.0 106.4,100.1 108.0,101.2 109.6,102.3 111.2,103.3 112.8,104.4 114.4,105.5 116.0,106.6 117.6,107.6 119.2,108.7 120.8,109.8 122.4,110.9 124.0,111.9 125.6,113.0 127.2,114.1 128.8,115.2 130.4,116.2 132.0,117.3 133.6,118.4 135.2,119.4 136.8,120.5 138.4,121.5 140.0,122.6 141.6,123.7 143.2,124.7 144.8,125.8 146.4,126.8 148.0,127.9 149.6,128.9 151.2,130.0 152.8,131.1 154.4,132.1 156.0,133.1 157.6,134.2 159.2,135.2 160.9,136.3 162.5,137.4 164.1,138.3 165.7,139.2 167.3,140.1 168.9,140.9 170.5,141.8 172.1,142.6 173.7,143.4 175.3,144.4 176.9,145.1 178.5,145.9 180.1,146.9 181.7,147.7 183.3,148.4 184.9,149.2 186.5,150.0 188.1,151.1 189.7,151.6 191.3,152.5 192.9,153.4 194.5,154.3 196.1,154.9 197.7,155.7 199.3,156.6 200.9,157.4 202.5,158.2 204.1,159.1 205.7,159.9 207.3,160.6 208.9,161.5 210.5,162.4 212.1,163.1 213.7,164.3 215.3,165.0 216.9,165.6 218.5,166.8 220.1,167.2 221.7,168.1 223.3,168.8 224.9,169.7 226.5,170.5 228.1,171.3 229.7,171.9 231.3,172.9 232.9,173.7 234.5,174.5 236.1,175.3 237.7,176.1 239.3,176.9 240.9,177.7 242.5,178.6 244.1,179.4 245.7,180.3 247.3,181.1 248.9,181.8 250.5,182.5 252.1,183.5 253.7,184.3 255.3,185.1 256.9,185.8 258.5,186.8 260.1,187.5 261.7,188.1 263.3,189.1 264.9,189.7 266.5,190.4 268.1,191.1 269.7,192.4 271.3,193.3 272.9,193.1 274.5,194.6 276.1,195.6 277.7,195.2 279.3,196.1 280.9,196.6 282.5,197.5 284.1,199.7 285.7,200.5 287.3,199.2 288.9,202.0 290.5,202.9 292.1,203.1 293.7,202.1 295.3,202.2 296.9,202.7 298.5,203.2 300.1,203.8 301.7,204.5 303.3,205.3 304.9,206.1 306.5,205.5 308.1,206.1 309.7,207.3 311.3,208.6 312.9,209.7 314.5,209.2 316.1,206.0 317.7,207.6 319.3,208.9 320.9,208.3 322.5,209.8 324.1,211.0 325.7,212.2 327.3,212.2 328.9,207.9 330.5,209.0 332.1,208.1 333.7,215.4 335.3,211.8 336.9,213.1 338.5,214.3 340.1,208.6 341.7,210.2 343.3,210.6 344.9,212.6 346.5,213.5 348.1,213.2 349.7,209.0 351.3,208.8 352.9,210.6 354.5,211.8 356.1,213.6 357.7,207.4 359.3,209.4 361.0,208.6 362.6,216.4 364.2,212.1 365.8,214.5 367.4,208.4 369.0,210.0 370.6,209.5 372.2,211.4 373.8,214.1 375.4,207.3 377.0,208.9 378.6,210.8 380.2,211.0 381.8,213.7 383.4,207.0 385.0,208.7 386.6,210.9 388.2,211.1 389.8,213.8 391.4,207.2 393.0,208.8 394.6,209.0 396.2,211.1 397.8,213.6 399.4,207.0 401.0,208.6 402.6,211.1 404.2,211.6 405.8,214.1 407.4,208.2 409.0,209.8 410.6,216.0 412.2,212.7 413.8,212.6 415.4,208.2 417.0,210.1 418.6,216.3 420.2,212.9 421.8,207.0 423.4,209.0 425.0,209.0 426.6,211.0 428.2,214.0 429.8,207.5 431.4,209.3 433.0,217.7 434.6,212.4 436.2,212.8 437.8,208.6 439.4,210.4 441.0,210.9 442.6,213.9 444.2,207.9 445.8,209.9 447.4,215.7 449.0,211.9 450.6,212.6 452.2,208.5 453.8,210.5 455.4,210.6 457.0,213.3 458.6,207.8 460.2,209.9 461.8,215.7 463.4,211.9 465.0,214.3 466.6,209.5 468.2,218.0 469.8,211.8 471.4,214.2 473.0,208.9 474.6,217.5 476.2,212.3 477.8,214.0 479.4,208.9 481.0,217.3 482.6,212.3 484.2,212.5 485.8,208.1 487.4,210.8 489.0,211.3 490.6,214.3 492.2,208.7 493.8,208.3 495.4,210.6 497.0,213.7 498.6,207.7 500.2,209.9 501.8,215.8 503.4,212.1 505.0,212.9 506.6,208.8 508.2,208.8 509.8,210.8 511.4,213.4 513.0,208.0 514.6,210.1 516.2,210.3 517.8,212.9 519.4,207.5 521.0,210.8 522.6,211.1 524.2,213.1 525.8,207.2 527.4,209.9 529.0,216.3 530.6,212.8 532.2,212.4 533.8,208.9 535.4,217.5 537.0,212.3 538.6,206.7 540.2,208.8 541.8,209.5 543.4,211.9 545.0,212.5 546.6,208.4 548.2,208.1 549.8,217.0 551.4,213.8 553.0,207.6 554.6,209.9 556.2,215.9 557.8,212.2 559.4,207.4 561.1,209.6 562.7,209.8 564.3,211.9 565.9,214.6 567.5,209.9 569.1,216.1 570.7,211.6 572.3,214.2 573.9,209.1 575.5,217.7 577.1,212.6 578.7,212.2 580.3,208.9 581.9,217.4 583.5,212.3 585.1,206.7 586.7,208.9 588.3,217.5 589.9,212.8 591.5,207.6 593.1,210.0 594.7,215.9 596.3,212.4 597.9,207.3 599.5,210.0 601.1,210.4 602.7,212.7 604.3,207.5 605.9,210.8 607.5,211.1 609.1,213.6 610.7,207.4 612.3,210.3 613.9,211.1 615.5,213.9 617.1,208.1 618.7,210.6 620.3,211.1 621.9,214.6 623.5,208.9 625.1,208.9 626.7,211.3 628.3,214.1 629.9,209.3 631.5,217.8 633.1,211.8 634.7,212.3 636.3,207.2 637.9,218.8 639.5,213.6 641.1,206.9 642.7,209.9 644.3,216.2 645.9,212.7 647.5,207.1 649.1,209.3 650.7,217.9 652.3,213.3 653.9,207.8 655.5,210.3 657.1,210.5 658.7,213.4 660.3,208.1 661.9,210.4 663.5,210.7 665.1,213.3 666.7,207.5 668.3,210.8 669.9,211.1 671.5,213.2 673.1,207.3 674.7,210.2 676.3,210.9 677.9,213.7 679.5,207.8 681.1,210.7 682.7,211.1 684.3,214.4 685.9,208.9 687.5,217.1 689.1,211.9 690.7,212.7 692.3,209.3 693.9,217.8 695.5,211.8 697.1,212.4 698.7,209.1 700.3,217.6 701.9,212.3 703.5,212.1 705.1,208.8 706.7,217.5 708.3,212.4 709.9,212.4 711.5,208.4 713.1,209.2 714.7,211.7 716.3,212.1 717.9,208.0 719.5,210.5 721.1,210.9 722.7,214.4 724.3,208.8 725.9,208.8 727.5,211.1 729.1,214.0 730.7,209.3 732.3,217.7 733.9,211.8 735.5,212.3 737.1,208.8 738.7,217.5 740.3,212.5 741.9,212.1 743.5,208.8 745.1,217.4 746.7,212.3 748.3,206.8 749.9,209.0 751.5,217.7 753.1,213.0 754.7,207.7 756.3,210.2 757.9,216.2 759.5,212.7 761.2,207.9 762.8,210.4 764.4,210.8 766.0,213.3 767.6,207.5 769.2,210.8 770.8,211.1 772.4,213.4 774.0,207.4 775.6,210.3 777.2,211.0 778.8,213.9 780.4,208.1 782.0,210.8 783.6,211.2 785.2,214.7 786.8,209.1 788.4,217.4 790.0,212.2 791.6,212.8 793.2,209.6 794.8,215.8 796.4,211.4 798.0,214.2 799.6,209.3 801.2,217.8 802.8,212.7 804.4,212.4 806.0,209.2 807.6,217.8 809.2,212.7 810.8,207.1 812.4,209.4 814.0,215.8 815.6,212.8 817.2,207.3 818.8,209.8 820.4,216.0 822.0,212.3 823.6,207.6 825.2,209.9 826.8,210.2 828.4,213.0 830.0,207.7 831.6,211.2 833.2,211.6 834.8,213.7 836.4,208.6 838.0,217.1 839.6,212.3 841.2,206.7 842.8,209.0 844.4,217.6 846.0,212.7 847.6,207.8 849.2,210.2 850.8,210.4 852.4,213.3 854.0,208.1 855.6,209.2 857.2,211.3 858.8,213.3 860.0,215.9"/><text class="c-axis" x="460.0" y="294" text-anchor="middle">time step</text></svg><!--/fig:residuals--></div>
+    <figcaption>Initial residuals from the hero run, read from its log. All three fall below 1e-6.</figcaption>
+  </figure>
+  <div class="stats three">
+    <div class="stat"><span class="num">2,000</span><p>Time steps</p></div>
+    <div class="stat"><span class="num">17 s</span><p>From <code>blockMesh</code> to exit 0, on a laptop</p></div>
+    <div class="stat"><span class="num">3</span><p>Commands per run: <code>blockMesh</code>, <code>foamToVTK</code>, <code>foamRun</code></p></div>
+  </div>
+</section>
+
+<section id="recover">
+  <div class="prose">
+    <h2>Recover</h2>
+    <p>When a run fails, the app reads the log, explains the likely cause and proposes a fix as a diff. You approve it before anything re-runs.</p>
+  </div>
+  <div class="ba block">
+    <div class="ba-col">
+      <p class="ba-h">Solver log</p>
+      <pre class="log">Create time
+
+<b>--&gt; FOAM FATAL ERROR:</b>
+solver not specified in the controlDict
+or on the command-line
+
+From function foamRun
+in file foamRun.C at line 95.
+
+FOAM exiting
+[foamRun exited with code 1]</pre>
+    </div>
+    <div class="ba-col">
+      <p class="ba-h">Diagnosis</p>
+      <div class="diag">
+        <p class="diag-t">Missing solver in controlDict</p>
+        <p>foamRun needs a <code>solver</code> entry to know which solver module to load. This case has none.</p>
+        <pre class="diff"><span class="f">system/controlDict</span>
+<span class="del">- solidLibs ...</span>
+<span class="add">+ solver  incompressibleFluid;</span></pre>
+        <div class="diag-b"><span class="btn">Apply and re-run</span><span class="btn ghost">Dismiss</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="prose">
+    <h2>Results</h2>
+    <p>A 3D viewer shows the solved case in the app, modelled on ANSYS CFD-Post: field colouring, time animation, slices, clips, iso-surfaces, streamlines, vector glyphs, point probes and a side-by-side compare.</p>
+  </div>
+  <ul class="chips">
+    <li>Field colouring</li><li>Time animation</li><li>Slice</li><li>Clip</li><li>Iso-surface</li><li>Streamlines</li><li>Vector glyphs</li><li>Point probe</li><li>Compare</li>
+  </ul>
+  <div class="gallery">
+    <figure class="g-cyl"><div class="plate tight"><img src="media/field-cylinder.webp" alt="Velocity magnitude around a cylinder: fast flow on both sides and a long slow wake behind it." width="1600" height="800" loading="lazy"></div><figcaption><b>“Create a flow around cylinder”</b> Velocity magnitude.</figcaption></figure>
+    <figure class="g-cav"><div class="plate tight"><img src="media/field-cavity.webp" alt="Velocity magnitude in the lid-driven cavity: fast along the lid, a slow core where the vortex centres." width="960" height="960" loading="lazy"></div><figcaption><b>“Lid-driven cavity, Re=100”</b> Velocity magnitude.</figcaption></figure>
+    <figure class="g-step"><div class="plate tight"><img src="media/field-step.webp" alt="Velocity magnitude in a backward-facing step: a fast core leaving the step and slow regions at the walls." width="1600" height="225" loading="lazy"></div><figcaption><b>“Pitz daily 2D, re 10”</b> Velocity magnitude. Height ×3.</figcaption></figure>
+    <figure class="g-ch"><div class="plate tight"><img src="media/field-channel.webp" alt="Temperature in a channel with a heated bottom wall: a warm layer grows along the floor." width="1600" height="128" loading="lazy"></div><figcaption><b>“Channel flow with a heated bottom wall”</b> Temperature, 300 to 319 K. Height ×4.</figcaption></figure>
+  </div>
+  <div class="scale"><span>0</span><i></i><span>max</span></div>
+  <p class="cap">Four runs from the app, each from one sentence. Drawn for this page from each run’s output files.</p>
+</section>
+
+<section id="setup">
+  <div class="prose">
+    <h2>Setup</h2>
+    <p>Docker and a model are the two things that stop people on day one. A health check runs on first launch, checks Docker, the OpenFOAM image and the model login, and repairs what it can. Bring your own key or point it at a local model through Ollama.</p>
+  </div>
+  <div class="two block">
+    <figure>
+      <div class="win">
+        <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-title">Environment setup</span></div>
+        <div class="w-main pad">
+          <ul class="w-checks">
+            <li><i class="okd"></i><b>Docker</b><span>Running</span></li>
+            <li><i class="okd"></i><b>OpenFOAM image</b><span>microfluidica/openfoam:13</span></li>
+            <li class="bad"><i class="bad"></i><b>Claude CLI</b><span>Not installed</span>
+              <div class="w-fix"><code>$ npm install -g @anthropic-ai/claude-code</code><div class="w-acts"><span class="w-btn pri">Fix it for me</span><span class="w-btn">I’ve done it</span></div></div></li>
+            <li class="wait"><i class="waitd"></i><b>Model login</b><span>Waiting</span></li>
+          </ul>
+        </div>
+      </div>
+      <figcaption>Each missing piece comes with its exact command and a button that runs it.</figcaption>
+    </figure>
+    <figure>
+      <div class="win">
+        <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-title">AI provider</span></div>
+        <div class="w-main pad">
+          <div class="w-form">
+            <div class="w-grid one">
+              <label><span>Provider</span><b class="sel">Custom OpenAI-compatible endpoint</b></label>
+              <label><span>Model</span><b>llama3.1:8b</b></label>
+              <label><span>Base URL</span><b>http://localhost:11434/v1</b></label>
+              <label><span>API key</span><b class="ph">optional (leave blank for local Ollama)</b></label>
+            </div>
+            <p class="w-note">Stored locally in your user config directory. Never leaves this machine except when calling the selected provider.</p>
+          </div>
+        </div>
+      </div>
+      <figcaption>A local model through Ollama needs no key at all.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="part" id="system">
+  <h2>System design</h2>
+  <p>Most of the work is here: what runs where, what the model can and can’t touch, and how a failed run gets back on track.</p>
+</div>
+
+<section id="architecture">
+  <div class="prose">
+    <h2>Architecture</h2>
+    <p>Electron starts a local Node server, and the React interface talks to it over REST, with live updates as server-sent events. All the real work lives in <code>core/</code>, plain Node with no Electron in it, so the whole pipeline runs and is tested without a window.</p>
+  </div>
+  <figure class="diagram" data-fluid-quiet>
+    <svg viewBox="0 0 880 420" class="arch" role="img" aria-label="Renderer talks to the local server over REST and server-sent events. The server calls core modules, which run commands in an OpenFOAM container through dockerode and call LLM providers. The container and the server share the project folder on disk. Electron starts the server and opens the window.">
+<g class="node" tabindex="0">      <rect class="n" x="0" y="20" width="170" height="250" rx="12"/>
+      <text class="t" x="20" y="50">Renderer</text><text class="ts" x="20" y="70">React · Vite · Zustand</text>
+      <path class="l" d="M0 86H170"/>
+      <text class="tm" x="20" y="114">Files</text><text class="tm" x="20" y="140">Editor</text><text class="tm" x="20" y="166">Assistant</text><text class="tm" x="20" y="192">Logs · Runs</text><text class="tm" x="20" y="218">Parameters</text><text class="tm" x="20" y="244">Results</text></g>
+
+<g class="node" tabindex="0">      <rect class="n" x="220" y="20" width="170" height="250" rx="12"/>
+      <text class="t" x="240" y="50">Local server</text><text class="ts" x="240" y="70">Node · port 3456</text>
+      <path class="l" d="M220 86H390"/>
+      <text class="tm" x="240" y="114">/generate</text><text class="tm" x="240" y="140">/run</text><text class="tm" x="240" y="166">/apply-fix</text><text class="tm" x="240" y="192">/postprocess</text><text class="tm" x="240" y="218">/vtk/manifest</text><text class="tm" x="240" y="244">/health</text></g>
+
+<g class="node" tabindex="0">      <rect class="nk" x="450" y="20" width="190" height="250" rx="12"/>
+      <text class="tk" x="470" y="50">core/</text><text class="tk2" x="470" y="70">Plain Node, no Electron</text>
+      <path class="lk" d="M450 86H640"/>
+      <text class="tkm" x="470" y="114">agent</text><text class="tkm" x="470" y="140">docker</text><text class="tkm" x="470" y="166">recovery</text><text class="tkm" x="470" y="192">postprocess</text><text class="tkm" x="470" y="218">docs index</text><text class="tkm" x="470" y="244">setup · health</text></g>
+
+<g class="node" tabindex="0">      <rect class="n" x="710" y="20" width="170" height="250" rx="12"/>
+      <text class="t" x="730" y="50">Container</text><text class="ts" x="730" y="70">OpenFOAM 13</text>
+      <path class="l" d="M710 86H880"/>
+      <text class="tm" x="730" y="114">blockMesh</text><text class="tm" x="730" y="140">checkMesh</text><text class="tm" x="730" y="166">foamRun</text><text class="tm" x="730" y="192">foamToVTK</text></g>
+
+      <path class="la" d="M170 130H216" marker-end="url(#aa)"/><path class="la" d="M220 160H174" marker-end="url(#aa)"/>
+      <text class="ts" x="195" y="118" text-anchor="middle">REST</text><text class="ts" x="195" y="182" text-anchor="middle">SSE</text>
+      <path class="l" d="M390 145H446" marker-end="url(#ah)"/><text class="ts" x="420" y="133" text-anchor="middle">calls</text>
+      <path class="l" d="M640 145H706" marker-end="url(#ah)"/><text class="ts" x="675" y="133" text-anchor="middle">dockerode</text>
+
+<g class="node" tabindex="0">      <rect class="n" x="0" y="330" width="390" height="76" rx="12"/>
+      <text class="t" x="20" y="360">Electron shell</text><text class="ts" x="20" y="382">Starts the server, waits for it, opens the window</text>
+      <path class="l" d="M85 330V274M305 330V274" stroke-dasharray="3 4"/></g>
+
+<g class="node" tabindex="0">      <rect class="n" x="450" y="330" width="190" height="76" rx="12"/>
+      <text class="t" x="470" y="356">LLM providers</text><text class="ts" x="470" y="376">Anthropic · OpenAI · Google</text><text class="ts" x="470" y="393">Ollama · Claude CLI</text>
+      <path class="l" d="M545 270V326" marker-end="url(#ah)"/></g>
+
+<g class="node" tabindex="0">      <rect class="n" x="710" y="330" width="170" height="76" rx="12"/>
+      <text class="t" x="730" y="360">Project folder</text><text class="ts" x="730" y="382">case/ · runs · logs</text>
+      <path class="l" d="M795 270V326" marker-end="url(#ah)"/><text class="ts" x="803" y="304">bind mount</text></g>
+    </svg>
+    <figcaption>Three layers in one app. The interface also runs in a plain browser against a mocked backend.</figcaption>
+  </figure>
+  <div class="cols">
+    <div><h3>Headless core</h3><p>No Electron import is allowed in <code>core/</code>. Every module can be run and tested from a terminal.</p></div>
+    <div><h3>Thin shell</h3><p>Electron only starts the server, waits up to 30 seconds for it to answer, then loads the interface.</p></div>
+    <div><h3>One port</h3><p>The server serves the built interface and the API from <code>localhost:3456</code>, so the browser and the app see the same thing.</p></div>
+  </div>
+</section>
+
+<section id="agent">
+  <div class="prose">
+    <h2>Agent loop</h2>
+    <p>Generation is a tool-calling loop, not one big prompt. The model gets eight tools and works until it calls <code>finish</code> or reaches 16 steps. Its instructions tell it to save the last steps for <code>blockMesh</code>, <code>checkMesh</code> and a short solver run, so it tests a case before calling it done.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 250" id="loop" role="img" aria-label="The model calls a tool, gets the result back and repeats, up to 16 steps. When it calls finish, the loop ends with a summary.">
+      <rect class="n" x="40" y="80" width="200" height="84" rx="12"/><text class="t" x="140" y="116" text-anchor="middle">Model</text><text class="ts" x="140" y="138" text-anchor="middle">Your choice of provider</text>
+      <rect class="n" x="380" y="80" width="200" height="84" rx="12"/><text class="t" x="480" y="116" text-anchor="middle">Tools</text><text class="ts" x="480" y="138" text-anchor="middle">Files · docs · run</text>
+      <path class="la" id="arc-call" d="M180 80C200 20 420 20 440 76" marker-end="url(#aa)"/><text class="ts" x="310" y="30" text-anchor="middle">tool call</text>
+      <path class="l" id="arc-res" d="M440 164C420 224 200 224 182 168" marker-end="url(#ah)"/><text class="ts" x="310" y="226" text-anchor="middle">result</text>
+      <rect class="nk" id="fin-box" x="680" y="80" width="200" height="84" rx="12"/><text class="tk" x="780" y="116" text-anchor="middle">finish</text><text class="tk2" x="780" y="138" text-anchor="middle">Summary of the case</text>
+      <path class="la" d="M580 122H676" marker-end="url(#aa)"/>
+      <text class="tm" x="40" y="60" id="step-n">step 1 … 16</text>
+    </svg>
+  </figure>
+  <div class="play" id="play" data-fluid-quiet>
+    <div class="play-h"><p>A cavity case, step by step, in the order the agent is told to work.</p><button class="fbtn" type="button" id="play-btn">Replay</button></div>
+    <ol class="play-list"><li><span class="sn">01</span><code>search_docs</code><span class="sa">"lid-driven cavity incompressibleFluid"</span><span class="sr">3 hits</span></li><li><span class="sn">02</span><code>read_doc</code><span class="sa">wiki/cases/lid-driven-cavity.md</span><span class="sr">read</span></li><li><span class="sn">03</span><code>list_case_files</code><span class="sa"></span><span class="sr">empty case</span></li><li><span class="sn">04</span><code>write_case_file</code><span class="sa">0/U</span><span class="sr">written</span></li><li><span class="sn">05</span><code>write_case_file</code><span class="sa">0/p</span><span class="sr">written</span></li><li><span class="sn">06</span><code>write_case_file</code><span class="sa">constant/physicalProperties</span><span class="sr">written</span></li><li><span class="sn">07</span><code>write_case_file</code><span class="sa">constant/momentumTransport</span><span class="sr">written</span></li><li><span class="sn">08</span><code>write_case_file</code><span class="sa">system/controlDict</span><span class="sr">written</span></li><li><span class="sn">09</span><code>write_case_file</code><span class="sa">system/fvSchemes</span><span class="sr">written</span></li><li><span class="sn">10</span><code>write_case_file</code><span class="sa">system/fvSolution</span><span class="sr">written</span></li><li><span class="sn">11</span><code>write_case_file</code><span class="sa">system/blockMeshDict</span><span class="sr">written</span></li><li><span class="sn">12</span><code>run_command</code><span class="sa">blockMesh</span><span class="sr">exit 0</span></li><li><span class="sn">13</span><code>run_command</code><span class="sa">checkMesh</span><span class="sr">Mesh OK</span></li><li><span class="sn">14</span><code>run_command</code><span class="sa">foamRun --steps 10</span><span class="sr">exit 0</span></li><li><span class="sn">15</span><code>finish</code><span class="sa"></span><span class="sr">8 files, validated</span></li></ol>
+    <p class="play-foot"><span id="play-count">15</span> of 16 steps used</p>
+  </div>
+  <div class="toolsets">
+    <div class="toolset"><span class="num">4</span><h3>Case files</h3><p>Every write stays inside the case folder and uses LF line endings.</p><ul><li>list_case_files</li><li>read_case_file</li><li>write_case_file</li><li>edit_case_file</li></ul></div>
+    <div class="toolset"><span class="num">2</span><h3>Docs</h3><p>Search the OpenFOAM manual and the wiki, then read a full page.</p><ul><li>search_docs</li><li>read_doc</li></ul></div>
+    <div class="toolset"><span class="num">1</span><h3>Run</h3><p>One command in the container, from the allowlist only.</p><ul><li>run_command</li></ul></div>
+    <div class="toolset key"><span class="num">1</span><h3>Finish</h3><p>Refused while the case folder is empty.</p><ul><li>finish</li></ul></div>
+  </div>
+  <div class="cols">
+    <div><h3>Two engines</h3><p>API keys go through the Vercel AI SDK. The Claude CLI option uses your own Claude Code login, so it works without a key.</p></div>
+    <div><h3>Local models</h3><p>With OpenAI-compatible models such as Ollama, files are written one at a time, which suits smaller models.</p></div>
+    <div><h3>Every step streamed</h3><p>Each tool call, result and file write goes to the interface as it happens.</p></div>
+  </div>
+</section>
+
+<section id="knowledge">
+  <div class="prose">
+    <h2>Knowledge</h2>
+    <p>The agent looks things up instead of relying on memory. A keyword index covers 48 pages of the OpenFOAM 13 manual and 18 wiki pages, split at headings. Search returns the source path, so the agent can read the whole page and cite it.</p>
+  </div>
+  <figure class="diagram">
+    <div class="search" id="search" data-fluid-quiet>
+      <div class="q"><span class="qk">search_docs</span><input id="q" type="search" value="Courant" spellcheck="false" autocomplete="off" aria-label="Search the docs"></div>
+      <ol class="hits" id="hits"><li><span class="hp">wiki/errors/common-failures.md</span><span class="hh">deltaT Too Large (Divergence)</span></li></ol>
+      <div class="q next"><span class="qk">read_doc</span><span class="qv" id="readdoc">wiki/errors/common-failures.md</span></div>
+      <div class="t-ex s-ex"><button type="button" data-q="Courant">Courant</button><button type="button" data-q="noSlip">noSlip</button><button type="button" data-q="pRefCell">pRefCell</button><button type="button" data-q="PIMPLE">PIMPLE</button><button type="button" data-q="empty patch">empty patch</button></div>
+    </div>
+    <figcaption>Search the agent’s sources, split at the same headings: the wiki’s OpenFOAM pages and the manual’s section titles. Try another word.</figcaption>
+  </figure>
+  <div class="stats three">
+    <div class="stat"><span class="num">48</span><p>Manual pages, scraped from the OpenFOAM 13 user guide</p></div>
+    <div class="stat"><span class="num">18</span><p>Wiki pages on cases, solvers and common failures</p></div>
+    <div class="stat"><span class="num">0</span><p>Vector databases. The corpus is small, and exact keywords suit OpenFOAM’s vocabulary.</p></div>
+  </div>
+</section>
+
+<section id="sandbox">
+  <div class="prose">
+    <h2>Sandbox</h2>
+    <p>Every solver command runs in a fresh container with only the case folder mounted, and the container is removed when the command ends. Commands are checked against an allowlist in code, not in the prompt, and every argument is shell-escaped.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 250" role="img" aria-label="A command is checked against the allowlist, then a container is created with the case folder mounted, the command runs and streams its output, the exit code is read, and the container is removed. A rejected command never reaches Docker. Cancelling kills the container.">
+      <rect class="n" x="0" y="40" width="130" height="64" rx="10"/><text class="t" x="65" y="70" text-anchor="middle">Allowlist</text><text class="ts" x="65" y="90" text-anchor="middle">In code</text>
+      <rect class="n" x="160" y="40" width="130" height="64" rx="10"/><text class="t" x="225" y="70" text-anchor="middle">Create</text><text class="ts" x="225" y="90" text-anchor="middle">Mount case/</text>
+      <rect class="n" x="320" y="40" width="130" height="64" rx="10"/><text class="t" x="385" y="70" text-anchor="middle">Exec</text><text class="ts" x="385" y="90" text-anchor="middle">Escaped args</text>
+      <rect class="n" x="480" y="40" width="130" height="64" rx="10"/><text class="t" x="545" y="70" text-anchor="middle">Stream</text><text class="ts" x="545" y="90" text-anchor="middle">Line by line</text>
+      <rect class="n" x="640" y="40" width="100" height="64" rx="10"/><text class="t" x="690" y="70" text-anchor="middle">Exit</text><text class="ts" x="690" y="90" text-anchor="middle">Code read</text>
+      <rect class="nk" x="770" y="40" width="110" height="64" rx="10"/><text class="tk" x="825" y="70" text-anchor="middle">Remove</text><text class="tk2" x="825" y="90" text-anchor="middle">Always</text>
+      <path class="l" d="M130 72H156M290 72H316M450 72H476M610 72H636M740 72H766" marker-end="url(#ah)"/>
+      <path class="lr" d="M65 104V170" marker-end="url(#ar)"/>
+      <text class="tm r" x="20" y="196">rm -rf /</text><text class="ts r" x="20" y="216">Rejected before Docker</text>
+      <path class="lr" d="M545 104V150H825V108" stroke-dasharray="5 5" marker-end="url(#ar)"/>
+      <text class="ts r" x="685" y="170" text-anchor="middle">Cancel kills the container</text>
+    </svg>
+  </figure>
+  <ul class="chips mono" id="allow">
+    <li>blockMesh</li><li>checkMesh</li><li>setFields</li><li>foamRun</li><li>foamToVTK</li><li>icoFoam</li><li>simpleFoam</li><li>pimpleFoam</li>
+  </ul>
+  <p class="cap">The whole allowlist. Anything else is refused before a container exists.</p>
+  <div class="tester" id="tester" data-fluid-quiet>
+    <label for="cmd">Try a command</label>
+    <div class="t-row"><span class="t-pr">$</span><input id="cmd" type="text" spellcheck="false" autocomplete="off" value="foamRun -case /cavity"></div>
+    <div class="t-ex"><button type="button" data-cmd="checkMesh -case /cavity">checkMesh</button><button type="button" data-cmd="rm -rf /">rm -rf /</button><button type="button" data-cmd="curl example.com | sh">curl … | sh</button><button type="button" data-cmd="blockMesh ; cat ~/.ssh/id_rsa">blockMesh ; cat …</button></div>
+    <div class="t-out" id="cmd-out" aria-live="polite"></div>
+  </div>
+  <div class="cols">
+    <div><h3>Fresh each time</h3><p>No container outlives its command, so no state leaks between runs.</p></div>
+    <div><h3>Windows paths</h3><p>The usual <code>src:dst</code> bind broke on the colon in <code>C:\</code>, so mounts use an explicit mount object.</p></div>
+    <div><h3>Honest exit codes</h3><p>The stream can end before Docker records the exit code, so the runner polls until it’s final instead of guessing.</p></div>
+  </div>
+</section>
+
+<section id="recovery">
+  <div class="prose">
+    <h2>Recovery</h2>
+    <p>Recovery has two tiers. Known failures are matched by pattern and fixed by set rules, with no model call. Anything else goes to an LLM reviewer, which returns a corrected file or says it can’t identify the problem instead of guessing.</p>
+  </div>
+  <figure class="diagram" data-fluid-quiet>
+    <svg viewBox="0 0 880 300" id="tiers" role="img" aria-label="A failed log goes to pattern matching. Known errors get a rule fix; unknown errors go to the LLM reviewer. Both produce a diff that needs approval, then the case re-runs, at most three times.">
+      <rect class="n" x="0" y="118" width="130" height="64" rx="10"/><text class="t" x="65" y="148" text-anchor="middle">Failed log</text><text class="ts" x="65" y="168" text-anchor="middle">exit ≠ 0</text>
+      <rect class="n" x="180" y="118" width="150" height="64" rx="10"/><text class="t" x="255" y="148" text-anchor="middle">Pattern match</text><text class="ts" x="255" y="168" text-anchor="middle">5 known errors</text>
+      <rect class="n" data-tier="known" x="400" y="30" width="190" height="64" rx="10"/><text class="t" x="495" y="60" text-anchor="middle">Rule fix</text><text class="ts" x="495" y="80" text-anchor="middle">Same fix every time</text>
+      <rect class="n" data-tier="unknown" x="400" y="206" width="190" height="64" rx="10"/><text class="t" x="495" y="236" text-anchor="middle">LLM reviewer</text><text class="ts" x="495" y="256" text-anchor="middle">Fix, or “can’t tell”</text>
+      <rect class="nk" x="660" y="118" width="220" height="64" rx="10"/><text class="tk" x="770" y="148" text-anchor="middle">Diff + approval</text><text class="tk2" x="770" y="168" text-anchor="middle">Then re-run</text>
+      <path class="l" d="M130 150H176" marker-end="url(#ah)"/>
+      <path class="la" data-tier="known" d="M330 140C360 140 360 62 396 62" marker-end="url(#aa)"/><text class="ts a" x="352" y="84" text-anchor="middle">known</text>
+      <path class="l" data-tier="unknown" d="M330 160C360 160 360 238 396 238" marker-end="url(#ah)"/><text class="ts" x="352" y="224" text-anchor="middle">unknown</text>
+      <path class="la" data-tier="known" d="M590 62C630 62 626 140 656 140" marker-end="url(#aa)"/>
+      <path class="l" data-tier="unknown" d="M590 238C630 238 626 160 656 160" marker-end="url(#ah)"/>
+      <path class="lr" d="M770 182V290H65V186" stroke-dasharray="5 5" marker-end="url(#ar)"/>
+      <text class="ts r" x="250" y="282" text-anchor="middle">At most 3 retries per run</text>
+    </svg>
+  </figure>
+  <div class="table" id="err-table" data-fluid-quiet>
+    <div class="tr th"><span>Log says</span><span>File</span><span>Fix</span></div>
+    <div class="tr" data-tier="known" tabindex="0"><code>keyword UFinal is undefined</code><span>fvSolution</span><span>Add a UFinal solver block</span></div>
+    <div class="tr" data-tier="known" tabindex="0"><code>cannot find file …/phaseProperties</code><span>phaseProperties</span><span>Create it for water and air</span></div>
+    <div class="tr" data-tier="known" tabindex="0"><code>Unknown patchField type "…"</code><span>0/U</span><span>Replace the type with noSlip</span></div>
+    <div class="tr" data-tier="known" tabindex="0"><code>No reference cell found</code><span>fvSolution</span><span>Add pRefCell and pRefValue</span></div>
+    <div class="tr" data-tier="known" tabindex="0"><code>Courant Number … max: &gt; 1</code><span>controlDict</span><span>Halve deltaT</span></div>
+    <div class="tr" data-tier="unknown" tabindex="0"><code>anything else</code><span>any</span><span>LLM reviewer proposes a corrected file</span></div>
+  </div>
+  <p class="cap">The five known errors, and everything else. Hover a row to see which path it takes.</p>
+</section>
+
+<section id="storage">
+  <div class="prose">
+    <h2>Storage and streams</h2>
+    <p>There’s no database. Each project is a folder, with append-only logs for runs and commands. Generation, runs and repairs all reach the interface as server-sent events.</p>
+  </div>
+  <div class="two block">
+    <figure class="pane">
+      <p class="pane-h">Project folder</p>
+<pre class="tree">projects/82a55a15/
+├─ meta.json        <i>name, status, chat history</i>
+├─ case/            <i>the OpenFOAM case</i>
+│  ├─ 0/  constant/  system/
+│  ├─ 0.05/ … 10/   <i>time steps</i>
+│  └─ VTK/          <i>for the viewer</i>
+├─ runs.jsonl       <i>one line per run</i>
+├─ commands.jsonl   <i>every container command</i>
+└─ runs/
+   └─ 342d3523.log  <i>full solver log</i></pre>
+    </figure>
+    <figure class="pane">
+      <p class="pane-h">POST /run · text/event-stream</p>
+<pre class="sse"><b>run-started</b> {"runId":"342d3523"}
+<b>line</b>        &gt; blockMesh -case /cavity
+<b>exit</b>        {"cmd":"blockMesh","code":0}
+<b>line</b>        Time = 0.005s
+<b>residual</b>    {"Ux":1,"Uy":0.99,"p":1}
+<b>line</b>        Time = 0.01s
+…
+<b>exit</b>        {"cmd":"foamRun","code":0}
+<b>done</b>        {"status":"success"}</pre>
+    </figure>
+  </div>
+  <p class="cap">Event payloads are simplified here.</p>
+  <div class="cols">
+    <div><h3>Plain files</h3><p>An OpenFOAM case is already plain files, so the same folder opens in ParaView or a terminal. Nothing is locked inside the app.</p></div>
+    <div><h3>Append-only</h3><p>Runs and commands are added as new lines and never rewritten, so a crash can’t corrupt the history.</p></div>
+    <div><h3>One stream per job</h3><p>Closing the request cancels the job, and on a run that kills the container.</p></div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="prose">
+    <h2>Results pipeline</h2>
+    <p>After a run, <code>foamToVTK</code> converts every time step inside the container. The server builds a list of steps and patches, and the interface fetches each step when it’s needed. vtk.js has no reader for this format, so I wrote one.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 200" role="img" aria-label="Case folder to foamToVTK in Docker, to VTK files, to the manifest API, to a custom parser, surface extraction and a cache, to the vtk.js viewer.">
+      <rect class="n" x="0" y="20" width="120" height="60" rx="10"/><text class="t" x="60" y="56" text-anchor="middle">case/</text>
+      <rect class="n" x="150" y="20" width="140" height="60" rx="10"/><text class="t" x="220" y="48" text-anchor="middle">foamToVTK</text><text class="ts" x="220" y="66" text-anchor="middle">In Docker</text>
+      <rect class="n" x="320" y="20" width="120" height="60" rx="10"/><text class="t" x="380" y="48" text-anchor="middle">VTK/*.vtk</text><text class="ts" x="380" y="66" text-anchor="middle">Every step</text>
+      <rect class="n" x="470" y="20" width="140" height="60" rx="10"/><text class="t" x="540" y="48" text-anchor="middle">Manifest</text><text class="ts" x="540" y="66" text-anchor="middle">Steps + patches</text>
+      <rect class="nk" x="640" y="20" width="240" height="60" rx="10"/><text class="tk" x="760" y="48" text-anchor="middle">Viewer</text><text class="tk2" x="760" y="66" text-anchor="middle">vtk.js, WebGL</text>
+      <path class="l" d="M120 50H146M290 50H316M440 50H466M610 50H636" marker-end="url(#ah)"/>
+      <rect class="n dash" x="470" y="120" width="410" height="60" rx="10"/>
+      <text class="tm" x="490" y="155">parser</text><text class="tm" x="610" y="155">surface</text><text class="tm" x="730" y="155">cache</text>
+      <path class="l" d="M545 151H600M675 151H720" marker-end="url(#ah)"/>
+      <path class="la" d="M540 80V116M800 120V84" marker-end="url(#aa)"/>
+      <text class="ts" x="490" y="198">In the browser, per step, on demand</text>
+    </svg>
+  </figure>
+  <div class="cols">
+    <div><h3>Own parser</h3><p>vtk.js has no reader for legacy unstructured VTK files, so the interface parses them itself.</p></div>
+    <div><h3>Cached steps</h3><p>Parsed steps are kept in memory, so scrubbing through time never reads from disk twice.</p></div>
+    <div><h3>One engine</h3><p>All vtk.js code sits behind one class. When WebGL drops its context, the viewer recovers instead of going blank.</p></div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="prose">
+    <h2>Stack and release</h2>
+  </div>
+  <ul class="stack">
+    <li><b>Interface</b><span>Electron, Vite, React, TypeScript, Zustand, Monaco, vtk.js</span></li>
+    <li><b>Server</b><span>Node, REST and server-sent events, dockerode</span></li>
+    <li><b>AI</b><span>Vercel AI SDK for Anthropic, OpenAI, Google and OpenAI-compatible models; the Claude CLI as a fallback; FlexSearch for docs</span></li>
+    <li><b>Solver</b><span>OpenFOAM 13 (Foundation) in <code>microfluidica/openfoam:13</code></span></li>
+    <li><b>Tests</b><span>Vitest, 25 test files: unit tests plus stages 0 to 5</span></li>
+    <li><b>Release</b><span>GitHub Actions builds a macOS DMG and a Windows installer and publishes them to GitHub Releases</span></li>
+  </ul>
+</section>
+
+<section id="validation">
+  <div class="prose">
+    <h2>Validation</h2>
+    <p>Physics is in the test suite. One stage runs the lid-driven cavity and compares the velocity along its centreline with Ghia et al. (1982), and a physics regression fails the build.</p>
+  </div>
+  <figure class="chart hov" id="ghia-chart" data-fluid-quiet>
+    <div class="legend"><span class="k-run">OpenFOAM Studio run</span><span class="k-ref">Ghia et al. (1982)</span></div>
+    <div class="plot"><div class="readout" id="ghia-read" hidden></div><!--fig:ghia--><svg viewBox="0 0 880 420" role="img" aria-label="Horizontal velocity along the vertical centreline of the cavity. The OpenFOAM Studio run follows the Ghia et al. 1982 points closely."><path class="c-grid" d="M60.0 20V370"/><text class="c-tick" x="60.0" y="390" text-anchor="middle">-0.4</text><path class="c-grid" d="M174.3 20V370"/><text class="c-tick" x="174.3" y="390" text-anchor="middle">-0.2</text><path class="c-grid" d="M288.6 20V370"/><text class="c-tick" x="288.6" y="390" text-anchor="middle">0</text><path class="c-grid" d="M402.9 20V370"/><text class="c-tick" x="402.9" y="390" text-anchor="middle">0.2</text><path class="c-grid" d="M517.1 20V370"/><text class="c-tick" x="517.1" y="390" text-anchor="middle">0.4</text><path class="c-grid" d="M631.4 20V370"/><text class="c-tick" x="631.4" y="390" text-anchor="middle">0.6</text><path class="c-grid" d="M745.7 20V370"/><text class="c-tick" x="745.7" y="390" text-anchor="middle">0.8</text><path class="c-grid" d="M860.0 20V370"/><text class="c-tick" x="860.0" y="390" text-anchor="middle">1</text><path class="c-grid" d="M60 370.0H860"/><text class="c-tick" x="50" y="374.0" text-anchor="end">0</text><path class="c-grid" d="M60 282.5H860"/><text class="c-tick" x="50" y="286.5" text-anchor="end">0.25</text><path class="c-grid" d="M60 195.0H860"/><text class="c-tick" x="50" y="199.0" text-anchor="end">0.5</text><path class="c-grid" d="M60 107.5H860"/><text class="c-tick" x="50" y="111.5" text-anchor="end">0.75</text><path class="c-grid" d="M60 20.0H860"/><text class="c-tick" x="50" y="24.0" text-anchor="end">1</text><path class="c-zero" d="M288.6 20V370"/><polyline class="c-run" points="288.6,370.0 278.1,361.2 260.7,343.8 245.4,326.2 231.1,308.8 217.1,291.2 203.4,273.8 190.6,256.2 179.9,238.8 173.0,221.2 172.0,203.8 178.6,186.2 193.6,168.8 216.7,151.2 247.0,133.8 283.3,116.3 326.4,98.7 380.8,81.3 458.3,63.8 578.1,46.2 755.2,28.8 860.0,20.0"/><circle class="c-ref" cx="860.0" cy="20.0" r="4.5" data-y="1" data-g="1" data-r="1.0000" data-rx="860.0"/><circle class="c-ref" cx="769.3" cy="28.2" r="4.5" data-y="0.9766" data-g="0.84123" data-r="0.8284" data-rx="761.9"/><circle class="c-ref" cx="739.3" cy="30.9" r="4.5" data-y="0.9688" data-g="0.78871" data-r="0.7782" data-rx="733.3"/><circle class="c-ref" cx="709.8" cy="33.7" r="4.5" data-y="0.9609" data-g="0.73722" data-r="0.7292" data-rx="705.3"/><circle class="c-ref" cx="681.2" cy="36.4" r="4.5" data-y="0.9531" data-g="0.68717" data-r="0.6809" data-rx="677.6"/><circle class="c-ref" cx="420.9" cy="71.9" r="4.5" data-y="0.8516" data-g="0.23151" data-r="0.2336" data-rx="422.1"/><circle class="c-ref" cx="290.5" cy="113.0" r="4.5" data-y="0.7344" data-g="0.00332" data-r="0.0050" data-rx="291.4"/><circle class="c-ref" cx="210.6" cy="154.0" r="4.5" data-y="0.6172" data-g="-0.13641" data-r="-0.1321" data-rx="213.1"/><circle class="c-ref" cx="171.0" cy="195.0" r="4.5" data-y="0.5" data-g="-0.20581" data-r="-0.1982" data-rx="175.3"/><circle class="c-ref" cx="168.1" cy="211.4" r="4.5" data-y="0.4531" data-g="-0.2109" data-r="-0.2032" data-rx="172.5"/><circle class="c-ref" cx="199.1" cy="271.5" r="4.5" data-y="0.2813" data-g="-0.15662" data-r="-0.1519" data-rx="201.8"/><circle class="c-ref" cx="230.6" cy="309.8" r="4.5" data-y="0.1719" data-g="-0.1015" data-r="-0.0991" data-rx="232.0"/><circle class="c-ref" cx="251.8" cy="334.4" r="4.5" data-y="0.1016" data-g="-0.06434" data-r="-0.0630" data-rx="252.6"/><circle class="c-ref" cx="261.3" cy="345.4" r="4.5" data-y="0.0703" data-g="-0.04775" data-r="-0.0459" data-rx="262.3"/><circle class="c-ref" cx="264.6" cy="348.1" r="4.5" data-y="0.0625" data-g="-0.04192" data-r="-0.0411" data-rx="265.1"/><circle class="c-ref" cx="267.3" cy="350.9" r="4.5" data-y="0.0547" data-g="-0.03717" data-r="-0.0364" data-rx="267.8"/><circle class="c-ref" cx="288.6" cy="370.0" r="4.5" data-y="0" data-g="0" data-r="0.0000" data-rx="288.6"/><text class="c-axis" x="460.0" y="412" text-anchor="middle">u / U lid</text><text class="c-axis" x="14" y="195.0" text-anchor="middle" transform="rotate(-90 14 195.0)">y / L</text></svg><!--/fig:ghia--></div>
+    <figcaption>Horizontal velocity on the vertical centreline of the hero run, against the published values. On this 20 × 20 mesh the largest gap is 5.4% of the lid speed.</figcaption>
+  </figure>
+  <div class="stats three">
+    <div class="stat"><span class="num">3.2%</span><p>Largest gap to Ghia in the stage 4 test</p></div>
+    <div class="stat"><span class="num">15%</span><p>Gap that fails the build</p></div>
+    <div class="stat"><span class="num">1.8e-6</span><p>Final residual in that test</p></div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="prose">
+    <h2>How I worked</h2>
+    <p>I built it with AI coding agents, in stages. No layer started until the layer below it passed its tests. A markdown wiki of OpenFOAM knowledge and an agent change log kept every session grounded.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 250" role="img" aria-label="Six stages as rising steps: 0 Docker, 1 files, 2 mesh, 3 solver, 4 physics, 5 conversation and recovery. Each passed before the next began.">
+      <rect class="n" x="0" y="190" width="136" height="50" rx="8"/><text class="tm" x="14" y="212">0</text><text class="t" x="14" y="230">Docker</text><text class="ts" x="122" y="212" text-anchor="end">5 tests</text>
+      <rect class="n" x="148" y="152" width="136" height="88" rx="8"/><text class="tm" x="162" y="174">1</text><text class="t" x="162" y="192">Files</text><text class="ts" x="270" y="174" text-anchor="end">4 tests</text>
+      <rect class="n" x="296" y="114" width="136" height="126" rx="8"/><text class="tm" x="310" y="136">2</text><text class="t" x="310" y="154">Mesh</text><text class="ts" x="418" y="136" text-anchor="end">3 tests</text>
+      <rect class="n" x="444" y="76" width="136" height="164" rx="8"/><text class="tm" x="458" y="98">3</text><text class="t" x="458" y="116">Solver</text><text class="ts" x="566" y="98" text-anchor="end">3 tests</text>
+      <rect class="nk" x="592" y="38" width="136" height="202" rx="8"/><text class="tkm" x="606" y="60">4</text><text class="tk" x="606" y="78">Physics</text><text class="tk2" x="714" y="60" text-anchor="end">Ghia</text>
+      <rect class="n" x="740" y="0" width="140" height="240" rx="8"/><text class="tm" x="754" y="22">5</text><text class="t" x="754" y="40">Chat and</text><text class="t" x="754" y="58">recovery</text>
+    </svg>
+    <figcaption>Stages 0 to 4 all passed on 11 April 2026, before the interface was built.</figcaption>
+  </figure>
+  <figure class="diagram">
+    <ol class="miles">
+      <li><b>Apr 11</b><span>Stages 0 to 4 pass: Docker, files, mesh, solver, physics</span></li>
+      <li><b>Apr 16</b><span>Chat follow-ups, residual chart, error recovery</span></li>
+      <li><b>Apr 19</b><span>Bring your own key, Windows build</span></li>
+      <li><b>Apr 27</b><span>New interface, built in seven phases</span></li>
+      <li><b>May 2</b><span>Local models, health check on launch</span></li>
+      <li><b>Jun 12</b><span>Results viewer</span></li>
+      <li><b>Jul 3</b><span>macOS releases from CI</span></li>
+      <li><b>Jul 6</b><span>Agent validation loop</span></li>
+    </ol>
+    <figcaption>Milestones, April to July 2026.</figcaption>
+  </figure>
+</section>
+
+<section id="outcome">
+  <div class="prose">
+    <h2>Outcome</h2>
+    <p>Version 1.0.2 is out on GitHub for macOS and Windows, under the MIT licence. It’s validated on the lid-driven cavity and works best on incompressible laminar cases for now. Next, I’m sharing it with a professor for feedback.</p>
+  </div>
+  <ul class="chips">
+    <li>v1.0.2</li><li>macOS DMG</li><li>Windows installer</li><li>MIT</li><li>OpenFOAM 13</li>
+  </ul>
+</section>
+
+<section id="learned">
+  <div class="prose"><h2>What I learned</h2></div>
+  <div class="cols">
+    <div><h3>End to end</h3><p>Every project before this was product design only. This is the first one I took from problem to shipped software: design, code, tests, packaging and release.</p></div>
+    <div><h3>Systems, not screens</h3><p>Most decisions were about where safety lives: in code, not the prompt; in rules for known errors, with the model only for the rest.</p></div>
+    <div><h3>Correct over working</h3><p>Using a benchmark as the pass gate changed what “done” meant.</p></div>
+  </div>
+</section>
+
+<section class="next">
+  <a class="next-card" href="../air-pollution/" data-fluid="../../thumbs/air-pollution.png">
+    <span class="next-text"><span class="next-label">Next project</span><span class="next-title">Air Atlas</span><span class="next-line">What is in the air, printed as halftone ink.</span><span class="next-go">Read the case study →</span></span>
+    <img src="../air-pollution/media/halftone-globe.jpg" alt="" width="960" height="960" loading="lazy">
+  </a>
+</section>
+
+</article>
+</div>
+<footer><a href="../../">All projects</a></footer>
+</main>
+<script src="flow.js?v=2" defer></script>
+<script src="interact.js" defer></script>
+<script src="../../fluid.js" defer></script>
+</body></html>

@@ -142,6 +142,12 @@ main.cs{max-width:1168px;padding-inline:40px}
   .cs .next-title{font-size:40px}
   .cs .next-line{font-size:16px;margin-bottom:24px}
 }
+/* Variant for OpenFOAM Studio: the navy of its field renders. */
+.cs .next-card.foam{background:#10162a;color:#dfe7f7}
+.cs .next-card.foam:hover{color:#dfe7f7}
+.cs .next-card.foam .next-label{color:#7f8fb8}
+.cs .next-card.foam .next-line{color:#b9c5e2}
+.cs .next-card.foam .next-go{color:#dfe7f7;text-decoration-color:#dfe7f766}
 @media(prefers-reduced-motion:reduce){.cs .next-card img{transition:none}}
 
 /* System design and desktop sections */

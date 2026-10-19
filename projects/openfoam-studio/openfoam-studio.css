@@ -65,7 +65,6 @@ main.of{max-width:1248px;padding-inline:40px;font-family:'Geist',Arial,Helvetica
 .of .cols p{font-size:15px;line-height:1.6;color:var(--soft);margin:0}
 .of .cols .n{display:block;font-size:13px;color:var(--acc);margin-bottom:10px}
 .of .pull{font-size:28px;line-height:1.4;color:var(--strong);max-width:820px;margin:88px 0 0;letter-spacing:-.01em}
-.of .glyph{display:block;width:120px;height:72px;margin-bottom:18px;overflow:visible}
 .of .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
 .of .two .plate{padding:24px}
 .of .two .plate figcaption{color:#8592b5}
@@ -117,7 +116,6 @@ main.of{max-width:1248px;padding-inline:40px;font-family:'Geist',Arial,Helvetica
 .of .dot{fill:var(--line)}
 .of .dot-a{fill:var(--acc)}
 .of .dot-r{fill:var(--fail)}
-.of .glyph .n{stroke-width:1.25}
 
 /* Prompt to files */
 .of .map{margin-top:56px;background:var(--panel);border-radius:18px;padding:40px}
@@ -364,6 +362,40 @@ main.of{max-width:1248px;padding-inline:40px;font-family:'Geist',Arial,Helvetica
   .of .w-grid{grid-template-columns:1fr}
   .of .w-main.pad{padding:14px}
 }
+
+/* Icons: Phosphor (MIT), inlined by scripts/openfoam-icons.py. Spots are duotone tiles above card headings; .ic sits inline with text. */
+.of .spot{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:color-mix(in srgb,var(--acc) 11%,transparent);color:var(--acc);margin-bottom:18px}
+.of .spot svg{width:24px;height:24px;display:block}
+.of .ic{display:inline-flex;vertical-align:-2px;margin-right:7px;color:var(--acc)}
+.of .ic svg{width:15px;height:15px;display:block}
+.of .facts dt .ic{color:var(--muted);vertical-align:-2px;margin-right:6px}
+.of .facts dt .ic svg{width:14px;height:14px}
+.of .stack b .ic svg{width:17px;height:17px}
+.of .stack b .ic{vertical-align:-3px;margin-right:10px}
+.of .chips .ic{color:currentColor;margin-right:6px}
+.of .chips .ic svg{width:14px;height:14px}
+.of .toolset{position:relative}
+.of .toolset .spot{position:absolute;top:22px;right:22px;margin:0;width:38px;height:38px;border-radius:10px}
+.of .toolset .spot svg{width:21px;height:21px}
+.of .toolset.key .spot{background:color-mix(in srgb,var(--on-acc) 16%,transparent);color:var(--on-acc)}
+.of .cols .spot+.n{margin-top:-4px}
+
+/* Release card */
+.of .release{display:block;max-width:660px;margin-top:40px;border:1px solid var(--rule2);border-radius:16px;background:var(--card);text-decoration:none;color:var(--text);overflow:hidden;transition:border-color .25s,transform .25s}
+.of .release:hover{border-color:var(--strong);color:var(--text)}
+.of .rel-h{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:20px 22px;border-bottom:1px solid var(--rule)}
+.of .rel-h .spot{margin:0}
+.of .rel-h b{font-weight:500;color:var(--strong);font-size:16px}
+.of .rel-tag{display:inline-block;margin-left:10px;font-size:11px;padding:2px 8px;border-radius:999px;color:var(--ok);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ok) 50%,transparent);vertical-align:2px}
+.of .rel-h small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.of .rel-go{color:var(--muted);margin:0;transition:color .25s,transform .25s}
+.of .rel-go svg{width:18px;height:18px}
+.of .release:hover .rel-go{color:var(--strong);transform:translate(2px,-2px)}
+.of .rel-assets{display:block;padding:8px 22px 12px}
+.of .rel-assets>span{display:flex;align-items:center;padding:10px 0;font-size:14px;color:var(--strong);border-bottom:1px dashed var(--rule)}
+.of .rel-assets>span:last-child{border-bottom:0}
+.of .rel-assets .ic{color:var(--soft);margin-right:12px}
+.of .rel-assets em{font-style:normal;margin-left:auto;font:12px 'Geist Mono',ui-monospace,monospace;color:var(--muted)}
 
 /* Interactions */
 .of .fig-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:24px}

@@ -189,72 +189,7 @@ ILL['l-pace'] = icon((W, H), pace, 'A stopwatch with a quarter of its face fille
 
 
 # ---------- Backend illustrations ----------
-def table(x, y, w, name, rows=3, key=False):
-    h = 26 + rows * 14 + 8
-    out = f'<rect x="{x+5}" y="{y+5}" width="{w}" height="{h}" rx="8" fill="url(#d25)"/>'
-    out += f'<rect class="i-paper i-ink" x="{x}" y="{y}" width="{w}" height="{h}" rx="8"/>'
-    out += f'<path d="M{x+1} {y+26}H{x+w-1}" class="i-ink"/>'
-    if key:
-        out += f'<path class="i-fillink" d="M{x} {y+26}V{y+8}A8 8 0 0 1 {x+8} {y}H{x+w-8}A8 8 0 0 1 {x+w} {y+8}V{y+26}Z"/><rect class="i-fillred" x="{x+12}" y="{y+9}" width="8" height="8" rx="1"/>'
-        out += f'<text class="i-mono i-onk" x="{x+28}" y="{y+17}">{name}</text>'
-    else:
-        out += f'<text class="i-mono" x="{x+12}" y="{y+17}">{name}</text>'
-    for i in range(rows):
-        ww = w - 24 - (i * 23) % 50
-        out += f'<path class="i-line" d="M{x+12} {y+40+i*14}H{x+12+ww}"/>'
-    return out, h
 
-# Data model: scans feed resources; resources carry history, edges and embeddings; work objects point at resources.
-b = '<text class="i-cap" x="20" y="20">Scans</text><text class="i-cap" x="330" y="20">Estate</text><text class="i-cap" x="700" y="20">Work</text>'
-links = ('<path class="i-line" d="M180 60H240M180 120H240M180 180H240M180 240H240M240 60V240M240 200H300"/>'
-         '<path class="i-line" d="M400 84V158M565 84V130H470V158M400 248V290M320 338V350M500 228H595V290"/>'
-         '<path class="i-line" d="M500 190H650M650 120V280M650 120H690M650 200H690M650 280H690"/>')
-b += links
-for i, n in enumerate(['scans', 'scan_passes', 'scan_scopes', 'scan_errors']):
-    t, _ = table(20, 36 + i * 60, 160, n, 1)
-    b += t
-t, _ = table(300, 158, 200, 'resources', 4, key=True); b += t
-for (x, y, n) in [(330, 40, 'resource_types'), (500, 40, 'resource_edges')]:
-    pass
-t, _ = table(330, 36, 140, 'resource_types', 1); b += t
-t, _ = table(490, 36, 150, 'resource_edges', 1); b += t
-t, _ = table(300, 290, 200, 'resource_changes', 1); b += t
-t, _ = table(300, 350, 200, 'resource_prescan', 1); b += t
-t, _ = table(520, 290, 150, 'embeddings', 1); b += t
-for i, n in enumerate(['findings', 'reports', 'alerts']):
-    t, _ = table(690, 96 + i * 80, 160, n, 1)
-    b += t
-ILL['schema'] = svg('schema', (880, 410), b, 'Estate tables. Four scan tables feed a central resources table, which links to resource types, edges, changes, prescan snapshots and embeddings. Findings, reports and alerts point back at resources.')
-
-# Scanning: every type in every region, 12 lanes at once, failures kept and retried.
-svcs = ['EC2', 'S3', 'RDS', 'Lambda', 'IAM', 'VPC', 'EKS', 'KMS', 'ELB']
-regs = 16
-b = ''
-cw, ch, gx, gy = 34, 22, 120, 40
-for j in range(regs):
-    b += f'<text class="i-tiny" x="{gx + j*(cw+6) + cw/2:.0f}" y="{gy-10}" text-anchor="middle">r{j+1}</text>'
-for i, sname in enumerate(svcs):
-    y = gy + i * (ch + 6)
-    b += f'<text class="i-small" x="{gx-14}" y="{y+15}" text-anchor="end">{sname}</text>'
-    for j in range(regs):
-        x = gx + j * (cw + 6)
-        k = (i * 7 + j * 3) % 23
-        if (i, j) in [(2, 11), (6, 4)]:
-            fill = 'url(#r50)'
-        elif i * regs + j > 118:
-            fill = 'none'
-        elif i * regs + j > 106:
-            fill = 'url(#d12)'
-        else:
-            fill = 'url(#d50)'
-        cls = 'i-cell'
-        b += f'<rect class="{cls}" x="{x}" y="{y}" width="{cw}" height="{ch}" rx="3" fill="{fill}"/>'
-b += f'<path class="i-red" d="M{gx+11*(cw+6)+cw/2} {gy+2*(ch+6)-4}C{gx+11*(cw+6)+cw/2} {gy-2} {gx+12*(cw+6)+10} {gy-2} {gx+12*(cw+6)+10} {gy+2*(ch+6)-6}" stroke-dasharray="3 3"/>'
-ly = gy + len(svcs) * (ch + 6) + 26
-b += f'<rect x="{gx}" y="{ly-11}" width="14" height="14" rx="2" fill="url(#d50)" class="i-cell"/><text class="i-small" x="{gx+22}" y="{ly}">Scanned</text>'
-b += f'<rect x="{gx+110}" y="{ly-11}" width="14" height="14" rx="2" fill="url(#d12)" class="i-cell"/><text class="i-small" x="{gx+132}" y="{ly}">Running, 12 at a time</text>'
-b += f'<rect x="{gx+300}" y="{ly-11}" width="14" height="14" rx="2" fill="url(#r50)" class="i-cell"/><text class="i-small" x="{gx+322}" y="{ly}">Failed, recorded, retried</text>'
-ILL['scan'] = svg('scan', (880, ly + 14), b, 'A grid of services by regions. Most cells are scanned, a few are running, and two failed cells are marked in red with a retry arrow.')
 
 # Model layer: allowlist, router, two providers, one stream back.
 b = ''
@@ -303,57 +238,9 @@ b += '<path class="d-line" d="M609 100V124"/><text class="d-s" x="609" y="140" t
 b += '<text class="d-s" x="75" y="122" text-anchor="middle">cannot run anything</text>'
 ILL['exec'] = f'<div class="diagram"><svg viewBox="0 0 880 196" role="img" aria-label="Five steps: the model proposes, a person confirms, the current state is snapshotted, one step runs, and the result is re-read. A red dashed line shows rollback restoring the snapshot.">{b}</svg></div>'
 
-# Evaluation: a finished turn passes six deterministic graders.
-b = '<rect x="7" y="47" width="170" height="150" rx="10" fill="url(#d25)"/><rect class="i-paper i-ink" x="0" y="40" width="170" height="150" rx="10"/>'
-b += '<text class="i-small" x="16" y="64">Finished turn</text><path class="i-ink" d="M16 84H150M16 100H130M16 116H140"/>'
-for j, hh in enumerate([16, 28, 22, 34]):
-    b += f'<rect x="{16+j*22}" y="{176-hh}" width="14" height="{hh}" fill="url(#d50)"/>'
-graders = ['grounding', 'citation', 'parse', 'shape', 'absence', 'reachable']
-b += '<path class="i-line" d="M170 115H860"/>'
-for i, g in enumerate(graders):
-    cx = 240 + i * 108
-    bad = (i == 0)
-    b += f'<circle class="i-paper i-ink" cx="{cx}" cy="115" r="30"/>'
-    if bad:
-        b += f'<circle cx="{cx}" cy="115" r="30" fill="url(#r25)"/><path class="i-red" d="M{cx-9} 106L{cx+9} 124M{cx+9} 106L{cx-9} 124" stroke-width="2.5"/>'
-    else:
-        b += f'<path class="i-ink" d="M{cx-10} 115L{cx-3} 122L{cx+11} 107" stroke-width="2"/>'
-    b += f'<text class="i-mono" x="{cx}" y="170" text-anchor="middle">{g}</text>'
-b += '<text class="i-small" x="212" y="200">A number that isn’t in the tool results fails grounding.</text>'
-ILL['eval'] = svg('eval', (880, 210), b, 'A finished turn passes six graders: grounding, citation, parse, shape, absence and reachable. Grounding is marked failed because a number did not appear in the tool results.')
 
 
-# ---------- Gen UI ----------
-b = ''
-b += '<rect x="7" y="27" width="360" height="230" rx="12" fill="url(#d25)"/><rect class="i-fillink" x="0" y="20" width="360" height="230" rx="12"/>'
-code = ['root = Stack([head, kpis, chart, cite])', 'head = TextContent("Prod exposure")', 'kpis = Metric("Internet-reachable", "1 bucket")', 'chart = BarChart(byService, "Exposed")', 'cite = Cite("evidence", "S3 policy")']
-for i, c in enumerate(code):
-    b += f'<text class="i-mono i-onk" x="20" y="{56+i*24}">{c}</text>'
-b += '<rect class="i-fillred" x="20" y="182" width="8" height="14"/>'
-b += '<text class="i-small i-onkm" x="20" y="232">OpenUI Lang, streaming</text>'
-b += '<path class="i-trail" d="M368 135H470"/><path class="i-ink" d="M462 128L472 135L462 142"/>'
-b += '<rect x="487" y="17" width="380" height="250" rx="12" fill="url(#d25)"/><rect class="i-paper i-ink" x="480" y="10" width="380" height="250" rx="12"/>'
-b += '<text class="i-cap" x="500" y="42">Prod exposure</text>'
-b += '<rect class="i-ink" x="500" y="58" width="160" height="64" rx="8" fill="none"/><text class="i-small" x="514" y="80">Internet-reachable</text><text class="i-big" x="514" y="108">1 bucket</text>'
-b += '<rect class="i-ink" x="676" y="58" width="164" height="64" rx="8" fill="none"/><text class="i-small" x="690" y="80">At risk</text><text class="i-big" x="690" y="108">8</text>'
-for j, hh in enumerate([28, 46, 20, 64, 36, 52]):
-    b += f'<rect x="{510+j*54}" y="{212-hh}" width="34" height="{hh}" fill="{"url(#r50)" if j==3 else "url(#d50)"}"/>'
-b += '<path class="i-line" d="M500 212H840"/>'
-b += '<rect class="i-ink" x="500" y="226" width="120" height="22" rx="11" fill="none"/><circle class="i-reddot" cx="514" cy="237" r="4"/><text class="i-small" x="524" y="241">S3 policy</text>'
-ILL['genui'] = svg('genui', (880, 270), b, 'On the left, five lines of OpenUI Lang stream in. On the right, the same answer rendered: a heading, two metric tiles, a bar chart and a citation chip.')
 
-def mini(body, label):
-    return f'<svg class="mini" viewBox="0 0 200 120" role="img" aria-label="{label}">{body}</svg>'
-M = {}
-M['Metric'] = mini('<rect class="i-paper i-ink" x="30" y="24" width="140" height="72" rx="8"/><text class="i-small" x="44" y="48">Monthly cost</text><text class="i-big" x="44" y="80">$41.2k</text><path class="i-red" d="M128 76L140 64L152 70"/>', 'A metric tile')
-M['BarChart'] = mini(''.join(f'<rect x="{36+i*26}" y="{100-h}" width="18" height="{h}" fill="{"url(#r50)" if i==2 else "url(#d50)"}"/>' for i, h in enumerate([30, 48, 70, 40, 56]))+'<path class="i-line" d="M28 100H172"/>', 'A bar chart')
-M['DataGrid'] = mini('<rect class="i-paper i-ink" x="24" y="18" width="152" height="86" rx="6"/><rect x="25" y="19" width="150" height="16" fill="url(#d25)"/>'+''.join(f'<path class="i-line" d="M24 {50+i*16}H176"/>' for i in range(3))+'<path class="i-line" d="M70 18V104M120 18V104"/>', 'A data grid')
-M['HtmlFigure'] = mini('<rect class="i-paper i-ink" x="24" y="18" width="152" height="86" rx="6"/><circle class="i-ink" cx="70" cy="60" r="22" fill="url(#d25)"/><circle class="i-ink" cx="96" cy="60" r="22" fill="url(#r25)"/><path class="i-ink" d="M130 48H160M130 60H154M130 72H158"/>', 'An explanatory figure')
-M['Widget'] = mini('<rect class="i-paper i-ink" x="24" y="18" width="152" height="86" rx="6"/><text class="i-small" x="38" y="42">Retention, days</text><path class="i-line" d="M38 62H162"/><path class="i-ink" d="M38 62H112" stroke-width="3"/><circle class="i-reddot" cx="112" cy="62" r="7"/><text class="i-big" x="38" y="92">$3,120 / mo</text>', 'An interactive calculator')
-M['Cite'] = mini('<path class="i-ink" d="M30 40H170M30 56H150"/><path class="i-ink" d="M30 72H112"/><rect class="i-ink" x="116" y="63" width="64" height="20" rx="10" fill="none"/><circle class="i-reddot" cx="128" cy="73" r="3.5"/><text class="i-tiny" x="137" y="77">source</text>', 'A citation chip in text')
-M['Questionnaire'] = mini(''.join(f'<circle class="i-ink" cx="40" cy="{36+i*24}" r="7" fill="{"url(#r50)" if i==1 else "none"}"/><path class="i-ink" d="M56 {36+i*24}H{150-i*16}"/>' for i in range(3))+'<text class="i-small" x="30" y="112">One question at a time</text>', 'A questionnaire with three options')
-M['Report'] = mini('<rect class="i-paper i-ink" x="56" y="10" width="88" height="104" rx="4"/><rect x="66" y="20" width="50" height="8" fill="url(#d50)"/><path class="i-line" d="M66 38H134M66 46H126"/>'+''.join(f'<rect x="{68+i*14}" y="{86-h}" width="9" height="{h}" fill="url(#d50)"/>' for i, h in enumerate([14, 24, 18, 30]))+'<path class="i-line" d="M66 96H134M66 104H120"/>', 'A report page')
-ILL['minis'] = '<div class="minis">' + ''.join(f'<figure>{v}<figcaption>{k}</figcaption></figure>' for k, v in M.items()) + '</div>'
 
 # Choosing the chart: from the data's shape vs from the reader's question.
 b = '<text class="i-cap" x="20" y="24">Chosen from the data</text><text class="i-cap" x="470" y="24">Chosen from the question</text>'
@@ -367,35 +254,203 @@ b += '<rect class="i-fillred" x="494" y="168" width="10" height="10" rx="2"/><te
 b += '<text class="i-small" x="494" y="210">One number and two qualifiers.</text>'
 ILL['chart'] = svg('chart', (880, 240), b, 'Left: a bar chart where all six bars equal one. Right: the same data as a single number with two qualifiers.')
 
-# ---------- Tokens ----------
-b = ''
-def stack(x, base, hist, new, cached):
-    out = ''
-    y = 250
-    parts = [('tools', 22), ('system', 90), ('history', hist), ('new', new)]
-    for name, h in parts:
-        y -= h
-        if name == 'new':
-            fill = 'url(#r50)'
-        elif cached:
-            fill = 'url(#d12)'
-        else:
-            fill = 'url(#d50)'
-        out += f'<rect x="{x}" y="{y}" width="34" height="{h}" fill="{fill}" class="i-cell"/>'
-    return out
-b += '<text class="i-cap" x="0" y="20">Before: each call re-reads everything</text><text class="i-cap" x="460" y="20">After: the shared prefix is read from cache</text>'
-calls = [(0, 10), (10, 12), (22, 10), (32, 14), (46, 10), (56, 12), (68, 12), (80, 10)]
-for i, (h, n) in enumerate(calls):
-    b += stack(i * 48, 0, h, n, False)
-    b += stack(460 + i * 48, 0, h, n, True)
-b += '<path class="i-line" d="M0 250H380M460 250H840"/>'
-b += '<text class="i-tiny" x="0" y="268">8 model calls across one report turn</text><text class="i-tiny" x="460" y="268">Same calls. The dotted part costs 0.1× to read.</text>'
-ly = 296
-b += f'<rect x="0" y="{ly-11}" width="14" height="14" fill="url(#d50)" class="i-cell"/><text class="i-small" x="22" y="{ly}">Re-read in full</text>'
-b += f'<rect x="150" y="{ly-11}" width="14" height="14" fill="url(#d12)" class="i-cell"/><text class="i-small" x="172" y="{ly}">Read from cache</text>'
-b += f'<rect x="310" y="{ly-11}" width="14" height="14" fill="url(#r50)" class="i-cell"/><text class="i-small" x="332" y="{ly}">New this call</text>'
-b += f'<text class="i-tiny" x="460" y="{ly}">Bottom to top: tool schemas, system prompt, conversation, new turn</text>'
-ILL['tokens'] = svg('tokens', (880, 310), b, 'Two charts of eight stacked bars. Before, every bar is solid because each call re-reads tools, system prompt and conversation. After, the shared part is light grey because it is read from cache, and only the new part on top is red.')
+
+
+# Data model: the real tables and columns from packages/estate-store/migrations.
+# Click a table to see what it holds and what it links to; wires are drawn by escher.js.
+from html import escape as esc
+import json
+
+TABLES = {
+    'scans': ('One row per scan of an account, with when it started and finished.',
+              [('id', 'uuid', 'pk'), ('profile', 'text', ''), ('account_id', 'text', ''), ('started_at', 'timestamptz', ''), ('finished_at', 'timestamptz', '')]),
+    'scan_passes': ('Every scan runs three passes: overview, services and extras.',
+                    [('scan_id', 'uuid', 'fk'), ('pass', 'text', ''), ('finished_at', 'timestamptz', '')]),
+    'scan_scopes': ('Which resource type in which region was scanned, and whether it worked.',
+                    [('scan_id', 'uuid', 'fk'), ('region', 'text', ''), ('resource_type', 'text', 'fk'), ('status', 'ok | error', '')]),
+    'scan_errors': ('Calls that failed, with the AWS error code, so a gap in the data is never silent.',
+                    [('scan_id', 'uuid', 'fk'), ('resource_type', 'text', ''), ('error_code', 'text', '')]),
+    'resource_types': ('The registry: how to list each type, where its ID and tags live, and how it links to others.',
+                       [('resource_type', 'text', 'pk'), ('service', 'text', ''), ('list_call', 'text', ''), ('edge_paths', 'jsonb', '')]),
+    'resources': ('Current state of every resource, one row per profile, account and ARN. A deleted resource stays, marked deleted.',
+                  [('arn', 'text', 'pk'), ('resource_type', 'text', 'fk'), ('attrs', 'jsonb', ''), ('metrics', 'jsonb', ''), ('secrets_encrypted', 'text', ''), ('content_hash', 'text', ''), ('status', 'live | deleted', ''), ('last_seen_scan', 'uuid', 'fk')]),
+    'resource_changes': ('One row for each resource a scan created, changed or deleted, with the diff.',
+                         [('arn', 'text', 'fk'), ('scan_id', 'uuid', 'fk'), ('change_type', 'text', ''), ('diff', 'jsonb', '')]),
+    'resource_edges': ('How resources connect, read from paths in their own configuration.',
+                       [('from_arn', 'text', 'fk'), ('to_arn', 'text', 'fk'), ('rel_type', 'text', '')]),
+    'resource_prescan': ('A photograph of each resource before a scan touches it. The scan diffs against it, writes the changes, then deletes it.',
+                         [('scan_id', 'uuid', 'fk'), ('arn', 'text', 'fk'), ('existed', 'boolean', ''), ('prev_hash', 'text', '')]),
+    'resource_embeddings': ('A vector for each resource, so search can match meaning as well as names.',
+                            [('arn', 'text', 'fk'), ('embedding', 'vector(384)', ''), ('doc', 'text', '')]),
+    'findings': ('Problems found by a scan, an alert, a report or a question, each tied to one resource.',
+                 [('id', 'text', 'pk'), ('severity', 'text', ''), ('category', 'text', ''), ('resource_id', 'text', 'fk')]),
+    'alerts': ('Rule matches for an account, open or archived, with when they were first and last seen.',
+               [('id', 'text', 'pk'), ('rule_slug', 'text', ''), ('severity', 'text', ''), ('status', 'open | archived', '')]),
+    'reports': ('Saved reports, each marked Clean, Warning, Failed or Stale.',
+                [('id', 'text', 'pk'), ('title', 'text', ''), ('status', 'text', ''), ('data', 'jsonb', '')]),
+}
+EDGES = [('scan_passes', 'scans'), ('scan_scopes', 'scans'), ('scan_errors', 'scans'), ('scan_scopes', 'resource_types'),
+         ('resources', 'scans'), ('resources', 'resource_types'), ('resource_changes', 'resources'), ('resource_changes', 'scans'),
+         ('resource_edges', 'resources'), ('resource_prescan', 'resources'), ('resource_prescan', 'scans'),
+         ('resource_embeddings', 'resources'), ('findings', 'resources')]
+COLS = [('Scans', ['scans', 'scan_passes', 'scan_scopes', 'scan_errors']),
+        ('Estate', ['resource_types', 'resources', 'resource_changes']),
+        ('History and search', ['resource_edges', 'resource_prescan', 'resource_embeddings']),
+        ('Work', ['findings', 'alerts', 'reports'])]
+
+def er_table(name):
+    desc, cols = TABLES[name]
+    links = sorted({b for a, b in EDGES if a == name} | {a for a, b in EDGES if b == name})
+    rows = ''.join(f'<span class="er-c{" " + k if k else ""}"><span>{c}</span><em>{esc(t)}</em></span>' for c, t, k in cols)
+    key = ' key' if name == 'resources' else ''
+    return (f'<button class="er-t{key}" type="button" data-t="{name}" data-links="{" ".join(links)}" data-desc="{esc(desc)}" aria-pressed="false">'
+            f'<span class="er-n">{name}</span><span class="er-cs">{rows}</span></button>')
+
+cols_html = ''.join(f'<div class="er-col"><p class="er-h">{h}</p>{"".join(er_table(t) for t in ts)}</div>' for h, ts in COLS)
+ILL['schema'] = f"""<figure class="art live er" data-live="schema" data-edges="{" ".join(a + ">" + b for a, b in EDGES)}" aria-label="The thirteen estate tables in four groups: scans, estate, history and search, and work. Choose a table to see its columns, what it holds and which tables it links to.">
+<div class="er-grid"><svg class="er-wires" aria-hidden="true"></svg>{cols_html}</div>
+<p class="er-note" aria-live="polite"><b>resources</b> <span>{esc(TABLES['resources'][0])}</span></p>
+<p class="er-key"><span class="er-k pk">Primary key</span><span class="er-k fk">Links to another table</span><span>Choose a table to trace it.</span></p></figure>"""
+
+
+# Components: real Escher components, drawn in HTML so they can be used.
+def gx(name, hint, body):
+    h = f'<span class="gx-hint">{hint}</span>' if hint else ''
+    open_ = ' open' if name == 'Cite' else ''
+    return f'<figure class="gx" data-gx="{name}"><div class="gx-stage{open_}">{body}</div><figcaption><code>{name}</code>{h}</figcaption></figure>'
+
+bars = [('EC2', 18.4), ('RDS', 12.9), ('S3', 4.1), ('Lambda', 2.2), ('EBS', 3.6)]
+top = 20
+ticks = ''.join(f'<span class="gc-tick" style="--y:{v / top * 100:.1f}%"><i>${v}k</i></span>' for v in (0, 10, 20))
+bands = ''.join(
+    f'<button type="button" class="gc-band{" on" if n == "RDS" else ""}" style="--h:{v / top * 100:.1f}%" data-v="${v}k" aria-label="{n}, ${v}k">'
+    f'<i></i><span>{n}</span></button>' for n, v in bars)
+grid_rows = [('orders-db', 'us-east-1', 4210), ('warehouse', 'us-west-2', 3880), ('etl-jobs', 'us-east-1', 1290), ('cdn-logs', 'eu-west-1', 412)]
+grid = ('<table class="gd"><thead><tr><th><button type="button" data-k="0">Resource</button></th><th><button type="button" data-k="1">Region</button></th>'
+        '<th class="r"><button type="button" data-k="2" aria-sort="descending">Cost / mo</button></th></tr></thead><tbody>'
+        + ''.join(f'<tr><td>{a}</td><td>{b}</td><td class="r" data-v="{c}">${c:,}</td></tr>' for a, b, c in grid_rows) + '</tbody></table>')
+M = [
+    gx('Metric', '', '<div class="gm"><span class="gm-l">Monthly cost</span><b class="gm-v">$41.2k</b><span class="gm-d bad">▲ 8% vs September</span><span class="gm-n">Budget $45k</span></div>'),
+    gx('BarChart', 'Hover a bar', f'<div class="gc" role="group" aria-label="Cost by service, RDS emphasised"><div class="gc-plot">{ticks}<div class="gc-bands">{bands}</div><p class="gc-tip" aria-hidden="true"></p></div></div>'),
+    gx('DataGrid', 'Sort a column', grid),
+    gx('HtmlFigure', '', '<svg class="gf" viewBox="0 0 220 110" role="img" aria-label="A figure: the internet reaches a bucket through a public bucket policy."><text x="2" y="60">Internet</text>'
+       '<path class="gf-l" d="M54 56H82"/><rect class="gf-b red" x="82" y="38" width="62" height="36" rx="6"/><text x="113" y="60" text-anchor="middle">Policy</text>'
+       '<path class="gf-l" d="M144 56H166"/><rect class="gf-b" x="166" y="38" width="52" height="36" rx="6"/><text x="192" y="60" text-anchor="middle">Bucket</text>'
+       '<text class="gf-s" x="113" y="94" text-anchor="middle">Principal: * opens it to anyone</text></svg>'),
+    gx('Widget', 'Drag', '<div class="gw" data-rate="34.67"><label class="gw-l" for="gw-days">Log retention, <b data-w="days">90</b> days</label>'
+       '<input id="gw-days" type="range" min="7" max="365" step="1" value="90"><b class="gw-v"><span data-w="cost">$3,120</span> / mo</b></div>'),
+    gx('Cite', 'Click the marker', '<p class="gt">Spend rose 8% this month, mostly from RDS.<button type="button" class="gt-m" aria-describedby="gt-pop">1</button></p>'
+       '<div class="gt-pop" id="gt-pop" role="tooltip"><span class="gt-src"><i></i>Evidence · AWS Cost Explorer</span>'
+       '<span class="gt-kv"><em>Scope</em>prod · us-east-1</span><span class="gt-kv"><em>Period</em>Oct 2026</span><span class="gt-ts">Data as of Oct 2, 2026 · 2:04 PM</span></div>'),
+    gx('Questionnaire', 'Pick one', '<div class="gq" aria-live="polite"><p class="gq-step">1 of 2</p><p class="gq-q">Which environment?</p>'
+       '<div class="gq-o"><button type="button">Production</button><button type="button">Staging</button><button type="button">Development</button></div></div>'),
+    gx('Report', '', '<div class="gr-sheet"><span class="gr-st">Warning</span><b class="gr-t">S3 exposure review</b><span class="gr-s">3 findings · 24 buckets</span>'
+       '<div class="gr-ch"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:30%" class="on"></i><i style="--h:55%"></i></div>'
+       '<div class="gr-ln"><i></i><i></i><i></i></div></div>'),
+]
+ILL['minis'] = '<div class="gxs">' + ''.join(M) + '</div>'
+
+
+# Evaluation: one turn, six graders. Pick a mistake and watch which grader catches it.
+# Rules and failure messages follow apps/prototype/src/eval/graders.ts.
+GRADERS = [('grounding', 'Every number is in a tool result'), ('citation', 'Knowledge answers cite a source'),
+           ('parse', 'The interface code parses'), ('shape', 'No empty or one-column parts'),
+           ('absence', 'Empty results aren’t read as “none”'), ('reachable', 'Every part is on screen')]
+TOOL = ['query_resources → {"type": "ebs-snapshot", "count": 5152,', '  "byAccount": {"prod": 3904, "data": 1248}}',
+        'search_knowledge → {"count": 2, "results": ["Snapshot retention", …]}']
+CODE = ['root = Stack([head, kpi, grid, cite, more])',
+        'head = TextContent("Prod holds 3,904 of 5,152 snapshots")',
+        'kpi = Metric("EBS snapshots", "5,152")',
+        'grid = Table([Col("Account", accts), Col("Snapshots", counts)])',
+        'cite = Cite(1, "evidence", "Snapshot retention runbook")',
+        'more = FollowUpBlock(["Which are older than 90 days?"])']
+def sc(label, why, fail=None, msg='', tool=None, code=None, bad=()):
+    return {'label': label, 'why': why, 'fail': fail, 'msg': msg, 'tool': tool or TOOL, 'code': code or CODE, 'bad': list(bad)}
+def edit(i, s):
+    c = list(CODE); c[i] = s; return c
+SCEN = [
+    sc('Invented number', 'The model rounded from memory. 4,812 is nowhere in what the tools returned.', 'grounding',
+       'numeric claim "4,812" does not appear in this turn’s tool results', code=edit(1, 'head = TextContent("Prod holds 4,812 of 5,152 snapshots")'), bad=[1]),
+    sc('Clean turn', 'Every number traces to a tool result, the runbook is cited, and every part renders.'),
+    sc('No citation', 'The runbook was used, but the answer doesn’t say so.', 'citation',
+       'search_knowledge returned passages but the answer has no Cite node with type "evidence"',
+       code=[CODE[0].replace(', cite', '')] + CODE[1:4] + CODE[5:], bad=[0]),
+    sc('Text outside the code', 'A friendly sentence before the code means part of the answer isn’t interface.', 'parse',
+       'content: prose before the first Lang statement', code=['Here’s what I found:'] + CODE, bad=[0]),
+    sc('One-column table', 'A table of names with nothing beside them answers nothing.', 'shape',
+       'content: Table with 1 column (needs >= 2)', code=edit(3, 'grid = Table([Col("Account", accts)])'), bad=[3]),
+    sc('False “none”', 'The real case: the query asked for ebs_snapshot, the estate spells it ebs-snapshot, and the answer denied 5,152 snapshots. Grounding passes, because zero matches an empty result.', 'absence',
+       'content: asserts absence on an all-empty tool result — "No accounts currently have EBS snapshots."',
+       tool=['query_resources → {"type": "ebs_snapshot", "count": 0}', '', 'search_knowledge → {"count": 0}'],
+       code=['root = Stack([head, more])', 'head = TextContent("No accounts currently have EBS snapshots.")', CODE[5]], bad=[1]),
+    sc('Forgotten table', 'The table is written but never placed, so the reader sees a heading with nothing under it.', 'reachable',
+       'content: component(s) defined but never reached from root: grid', code=edit(0, 'root = Stack([head, kpi, cite, more])'), bad=[0]),
+]
+
+def gr_rows(fail):
+    return ''.join(f'<li class="{"fail" if g == fail else "pass"}" data-g="{g}"><span class="gv-i" aria-hidden="true"></span><span class="gv-n">{g}</span><span class="gv-d">{d}</span></li>' for g, d in GRADERS)
+def code_html(lines, bad):
+    return ''.join(f'<span class="{"bad" if i in bad else ""}">{esc(l)}</span>' for i, l in enumerate(lines))
+s0 = SCEN[0]
+scen_json = json.dumps(SCEN, ensure_ascii=False).replace('</', '<\\/')
+chips = ''.join(f'<button type="button" data-i="{i}" aria-pressed="{"true" if i == 0 else "false"}">{esc(s["label"])}</button>' for i, s in enumerate(SCEN))
+ILL['eval'] = f"""<figure class="art live gv" data-live="graders" aria-label="One answer checked by six graders. Choose a mistake to put into the answer and see which grader catches it.">
+<div class="gv-chips" role="group" aria-label="Mistake">{chips}</div>
+<div class="gv-body"><div class="gv-turn"><p class="gv-h">Tool results</p><pre class="gv-tool">{code_html(s0['tool'], [])}</pre>
+<p class="gv-h">Answer, in OpenUI Lang</p><pre class="gv-code">{code_html(s0['code'], s0['bad'])}</pre></div>
+<div class="gv-side"><ol class="gv-list">{gr_rows(s0['fail'])}</ol>
+<p class="gv-msg"><code>{esc(s0['msg'])}</code></p><p class="gv-why">{esc(s0['why'])}</p></div></div>
+<script type="application/json" class="gv-data">{scen_json}</script></figure>"""
+
+
+# ---------- Live (HTML + escher.js) ----------
+# Gen UI: OpenUI Lang types in on the left, the answer assembles on the right, one piece per line.
+code = [
+    ('root', 'root = Stack([head, kpis, chart, cite])'),
+    ('head', 'head = TextContent("Prod exposure")'),
+    ('kpis', 'kpis = Metric("Internet-reachable", "1 bucket")'),
+    ('chart', 'chart = BarChart(byService, "Exposed")'),
+    ('cite', 'cite = Cite("evidence", "S3 policy")'),
+]
+lines_html = ''.join(f'<span class="ln" data-k="{k}" data-text="{t.replace(chr(34), "&quot;")}">{t.replace(chr(34), "&quot;")}</span>' for k, t in code)
+bars_html = ''.join(f'<i style="--h:{h}%"{" class=r" if i == 3 else ""}></i>' for i, h in enumerate([40, 66, 28, 92, 52, 74]))
+ILL['genui'] = f"""<figure class="art live stream" data-live="stream" aria-label="OpenUI Lang streams in on the left while the answer assembles on the right: a heading, two metric tiles, a bar chart and a citation.">
+<div class="stream-code"><div class="stream-lines">{lines_html}</div><span class="caret"></span><span class="stream-label">OpenUI Lang, streaming</span></div>
+<div class="stream-card" data-k="root"><p class="sc-head" data-k="head">Prod exposure</p>
+<div class="sc-kpis" data-k="kpis"><div><span>Internet-reachable</span><b>1 bucket</b></div><div><span>At risk</span><b>8</b></div></div>
+<div class="sc-chart" data-k="chart">{bars_html}</div>
+<span class="sc-cite" data-k="cite"><i></i>S3 policy</span></div>
+<button class="replay" type="button"><span class="ic" data-ic="arrow-counter-clockwise"></span>Replay</button></figure>"""
+
+# Scanning: a simulated run. Every cell is one call; twelve run at once; two fail and are retried.
+svcs = ['EC2', 'S3', 'RDS', 'Lambda', 'IAM', 'VPC', 'EKS', 'KMS', 'ELB']
+regs = 16
+rows = ''
+for i, sname in enumerate(svcs):
+    cells = ''.join(f'<i data-fail="{1 if (i, j) in [(2, 11), (6, 4)] else 0}"></i>' for j in range(regs))
+    rows += f'<div class="sg-row"><span>{sname}</span>{cells}</div>'
+head = '<div class="sg-row sg-head"><span></span>' + ''.join(f'<b>r{j+1}</b>' for j in range(regs)) + '</div>'
+ILL['scan'] = f"""<figure class="art live scan" data-live="scan" aria-label="A grid of services by regions fills as a scan runs twelve calls at a time. Two calls fail, are marked in red, and are retried.">
+<div class="sg">{head}{rows}</div>
+<div class="sg-foot"><span class="key k-done">Scanned</span><span class="key k-run">Running</span><span class="key k-fail">Failed, recorded, retried</span><span class="sg-count"><b data-c="run">0</b> in flight · <b data-c="done">0</b> of {len(svcs)*regs} done</span></div>
+<button class="replay" type="button"><span class="ic" data-ic="arrow-counter-clockwise"></span>Replay</button></figure>"""
+
+# Tokens: one example turn, toggle between before and after prompt caching.
+hist = [0, 1.2, 2.6, 4.0, 5.6, 7.0, 8.6, 10.0]
+tools, system, new = 2.2, 9.0, 1.2
+mx = tools + system + max(hist) + new
+cols = ''
+for h in hist:
+    seg = lambda cls, v: f'<i class="{cls}" style="--v:{v/mx*100:.2f}%"></i>'
+    cols += '<div class="tk-bar">' + seg('n', new) + seg('h', h) + seg('s', system) + seg('t', tools) + '</div>'
+before = sum(tools + system + h + new for h in hist)
+after = sum((tools + system + h) * 0.1 + new * 1.25 for h in hist)
+ILL['tokens'] = f"""<figure class="art live tokens" data-live="tokens" data-before="{before:.0f}" data-after="{after:.0f}" aria-label="Eight stacked bars, one per model call in a report turn. A toggle switches between before and after prompt caching: after, the shared prefix is read from cache at a tenth of the price.">
+<div class="tk-top"><div class="seg" role="group" aria-label="Show"><button type="button" data-mode="before" aria-pressed="true">Before</button><button type="button" data-mode="after" aria-pressed="false">After caching</button></div>
+<p class="tk-read"><b data-r="val">{before:.0f}k</b> billed input, in token-equivalents</p></div>
+<div class="tk-chart">{cols}</div>
+<div class="tk-foot"><span class="key k-full">Re-read in full</span><span class="key k-cache">Read from cache, 0.1×</span><span class="key k-new">New this call, cache write 1.25×</span></div>
+<p class="tk-note">An example report turn of eight calls. Bottom to top: tool schemas, system prompt, conversation so far, the new turn. Prices are the published cache multipliers.</p></figure>"""
 
 html = open(PAGE).read()
 for k, v in ILL.items():

@@ -225,21 +225,17 @@ main.cs{max-width:1168px;padding-inline:40px}
 .cs .toolset p{font-size:14px;line-height:1.5;color:var(--soft);margin:0 0 20px}
 .cs .toolset ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .cs .toolset li{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;line-height:1;padding:6px 8px;border-radius:6px;background:var(--bg);color:var(--strong);border:1px solid var(--rule)}
-.cs .toolset.key{background:var(--strong)}
+.cs .toolset.key{display:block;background:var(--strong)}
 .cs .toolset.key .num,.cs .toolset.key h3{color:var(--bg)}
 .cs .toolset.key p{color:var(--muted)}
 .cs .toolset.key li{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 25%,transparent)}
 @media(max-width:900px){.cs .toolsets{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.cs .toolsets{grid-template-columns:1fr}}
+@media(max-width:600px){.cs .toolsets{grid-template-columns:minmax(0,1fr)}.cs .toolset li{overflow-wrap:anywhere}}
 
 /* Gen UI and tokens */
 .cs .i-onkm{fill:var(--bg);opacity:.6}
 .cs .i-big{font-size:22px;fill:var(--strong);font-weight:500}
 .cs .i-huge{font-size:56px;fill:var(--strong);font-weight:500;letter-spacing:-1px}
-.cs .minis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
-.cs .minis figure{background:var(--panel);border-radius:14px;padding:16px 16px 14px;margin:0}
-.cs .minis svg{display:block;width:100%;height:auto;overflow:visible}
-.cs .minis figcaption{font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;color:var(--strong);margin-top:10px}
 .cs .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px}
 .cs .tier{background:var(--panel);border-radius:16px;padding:0 28px 28px;overflow:hidden}
 .cs .tier-bar{display:block;height:24px;margin:0 -28px 24px}
@@ -248,4 +244,271 @@ main.cs{max-width:1168px;padding-inline:40px}
 .cs .t-c .tier-bar{background:conic-gradient(var(--red) 25%,transparent 0 50%,var(--red) 0 75%,transparent 0) 0 0/4px 4px}
 .cs .tier ul{margin:12px 0 0;padding-left:18px;color:var(--soft);font-size:14px;line-height:1.55}
 .cs .tier li+li{margin-top:8px}
-@media(max-width:900px){.cs .minis{grid-template-columns:repeat(2,minmax(0,1fr))}.cs .tiers{grid-template-columns:1fr}}
+@media(max-width:900px){.cs .tiers{grid-template-columns:1fr}}
+
+/* ---------- Sidebar: grouped, sticky, follows the section in view ---------- */
+.cs{--dith:conic-gradient(var(--strong) 25%,transparent 0 50%,var(--strong) 0 75%,transparent 0) 0 0/4px 4px;--dith-r:conic-gradient(var(--red) 25%,transparent 0 50%,var(--red) 0 75%,transparent 0) 0 0/4px 4px;--dith-l:radial-gradient(circle at 1px 1px,var(--strong) .9px,transparent 1.1px) 0 0/6px 6px}
+.cs .toc{display:none}
+@media(min-width:1200px){
+  main.cs{max-width:1480px;padding-inline:48px}
+  .cs article:not([hidden]){display:grid;grid-template-columns:176px minmax(0,1fr);column-gap:80px}
+  .cs article>*{grid-column:2;min-width:0}
+  .cs article>.toc{display:block;grid-column:1;grid-row:1/span 80;align-self:start;position:sticky;top:88px;max-height:calc(100vh - 112px);overflow:auto;scrollbar-width:none;padding:4px 0 24px}
+  .cs article>.toc::-webkit-scrollbar{display:none}
+}
+.cs .toc-g+.toc-g{margin-top:28px}
+.cs .toc p{font-size:13px;line-height:1.3;color:var(--strong);margin:0 0 10px}
+.cs .toc ul{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
+.cs .toc a{display:block;font-size:13px;line-height:1.3;padding:5px 0 5px 15px;margin-left:-1px;border-left:1px solid transparent;color:var(--muted);text-decoration:none;transition:color .25s ease,border-color .25s ease}
+.cs .toc a:hover{color:var(--strong)}
+.cs .toc a[aria-current=true]{color:var(--strong);border-left-color:var(--red)}
+.cs section{scroll-margin-top:64px}
+
+/* ---------- Live visuals (escher.js) ---------- */
+.cs .live{position:relative;isolation:isolate}
+.cs .replay{position:absolute;top:16px;right:20px;font:inherit;font-size:12px;color:var(--muted);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.cs .live.done .replay{opacity:1;pointer-events:auto}
+.cs .replay:hover{color:var(--strong)}
+.cs .key{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--soft)}
+.cs .key::before{content:"";width:12px;height:12px;border:1px solid var(--strong);border-radius:2px}
+
+/* Gen UI stream */
+.cs .stream{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center;padding:56px}
+.cs .stream-code,.cs .stream-card{position:relative;border-radius:12px}
+.cs .stream-code::before,.cs .stream-card::before{content:"";position:absolute;inset:0;transform:translate(7px,7px);border-radius:12px;background:var(--dith-l);z-index:-1}
+.cs .stream-code{background:var(--strong);color:var(--bg);padding:24px 24px 20px;min-height:268px;display:flex;flex-direction:column}
+.cs .stream-lines{font-family:'Geist Mono',ui-monospace,monospace;font-size:12.5px;line-height:2.1;flex:1}
+.cs .ln{display:block;white-space:pre;min-height:2.1em;overflow:hidden}
+.cs .caret{display:inline-block;width:7px;height:14px;background:var(--red);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.cs .stream-label{font-size:12px;opacity:.55;margin-top:12px}
+.cs .stream-card{background:var(--bg);border:1.5px solid var(--strong);padding:22px}
+.cs .stream-card [data-k],.cs .stream-card{transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+.cs .sc-head{font-size:16px;color:var(--strong);margin:0 0 14px}
+.cs .sc-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cs .sc-kpis div{border:1px solid var(--strong);border-radius:8px;padding:10px 12px}
+.cs .sc-kpis span{display:block;font-size:12px;color:var(--soft)}
+.cs .sc-kpis b{display:block;font-size:22px;font-weight:500;color:var(--strong);line-height:1.3}
+.cs .sc-chart{display:flex;align-items:flex-end;gap:14px;height:104px;border-bottom:1px solid var(--line);margin:18px 0 14px}
+.cs .sc-chart i{flex:1;height:var(--h);background:var(--dith);transform-origin:bottom;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.cs .sc-chart i:nth-child(2){transition-delay:.05s}.cs .sc-chart i:nth-child(3){transition-delay:.1s}.cs .sc-chart i:nth-child(4){transition-delay:.15s}.cs .sc-chart i:nth-child(5){transition-delay:.2s}.cs .sc-chart i:nth-child(6){transition-delay:.25s}
+.cs .sc-chart i.r{background:var(--dith-r)}
+.cs .sc-cite{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);border:1px solid var(--strong);border-radius:999px;padding:3px 12px 3px 10px}
+.cs .sc-cite i{width:7px;height:7px;border-radius:50%;background:var(--red)}
+.cs .is-anim .stream-card:not(.on){opacity:.0;transform:translateY(10px)}
+.cs .is-anim .stream-card [data-k]:not(.on){opacity:0;transform:translateY(8px)}
+.cs .is-anim .sc-chart:not(.on) i{transform:scaleY(0)}
+
+/* Scan grid */
+.cs .scan{padding:56px}
+.cs .sg{display:grid;gap:5px}
+.cs .sg-row{display:grid;grid-template-columns:52px repeat(16,minmax(0,1fr));gap:5px;align-items:center}
+.cs .sg-row>span{font-size:12px;color:var(--soft);text-align:right;padding-right:8px}
+.cs .sg-head b{font-size:10px;font-weight:400;color:var(--muted);text-align:center}
+.cs .sg i{display:block;height:22px;border:1px solid var(--strong);border-radius:3px;transition:background-color .2s ease}
+.cs .sg i.run{background:var(--dith-l)}
+.cs .sg i.done{background:var(--dith)}
+.cs .sg i.fail{background:var(--dith-r);border-color:var(--red)}
+.cs .sg i.retried{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.cs .sg-foot{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:28px;padding-left:57px}
+.cs .k-done::before{background:var(--dith)}.cs .k-run::before{background:var(--dith-l)}.cs .k-fail::before{background:var(--dith-r);border-color:var(--red)}
+.cs .sg-count{margin-left:auto;font-size:12px;color:var(--soft);font-variant-numeric:tabular-nums}
+.cs .sg-count b{font-weight:500;color:var(--strong)}
+
+/* Token toggle chart */
+.cs .tokens{padding:48px 56px}
+.cs .tk-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.cs .seg{display:inline-flex;padding:3px;border-radius:999px;background:var(--bg);border:1px solid var(--rule)}
+.cs .seg button{font:inherit;font-size:13px;padding:6px 16px;border:0;border-radius:999px;background:none;color:var(--soft);cursor:pointer;transition:background-color .3s ease,color .3s ease}
+.cs .seg button[aria-pressed=true]{background:var(--strong);color:var(--bg)}
+.cs .seg button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.cs .tk-read{margin:0;font-size:13px;color:var(--soft)}
+.cs .tk-read b{font-size:28px;font-weight:500;color:var(--strong);margin-right:8px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cs .tk-chart{display:flex;gap:16px;align-items:flex-end;height:260px;margin-top:36px;border-bottom:1px solid var(--line)}
+.cs .tk-bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.cs .tk-bar i{display:block;height:var(--v);border:1px solid var(--strong);border-bottom:0;background:var(--dith);transition:background .7s ease}
+.cs .tk-bar i[style*="--v:0.00%"]{border:0}
+.cs .tk-bar i.n{background:var(--dith-r);border-color:var(--red)}
+.cs .tokens.after .tk-bar i:not(.n){background:var(--dith-l)}
+.cs .tk-foot{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:20px}
+.cs .k-full::before{background:var(--dith)}.cs .k-cache::before{background:var(--dith-l)}.cs .k-new::before{background:var(--dith-r);border-color:var(--red)}
+.cs .tk-note{font-size:12px;color:var(--muted);margin:12px 0 0;max-width:640px}
+
+@media(max-width:900px){.cs .stream{grid-template-columns:minmax(0,1fr);padding:32px}.cs .live .replay{position:static;display:block;margin:20px 0 0 auto}.cs .stream .replay{grid-column:1}.cs .scan,.cs .tokens{padding:32px}}
+@media(max-width:600px){
+  .cs .stream{padding:16px;gap:28px}.cs .stream-code{min-height:0;padding:18px}.cs .stream-lines{font-size:10.5px}
+  .cs .scan,.cs .tokens{padding:20px 12px}
+  .cs .sg,.cs .sg-row{gap:3px}.cs .sg-row{grid-template-columns:40px repeat(16,minmax(0,1fr))}.cs .sg i{height:14px;border-radius:2px}
+  .cs .sg-head b{font-size:0}.cs .sg-head b:first-of-type,.cs .sg-head b:last-of-type{font-size:9px}
+  .cs .sg-foot{padding-left:0}.cs .sg-count{margin-left:0;width:100%}
+  .cs .tk-chart{gap:6px;height:200px}
+
+}
+@media(prefers-reduced-motion:reduce){.cs .caret{animation:none}.cs .sc-chart i,.cs .stream-card [data-k],.cs .tk-bar i,.cs .sg i{transition:none}}
+
+/* Icons: Phosphor (MIT), inlined by scripts/escher-icons.py. Spots are duotone tiles above short headings; .ic sits inline with labels. */
+.cs .spot{position:relative;isolation:isolate;display:grid;place-items:center;width:44px;height:44px;color:var(--red);margin-bottom:22px}
+.cs .spot::before,.cs .spot::after{content:"";position:absolute;inset:0;border-radius:12px;z-index:-1}
+.cs .spot::before{transform:translate(4px,4px);background:var(--dith-l);opacity:.5}
+.cs .spot::after{background:var(--bg);border:1px solid var(--rule)}
+.cs .spot svg{width:22px;height:22px;display:block}
+.cs .ic{display:inline-flex;vertical-align:-2px;margin-right:7px}
+.cs .ic svg{width:15px;height:15px;display:block}
+.cs .facts dt .ic svg{width:14px;height:14px}
+.cs .tier .n .ic,.cs .builds .n .ic{color:var(--strong)}
+.cs .t-c .n .ic{color:var(--red)}
+.cs .toolset{position:relative}
+.cs .toolset .spot{position:absolute;top:24px;right:24px;margin:0;width:38px;height:38px;border-radius:10px}
+.cs .toolset .spot::before,.cs .toolset .spot::after{border-radius:10px}
+.cs .toolset .spot svg{width:20px;height:20px}
+.cs .toolset.key .spot::after{background:transparent;border-color:color-mix(in srgb,var(--bg) 25%,transparent)}
+.cs .toolset.key .spot::before{display:none}
+.cs .replay{display:inline-flex;align-items:center}
+.cs .replay .ic{margin-right:5px;vertical-align:0}
+.cs .replay .ic svg{width:13px;height:13px}
+
+/* Data model: the real tables. escher.js draws the wires for the chosen table. */
+.cs .er-grid{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px 48px}
+.cs .art.er svg.er-wires{position:absolute;inset:0;width:100%;height:100%;max-width:none;overflow:visible;pointer-events:none;opacity:1;transform:none;transition:none}
+.cs .er-wires path{fill:none;stroke:var(--strong);stroke-width:1.25}
+.cs .er-wires circle{fill:var(--red)}
+.cs .er-col{position:relative;z-index:1;display:flex;flex-direction:column;gap:16px;min-width:0}
+.cs .er-h{font-size:13px;color:var(--muted);margin:0 0 2px}
+.cs .er-t{position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1.5px solid var(--strong);border-radius:10px;padding:0;cursor:pointer;transition:border-color .3s ease,box-shadow .25s ease}
+.cs .er-t::before{content:"";position:absolute;inset:-1.5px;transform:translate(5px,5px);border-radius:10px;background:var(--dith-l);z-index:-1;transition:opacity .3s ease}
+.cs .er-n{display:block;font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;color:var(--strong);padding:9px 12px;border-bottom:1.5px solid var(--strong);overflow-wrap:anywhere}
+.cs .er-t.key .er-n{background:var(--strong);color:var(--bg);border-radius:8px 8px 0 0}
+.cs .er-t.key .er-n::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--red);margin-right:8px;vertical-align:0}
+.cs .er-cs{display:block;padding:6px 0 8px}
+.cs .er-c{display:flex;justify-content:space-between;gap:10px;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;line-height:1.35;padding:3px 12px;color:var(--soft)}
+.cs .er-c span{min-width:0;overflow-wrap:anywhere}
+.cs .er-c em{font-style:normal;color:var(--muted);white-space:nowrap}
+.cs .er-c.pk span,.cs .er-c.fk span{color:var(--strong)}
+.cs .er-c.pk span::before,.cs .er-k.pk::before{content:"";display:inline-block;width:6px;height:6px;border-radius:1px;background:var(--strong);margin-right:6px;vertical-align:1px}
+.cs .er-c.fk span::before,.cs .er-k.fk::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;border:1.5px solid var(--red);margin-right:6px;vertical-align:1px}
+.cs .er.has-sel .er-t:not(.sel):not(.rel){border-color:var(--rule)}
+.cs .er.has-sel .er-t:not(.sel):not(.rel)::before{opacity:0}
+.cs .er.has-sel .er-t:not(.sel):not(.rel) .er-n{border-color:var(--rule);color:var(--muted)}
+.cs .er.has-sel .er-t:not(.sel):not(.rel) .er-c,.cs .er.has-sel .er-t:not(.sel):not(.rel) .er-c span{color:var(--muted)}
+.cs .er.has-sel .er-t.key:not(.sel):not(.rel) .er-n{background:var(--rule)}
+.cs .er-t.sel{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--red)}
+.cs .er-t:hover{border-color:var(--strong)!important}
+.cs .er-note{margin:40px 0 0;max-width:640px;font-size:15px;line-height:1.6;color:var(--soft);min-height:3.2em}
+.cs .er-note b{font-family:'Geist Mono',ui-monospace,monospace;font-weight:400;font-size:13px;color:var(--strong);margin-right:6px}
+.cs .er-key{display:flex;flex-wrap:wrap;gap:8px 24px;margin:16px 0 0;font-size:12px;color:var(--muted)}
+@media(max-width:1100px){.cs .er-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.cs .er-grid{grid-template-columns:minmax(0,1fr)}.cs .art.er svg.er-wires{display:none}}
+
+/* Components: working copies of Escher's own. */
+.cs .gxs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
+.cs .gx{display:flex;flex-direction:column;background:var(--panel);border-radius:14px;padding:20px 20px 16px;margin:0;min-width:0}
+.cs .gx-stage{position:relative;flex:1;display:grid;place-items:center;min-height:168px}
+.cs .gx figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:16px}
+.cs .gx figcaption code{background:none;padding:0;font-size:12px}
+.cs .gx-hint{font-size:12px;color:var(--muted)}
+.cs .gm,.cs .gw{display:grid;gap:3px;width:100%;max-width:240px;background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:14px 16px}
+.cs .gm-l,.cs .gm-n{font-size:12px;color:var(--muted)}
+.cs .gm-v{font-size:26px;font-weight:500;color:var(--strong);letter-spacing:-.01em;margin:2px 0}
+.cs .gm-d{font-size:12px;color:var(--soft)}
+.cs .gm-d.bad{color:var(--red)}
+.cs .gc{width:100%;padding:8px 0 22px 34px}
+.cs .gc-plot{position:relative;height:128px}
+.cs .gc-tick{position:absolute;left:0;right:0;bottom:var(--y);border-top:1px solid var(--rule)}
+.cs .gc-tick i{position:absolute;right:100%;margin-right:6px;transform:translateY(-50%);font:normal 10px 'Geist Mono',ui-monospace,monospace;color:var(--muted)}
+.cs .gc-bands{position:absolute;inset:0;display:flex}
+.cs .gc-band{position:relative;flex:1;height:100%;font:inherit;background:transparent;border:0;padding:0;cursor:default;border-radius:4px 4px 0 0}
+.cs .gc-band:hover,.cs .gc-band:focus-visible{background:color-mix(in srgb,var(--strong) 5%,transparent);outline:0}
+.cs .gc-band i{position:absolute;bottom:0;left:22%;right:22%;height:var(--h);background:color-mix(in srgb,var(--strong) 20%,var(--bg));border-radius:2px 2px 0 0}
+.cs .gc-band.on i{background:var(--strong)}
+.cs .gc-band span{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:6px;font:10px 'Geist Mono',ui-monospace,monospace;color:var(--muted);white-space:nowrap}
+.cs .gc-band.on span{color:var(--strong)}
+.cs .gc-tip{position:absolute;top:-6px;left:0;margin:0;padding:4px 8px;font-size:12px;color:var(--strong);background:var(--bg);border:1px solid var(--rule);border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,-100%);transition:opacity .15s ease}
+.cs .gc-tip.on{opacity:1}
+.cs .gd{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--strong)}
+.cs .gd th{text-align:left;padding:0;border-bottom:1px solid var(--rule)}
+.cs .gd th button{font:inherit;font-size:11px;color:var(--muted);background:none;border:0;padding:8px 8px;cursor:pointer;width:100%;text-align:inherit;white-space:nowrap}
+.cs .gd th button:hover{color:var(--strong)}
+.cs .gd th button[aria-sort]{color:var(--strong)}
+.cs .gd th button[aria-sort=descending]::after{content:" ↓"}
+.cs .gd th button[aria-sort=ascending]::after{content:" ↑"}
+.cs .gd td{padding:7px 8px;border-top:1px solid var(--rule);white-space:nowrap}
+.cs .gd tr:first-child td{border-top:0}
+.cs .gd td:first-child{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;white-space:normal;overflow-wrap:anywhere}
+.cs .gd .r{text-align:right;font-variant-numeric:tabular-nums}
+.cs .gf{width:100%;height:auto;overflow:visible}
+.cs .gf text{font-size:11px;fill:var(--strong)}
+.cs .gf .gf-s{font-size:10px;fill:var(--muted)}
+.cs .gf-l{stroke:var(--strong);stroke-width:1.25;fill:none}
+.cs .gf-b{fill:var(--bg);stroke:var(--strong);stroke-width:1.25}
+.cs .gf-b.red{fill:url(#r25);stroke:var(--red)}
+.cs .gw{gap:10px}
+.cs .gw-l{font-size:12px;color:var(--muted)}
+.cs .gw-l b{color:var(--strong);font-weight:400;font-variant-numeric:tabular-nums}
+.cs .gw input{width:100%;margin:0;accent-color:var(--red)}
+.cs .gw-v{font-size:22px;font-weight:500;color:var(--strong);font-variant-numeric:tabular-nums}
+.cs .gx[data-gx=Cite] .gx-stage{place-items:start stretch;align-content:start;padding-top:12px}
+.cs .gt{margin:0;font-size:14px;line-height:1.55;color:var(--strong)}
+.cs .gt-m{font:inherit;font-size:10px;line-height:16px;min-width:16px;height:16px;padding:0 4px;margin-left:3px;vertical-align:super;border:0;border-radius:8px;background:var(--chip);color:var(--strong);cursor:help}
+.cs .gt-m:hover,.cs .gt-m:focus-visible,.cs .gx-stage.open .gt-m{background:var(--red);color:#fff;outline:0}
+.cs .gt-m:focus-visible{box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--red)}
+.cs .gt-pop{position:absolute;left:0;right:0;top:76px;display:grid;gap:4px;padding:10px 12px;font-size:12px;color:var(--strong);background:var(--bg);border:1px solid var(--rule);border-radius:8px;opacity:0;transform:translateY(4px);transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.cs .gx-stage:has(.gt-m:hover) .gt-pop,.cs .gx-stage:has(.gt-m:focus-visible) .gt-pop,.cs .gx-stage.open .gt-pop{opacity:1;transform:none}
+.cs .gt-src{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.cs .gt-src i{width:6px;height:6px;border-radius:50%;background:var(--red)}
+.cs .gt-kv em{font-style:normal;color:var(--muted);margin-right:8px}
+.cs .gt-ts{font-size:11px;color:var(--muted);margin-top:2px}
+.cs .gq{width:100%}
+.cs .gq-step{margin:0;font:11px 'Geist Mono',ui-monospace,monospace;color:var(--muted)}
+.cs .gq-q{margin:4px 0 10px;font-size:15px;color:var(--strong)}
+.cs .gq-o{display:grid;gap:6px}
+.cs .gq-o button{font:inherit;font-size:13px;text-align:left;color:var(--strong);background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:7px 12px;cursor:pointer;transition:border-color .2s ease}
+.cs .gq-o button:hover,.cs .gq-o button:focus-visible{border-color:var(--strong);outline:0}
+.cs .gq-o button.again{border-style:dashed;color:var(--soft)}
+.cs .gr-sheet{display:grid;gap:5px;width:100%;max-width:170px;background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:14px}
+.cs .gr-st{justify-self:start;font-size:10px;color:var(--red);border:1px solid var(--red);border-radius:99px;padding:1px 8px}
+.cs .gr-t{font-size:13px;font-weight:500;color:var(--strong);margin-top:4px}
+.cs .gr-s{font-size:11px;color:var(--muted)}
+.cs .gr-ch{display:flex;align-items:flex-end;gap:7px;height:46px;margin:8px 0 4px;border-bottom:1px solid var(--rule)}
+.cs .gr-ch i{flex:1;height:var(--h);background:var(--dith)}
+.cs .gr-ch i.on{background:var(--dith-r)}
+.cs .gr-ln i{display:block;height:1px;background:var(--rule);margin-top:7px}
+.cs .gr-ln i:nth-child(2){width:80%}.cs .gr-ln i:nth-child(3){width:60%}
+@media(max-width:1100px){.cs .gxs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.cs .gxs{grid-template-columns:minmax(0,1fr)}}
+
+/* Evaluation: pick a mistake, watch the graders. */
+.cs .gv-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.cs .gv-chips button{font:inherit;font-size:13px;color:var(--soft);background:var(--bg);border:1px solid var(--rule);border-radius:99px;padding:7px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.cs .gv-chips button:hover{color:var(--strong);border-color:var(--line)}
+.cs .gv-chips button[aria-pressed=true]{background:var(--strong);border-color:var(--strong);color:var(--bg)}
+.cs .gv-body{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px;align-items:start}
+.cs .gv-turn{position:relative;background:var(--bg);border:1.5px solid var(--strong);border-radius:12px;padding:20px 22px}
+.cs .gv-turn::before{content:"";position:absolute;inset:-1.5px;transform:translate(7px,7px);border-radius:12px;background:var(--dith-l);z-index:-1}
+.cs .gv-h{margin:0 0 8px;font-size:12px;color:var(--muted)}
+.cs .gv-h+pre+.gv-h{margin-top:20px}
+.cs .gv-turn pre{margin:0;font:11.5px/1.8 'Geist Mono',ui-monospace,monospace;color:var(--strong);white-space:pre-wrap;overflow-wrap:anywhere}
+.cs .gv-tool{color:var(--soft)!important}
+.cs .gv-turn pre span{display:block;min-height:1.8em;margin:0 -22px;padding:0 22px;transition:background .3s ease}
+.cs .gv-turn pre span.bad{background:color-mix(in srgb,var(--red) 13%,transparent);box-shadow:inset 3px 0 var(--red)}
+.cs .gv-list{list-style:none;margin:0;padding:0}
+.cs .gv-list li{display:grid;grid-template-columns:20px 84px minmax(0,1fr);align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--rule);transition:opacity .25s ease}
+.cs .gv-list li:last-child{border-bottom:1px solid var(--rule)}
+.cs .gv-n{font:12px 'Geist Mono',ui-monospace,monospace;color:var(--strong)}
+.cs .gv-d{font-size:13px;color:var(--soft)}
+.cs .gv-i{position:relative;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--strong);transition:background .2s ease,border-color .2s ease}
+.cs .gv-list .pass .gv-i::after{content:"";position:absolute;left:5.5px;top:3px;width:4px;height:8px;border:solid var(--strong);border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.cs .gv-list .fail .gv-i{border-color:var(--red);background:var(--dith-r)}
+.cs .gv-list .fail .gv-n{color:var(--red)}
+.cs .gv-list .wait{opacity:.35}
+.cs .gv-list .wait .gv-i{border-style:dashed}
+.cs .gv-list .run .gv-i{border-color:var(--rule);border-top-color:var(--strong);animation:gvspin .6s linear infinite}
+@keyframes gvspin{to{transform:rotate(360deg)}}
+.cs .gv-msg{margin:20px 0 0;min-height:2.6em}
+.cs .gv-msg code{display:block;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.5;color:var(--red);background:color-mix(in srgb,var(--red) 8%,transparent)}
+.cs .gv-msg.ok code{color:var(--strong);background:var(--chip)}
+.cs .gv-msg.hold{opacity:0}
+.cs .gv-why{margin:12px 0 0;font-size:14px;line-height:1.55;color:var(--soft)}
+@media(max-width:900px){.cs .gv-body{grid-template-columns:minmax(0,1fr);gap:40px}}
+@media(prefers-reduced-motion:reduce){.cs .gv-list .run .gv-i{animation:none}.cs .er-t,.cs .gt-pop,.cs .gv-list li{transition:none}}
+.cs .gv-tool{min-height:5.4em}.cs .gv-code{min-height:12.6em}
+@media(max-width:600px){.cs .gv-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -12px 28px;padding:0 12px 4px;scrollbar-width:none}.cs .gv-chips::-webkit-scrollbar{display:none}.cs .gv-chips button{flex:none}}

@@ -187,6 +187,141 @@ ILL['l-role'] = icon((W, H), role, 'Two overlapping circles, design and code, wi
 ILL['l-process'] = icon((W, H), process, 'A rough sketch on the left of a sheet turns into code on the right.')
 ILL['l-pace'] = icon((W, H), pace, 'A stopwatch with a quarter of its face filled.')
 
+
+# ---------- Backend illustrations ----------
+def table(x, y, w, name, rows=3, key=False):
+    h = 26 + rows * 14 + 8
+    out = f'<rect x="{x+5}" y="{y+5}" width="{w}" height="{h}" rx="8" fill="url(#d25)"/>'
+    out += f'<rect class="i-paper i-ink" x="{x}" y="{y}" width="{w}" height="{h}" rx="8"/>'
+    out += f'<path d="M{x+1} {y+26}H{x+w-1}" class="i-ink"/>'
+    if key:
+        out += f'<path class="i-fillink" d="M{x} {y+26}V{y+8}A8 8 0 0 1 {x+8} {y}H{x+w-8}A8 8 0 0 1 {x+w} {y+8}V{y+26}Z"/><rect class="i-fillred" x="{x+12}" y="{y+9}" width="8" height="8" rx="1"/>'
+        out += f'<text class="i-mono i-onk" x="{x+28}" y="{y+17}">{name}</text>'
+    else:
+        out += f'<text class="i-mono" x="{x+12}" y="{y+17}">{name}</text>'
+    for i in range(rows):
+        ww = w - 24 - (i * 23) % 50
+        out += f'<path class="i-line" d="M{x+12} {y+40+i*14}H{x+12+ww}"/>'
+    return out, h
+
+# Data model: scans feed resources; resources carry history, edges and embeddings; work objects point at resources.
+b = '<text class="i-cap" x="20" y="20">Scans</text><text class="i-cap" x="330" y="20">Estate</text><text class="i-cap" x="700" y="20">Work</text>'
+links = ('<path class="i-line" d="M180 60H240M180 120H240M180 180H240M180 240H240M240 60V240M240 200H300"/>'
+         '<path class="i-line" d="M400 84V158M565 84V130H470V158M400 248V290M320 338V350M500 228H595V290"/>'
+         '<path class="i-line" d="M500 190H650M650 120V280M650 120H690M650 200H690M650 280H690"/>')
+b += links
+for i, n in enumerate(['scans', 'scan_passes', 'scan_scopes', 'scan_errors']):
+    t, _ = table(20, 36 + i * 60, 160, n, 1)
+    b += t
+t, _ = table(300, 158, 200, 'resources', 4, key=True); b += t
+for (x, y, n) in [(330, 40, 'resource_types'), (500, 40, 'resource_edges')]:
+    pass
+t, _ = table(330, 36, 140, 'resource_types', 1); b += t
+t, _ = table(490, 36, 150, 'resource_edges', 1); b += t
+t, _ = table(300, 290, 200, 'resource_changes', 1); b += t
+t, _ = table(300, 350, 200, 'resource_prescan', 1); b += t
+t, _ = table(520, 290, 150, 'embeddings', 1); b += t
+for i, n in enumerate(['findings', 'reports', 'alerts']):
+    t, _ = table(690, 96 + i * 80, 160, n, 1)
+    b += t
+ILL['schema'] = svg('schema', (880, 410), b, 'Estate tables. Four scan tables feed a central resources table, which links to resource types, edges, changes, prescan snapshots and embeddings. Findings, reports and alerts point back at resources.')
+
+# Scanning: every type in every region, 12 lanes at once, failures kept and retried.
+svcs = ['EC2', 'S3', 'RDS', 'Lambda', 'IAM', 'VPC', 'EKS', 'KMS', 'ELB']
+regs = 16
+b = ''
+cw, ch, gx, gy = 34, 22, 120, 40
+for j in range(regs):
+    b += f'<text class="i-tiny" x="{gx + j*(cw+6) + cw/2:.0f}" y="{gy-10}" text-anchor="middle">r{j+1}</text>'
+for i, sname in enumerate(svcs):
+    y = gy + i * (ch + 6)
+    b += f'<text class="i-small" x="{gx-14}" y="{y+15}" text-anchor="end">{sname}</text>'
+    for j in range(regs):
+        x = gx + j * (cw + 6)
+        k = (i * 7 + j * 3) % 23
+        if (i, j) in [(2, 11), (6, 4)]:
+            fill = 'url(#r50)'
+        elif i * regs + j > 118:
+            fill = 'none'
+        elif i * regs + j > 106:
+            fill = 'url(#d12)'
+        else:
+            fill = 'url(#d50)'
+        cls = 'i-cell'
+        b += f'<rect class="{cls}" x="{x}" y="{y}" width="{cw}" height="{ch}" rx="3" fill="{fill}"/>'
+b += f'<path class="i-red" d="M{gx+11*(cw+6)+cw/2} {gy+2*(ch+6)-4}C{gx+11*(cw+6)+cw/2} {gy-2} {gx+12*(cw+6)+10} {gy-2} {gx+12*(cw+6)+10} {gy+2*(ch+6)-6}" stroke-dasharray="3 3"/>'
+ly = gy + len(svcs) * (ch + 6) + 26
+b += f'<rect x="{gx}" y="{ly-11}" width="14" height="14" rx="2" fill="url(#d50)" class="i-cell"/><text class="i-small" x="{gx+22}" y="{ly}">Scanned</text>'
+b += f'<rect x="{gx+110}" y="{ly-11}" width="14" height="14" rx="2" fill="url(#d12)" class="i-cell"/><text class="i-small" x="{gx+132}" y="{ly}">Running, 12 at a time</text>'
+b += f'<rect x="{gx+300}" y="{ly-11}" width="14" height="14" rx="2" fill="url(#r50)" class="i-cell"/><text class="i-small" x="{gx+322}" y="{ly}">Failed, recorded, retried</text>'
+ILL['scan'] = svg('scan', (880, ly + 14), b, 'A grid of services by regions. Most cells are scanned, a few are running, and two failed cells are marked in red with a retry arrow.')
+
+# Model layer: allowlist, router, two providers, one stream back.
+b = ''
+def node(x, y, w, h, t, sub=None, key=False):
+    cls, tc = ('d-key', 'd-key-t') if key else ('d-node', 'd-t')
+    o = f'<rect class="{cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="12"/>'
+    o += f'<text class="{tc}" x="{x+w/2}" y="{y+(h/2 if not sub else h/2-4)+5}" text-anchor="middle" font-size="15">{t}</text>'
+    if sub:
+        o += f'<text class="{"d-key-t" if key else "d-s"}" x="{x+w/2}" y="{y+h/2+16}" text-anchor="middle" font-size="12"{" opacity=.7" if key else ""}>{sub}</text>'
+    return o
+b += node(0, 70, 150, 64, 'Request', 'model id, tools')
+b += node(200, 70, 150, 64, 'Allowlist', 'unknown id → 400')
+b += node(400, 70, 150, 64, 'Router', None, key=True)
+b += node(640, 10, 220, 64, 'Anthropic', 'claude-*, cached prompt')
+b += node(640, 130, 220, 64, 'OpenRouter', 'vendor/model')
+b += '<path class="d-line" d="M150 102H200M350 102H400M550 102C600 102 590 42 640 42M550 102C600 102 590 162 640 162"/>'
+# stream ribbon
+sy = 250
+b += f'<text class="d-s" x="0" y="{sy-14}">Back to the browser, one stream</text>'
+x = 0
+seq = ['t','t','t','tool','t','t','t','tool','t','t','t','t','t','usage']
+for k in seq:
+    w = 46 if k == 't' else 84
+    if k == 't':
+        b += f'<rect x="{x}" y="{sy}" width="{w}" height="30" rx="4" fill="url(#d25)"/>'
+    elif k == 'tool':
+        b += f'<rect class="i-fillred" x="{x}" y="{sy}" width="{w}" height="30" rx="4"/><text x="{x+w/2}" y="{sy+19}" text-anchor="middle" class="i-on">tool call</text>'
+    else:
+        b += f'<rect class="i-fillink" x="{x}" y="{sy}" width="{w}" height="30" rx="4"/><text x="{x+w/2}" y="{sy+19}" text-anchor="middle" class="i-onk">tokens</text>'
+    x += w + 6
+b += f'<text class="d-s" x="0" y="{sy+54}">Text renders as it arrives. Tool calls run in the browser. The last marker reports token use.</text>'
+ILL['model'] = f'<div class="diagram"><svg viewBox="0 0 880 {sy+64}" role="img" aria-label="A request passes an allowlist, then a router sends claude models to Anthropic with a cached prompt and other models to OpenRouter. One stream comes back with text, tool-call markers and a final token-use marker.">{b}</svg></div>'
+
+# Execution: propose, confirm, snapshot, run, verify; rollback restores.
+b = ''
+steps = [('Propose', 'the model'), ('Confirm', 'a person'), ('Snapshot', 'current state'), ('Run', 'one step'), ('Verify', 're-read it')]
+for i, (t, sub) in enumerate(steps):
+    x = i * 178
+    b += node(x, 30, 150, 70, t, sub, key=(i == 1))
+    if i:
+        b += f'<path class="d-line" d="M{x-28} 65H{x}"/>'
+# person cursor on confirm
+b += '<path class="i-ink" d="M250 112L250 136L256 130L261 141L265 139L260 128L268 128Z" fill="url(#d50)"/>'
+b += '<path class="d-red" d="M787 100V160H431V100" stroke-dasharray="4 4"/><text class="d-redt" x="609" y="180" text-anchor="middle">Rollback restores the snapshot</text>'
+b += '<path class="d-line" d="M609 100V124"/><text class="d-s" x="609" y="140" text-anchor="middle">halt or ask</text>'
+b += '<text class="d-s" x="75" y="122" text-anchor="middle">cannot run anything</text>'
+ILL['exec'] = f'<div class="diagram"><svg viewBox="0 0 880 196" role="img" aria-label="Five steps: the model proposes, a person confirms, the current state is snapshotted, one step runs, and the result is re-read. A red dashed line shows rollback restoring the snapshot.">{b}</svg></div>'
+
+# Evaluation: a finished turn passes six deterministic graders.
+b = '<rect x="7" y="47" width="170" height="150" rx="10" fill="url(#d25)"/><rect class="i-paper i-ink" x="0" y="40" width="170" height="150" rx="10"/>'
+b += '<text class="i-small" x="16" y="64">Finished turn</text><path class="i-ink" d="M16 84H150M16 100H130M16 116H140"/>'
+for j, hh in enumerate([16, 28, 22, 34]):
+    b += f'<rect x="{16+j*22}" y="{176-hh}" width="14" height="{hh}" fill="url(#d50)"/>'
+graders = ['grounding', 'citation', 'parse', 'shape', 'absence', 'reachable']
+b += '<path class="i-line" d="M170 115H860"/>'
+for i, g in enumerate(graders):
+    cx = 240 + i * 108
+    bad = (i == 0)
+    b += f'<circle class="i-paper i-ink" cx="{cx}" cy="115" r="30"/>'
+    if bad:
+        b += f'<circle cx="{cx}" cy="115" r="30" fill="url(#r25)"/><path class="i-red" d="M{cx-9} 106L{cx+9} 124M{cx+9} 106L{cx-9} 124" stroke-width="2.5"/>'
+    else:
+        b += f'<path class="i-ink" d="M{cx-10} 115L{cx-3} 122L{cx+11} 107" stroke-width="2"/>'
+    b += f'<text class="i-mono" x="{cx}" y="170" text-anchor="middle">{g}</text>'
+b += '<text class="i-small" x="212" y="200">A number that isn’t in the tool results fails grounding.</text>'
+ILL['eval'] = svg('eval', (880, 210), b, 'A finished turn passes six graders: grounding, citation, parse, shape, absence and reachable. Grounding is marked failed because a number did not appear in the tool results.')
+
 html = open(PAGE).read()
 for k, v in ILL.items():
     marker = f'<!--ill:{k}-->'

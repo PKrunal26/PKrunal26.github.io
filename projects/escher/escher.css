@@ -206,3 +206,22 @@ main.cs{max-width:1168px;padding-inline:40px}
 @keyframes trail{to{stroke-dashoffset:-90}}
 @media(prefers-reduced-motion:reduce){.reveal .cs .art svg,.reveal .cs .ico{opacity:1;transform:none;transition:none}.cs .i-trail,.cs .i-trail-s{animation:none}}
 @media(max-width:600px){.cs .art{padding:16px 6px}}
+
+/* Backend sections */
+.cs .i-tiny{font-size:10px;fill:var(--muted)}
+.cs .i-cell{stroke:var(--strong);stroke-width:1}
+.cs .i-on{font-size:11px;fill:#fff}
+.cs .i-onk{font-size:11px;fill:var(--bg)}
+.cs .toolsets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:64px}
+.cs .toolset{background:var(--panel);border-radius:16px;padding:28px}
+.cs .toolset .num{font-size:44px;margin-bottom:20px}
+.cs .toolset h3{margin-bottom:4px}
+.cs .toolset p{font-size:14px;line-height:1.5;color:var(--soft);margin:0 0 20px}
+.cs .toolset ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.cs .toolset li{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;line-height:1;padding:6px 8px;border-radius:6px;background:var(--bg);color:var(--strong);border:1px solid var(--rule)}
+.cs .toolset.key{background:var(--strong)}
+.cs .toolset.key .num,.cs .toolset.key h3{color:var(--bg)}
+.cs .toolset.key p{color:var(--muted)}
+.cs .toolset.key li{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 25%,transparent)}
+@media(max-width:900px){.cs .toolsets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.cs .toolsets{grid-template-columns:1fr}}

@@ -4,13 +4,13 @@ Fills every <span class="spot" data-ic="NAME"> with the duotone icon and every
 <span class="ic" data-ic="NAME"> with the regular one, so the page needs no
 icon font or extra requests. Re-run after adding or changing a marker:
 
-    python3 scripts/openfoam-icons.py
+    python3 scripts/openfoam-icons.py [page.html]
 """
-import os, re
+import os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ICONS = os.path.join(HERE, 'icons', 'phosphor')
-PAGE = os.path.join(HERE, '..', 'projects', 'openfoam-studio', 'index.html')
+PAGE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', 'projects', 'openfoam-studio', 'index.html')
 
 def svg(weight, name):
     raw = open(os.path.join(ICONS, weight, name + '.svg')).read().strip()

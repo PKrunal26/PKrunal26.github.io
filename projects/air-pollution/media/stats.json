@@ -1,0 +1,559 @@
+{
+"asOf": "2026-10-19T19:10:17.681Z",
+"summary": {
+"range": "30d",
+"visitors": 173,
+"shared_location": 5,
+"refused_location": 25,
+"new_visitors": 99,
+"returning_visitors": 15,
+"as_of": "2026-10-19T19:10:17.681Z",
+"zone": "Asia/Kolkata"
+},
+"daily": [
+{
+"day": "2026-10-11",
+"visitors": 64
+},
+{
+"day": "2026-10-12",
+"visitors": 20
+},
+{
+"day": "2026-10-13",
+"visitors": 8
+},
+{
+"day": "2026-10-14",
+"visitors": 4
+},
+{
+"day": "2026-10-15",
+"visitors": 27
+},
+{
+"day": "2026-10-16",
+"visitors": 10
+},
+{
+"day": "2026-10-17",
+"visitors": 11
+},
+{
+"day": "2026-10-18",
+"visitors": 23
+},
+{
+"day": "2026-10-19",
+"visitors": 6
+},
+{
+"day": "2026-10-20",
+"visitors": 0
+}
+],
+"actions": [
+{
+"group": "Location button",
+"name": "Blocked",
+"visitors": 6
+},
+{
+"group": "Location button",
+"name": "Found",
+"visitors": 4
+},
+{
+"group": "Layers turned on",
+"name": "Nitrogen dioxide",
+"visitors": 51
+},
+{
+"group": "Layers turned on",
+"name": "Carbon monoxide",
+"visitors": 49
+},
+{
+"group": "Layers turned on",
+"name": "Ozone",
+"visitors": 43
+},
+{
+"group": "Layers turned on",
+"name": "Sulphur dioxide",
+"visitors": 41
+},
+{
+"group": "Layers turned on",
+"name": "Particulate matter",
+"visitors": 37
+},
+{
+"group": "Layers turned on",
+"name": "Fine particles",
+"visitors": 19
+},
+{
+"group": "Layers turned on",
+"name": "Mineral dust",
+"visitors": 15
+},
+{
+"group": "Layers turned on",
+"name": "sun",
+"visitors": 8
+},
+{
+"group": "Layers turned on",
+"name": "Relative humidity",
+"visitors": 7
+},
+{
+"group": "Layers turned on",
+"name": "Wind",
+"visitors": 7
+},
+{
+"group": "Layers turned on",
+"name": "Birch pollen",
+"visitors": 6
+},
+{
+"group": "Layers turned on",
+"name": "Olive pollen",
+"visitors": 6
+},
+{
+"group": "Layers turned on",
+"name": "UV index",
+"visitors": 6
+},
+{
+"group": "Layers turned on",
+"name": "Aerosol optical depth",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Alder pollen",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Ammonia",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Grass pollen",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Mugwort pollen",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Ragweed pollen",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Secondary inorganic aerosol",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Temperature",
+"visitors": 5
+},
+{
+"group": "Layers turned on",
+"name": "Clear-sky UV index",
+"visitors": 4
+},
+{
+"group": "Layers turned on",
+"name": "Non-methane volatile organic compounds",
+"visitors": 4
+},
+{
+"group": "Layers turned on",
+"name": "PM₁₀ from wildfires",
+"visitors": 4
+},
+{
+"group": "Layers turned on",
+"name": "Total elementary carbon",
+"visitors": 4
+},
+{
+"group": "Layers turned on",
+"name": "PM₂.₅ total organic matter",
+"visitors": 3
+},
+{
+"group": "Layers turned on",
+"name": "Residential elementary carbon",
+"visitors": 3
+},
+{
+"group": "Layers turned on",
+"name": "Sea salt aerosol",
+"visitors": 3
+},
+{
+"group": "Layers turned on",
+"name": "Formaldehyde",
+"visitors": 2
+},
+{
+"group": "Layers turned on",
+"name": "Glyoxal",
+"visitors": 2
+},
+{
+"group": "Layers turned on",
+"name": "Nitrogen monoxide",
+"visitors": 2
+},
+{
+"group": "Layers turned on",
+"name": "Peroxyacyl nitrates",
+"visitors": 2
+},
+{
+"group": "Places searched",
+"name": "New Delhi",
+"visitors": 5
+},
+{
+"group": "Places searched",
+"name": "Typed coordinates",
+"visitors": 3
+},
+{
+"group": "Places searched",
+"name": "Bengaluru",
+"visitors": 2
+},
+{
+"group": "Places searched",
+"name": "Jakarta",
+"visitors": 1
+},
+{
+"group": "Places searched",
+"name": "Rome",
+"visitors": 1
+},
+{
+"group": "Places searched",
+"name": "Singapore",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "Played the 48-hour forecast",
+"visitors": 35
+},
+{
+"group": "Time and readings",
+"name": "Opened History",
+"visitors": 26
+},
+{
+"group": "Time and readings",
+"name": "Played the monthly history",
+"visitors": 19
+},
+{
+"group": "Time and readings",
+"name": "Opened Today (48-hour forecast)",
+"visitors": 14
+},
+{
+"group": "Time and readings",
+"name": "Tapped the globe for a reading",
+"visitors": 42
+},
+{
+"group": "Time and readings",
+"name": "release/2026-10-17/closed",
+"visitors": 14
+},
+{
+"group": "Time and readings",
+"name": "card-found/gobi-dust",
+"visitors": 3
+},
+{
+"group": "Time and readings",
+"name": "card-found/north-india-november",
+"visitors": 3
+},
+{
+"group": "Time and readings",
+"name": "release/2026-10-17/cards",
+"visitors": 3
+},
+{
+"group": "Time and readings",
+"name": "card-collected/gobi-dust",
+"visitors": 2
+},
+{
+"group": "Time and readings",
+"name": "card-collected/indonesia-2026",
+"visitors": 2
+},
+{
+"group": "Time and readings",
+"name": "card-found/harmattan",
+"visitors": 2
+},
+{
+"group": "Time and readings",
+"name": "card-found/indonesia-2026",
+"visitors": 2
+},
+{
+"group": "Time and readings",
+"name": "card-wrong/north-india-november",
+"visitors": 2
+},
+{
+"group": "Time and readings",
+"name": "card-collected/harmattan",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-found/athens-dust-2024",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-found/punjab-pakistan-november",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-found/saharan-dust-caribbean",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-found/south-america-2024",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-shared/indonesia-2026",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-wrong/gobi-dust",
+"visitors": 1
+},
+{
+"group": "Time and readings",
+"name": "card-wrong/harmattan",
+"visitors": 1
+}
+],
+"breakdowns": [
+{
+"dimension": "Pages",
+"name": "Who Owns the Air?",
+"visitors": 157
+},
+{
+"dimension": "Pages",
+"name": "Air Atlas Data Study",
+"visitors": 16
+},
+{
+"dimension": "Referrers",
+"name": "Direct or unknown",
+"visitors": 48
+},
+{
+"dimension": "Referrers",
+"name": "www.reddit.com",
+"visitors": 48
+},
+{
+"dimension": "Referrers",
+"name": "l.instagram.com",
+"visitors": 39
+},
+{
+"dimension": "Referrers",
+"name": "pkrunal26.github.io/air-pollution-map",
+"visitors": 12
+},
+{
+"dimension": "Referrers",
+"name": "www.linkedin.com",
+"visitors": 8
+},
+{
+"dimension": "Referrers",
+"name": "Google",
+"visitors": 3
+},
+{
+"dimension": "Referrers",
+"name": "github.com/PKrunal26/air-pollution-map",
+"visitors": 3
+},
+{
+"dimension": "Referrers",
+"name": "pkrunal26.github.io/projects/air-pollution",
+"visitors": 3
+},
+{
+"dimension": "Referrers",
+"name": "pkrunal26.github.io/air-pollution-map/c/gobi-dust",
+"visitors": 2
+},
+{
+"dimension": "Referrers",
+"name": "pkrunal26.github.io/air-pollution-map/c/south-america-2024",
+"visitors": 2
+},
+{
+"dimension": "Referrers",
+"name": "com.linkedin.android",
+"visitors": 1
+},
+{
+"dimension": "Referrers",
+"name": "com.reddit.frontpage",
+"visitors": 1
+},
+{
+"dimension": "Countries",
+"name": "India",
+"visitors": 102
+},
+{
+"dimension": "Countries",
+"name": "United States",
+"visitors": 26
+},
+{
+"dimension": "Countries",
+"name": "Canada",
+"visitors": 8
+},
+{
+"dimension": "Countries",
+"name": "Germany",
+"visitors": 8
+},
+{
+"dimension": "Countries",
+"name": "United Kingdom",
+"visitors": 7
+},
+{
+"dimension": "Countries",
+"name": "Australia",
+"visitors": 3
+},
+{
+"dimension": "Countries",
+"name": "France",
+"visitors": 2
+},
+{
+"dimension": "Countries",
+"name": "Japan",
+"visitors": 2
+},
+{
+"dimension": "Countries",
+"name": "Netherlands",
+"visitors": 2
+},
+{
+"dimension": "Countries",
+"name": "Switzerland",
+"visitors": 1
+},
+{
+"dimension": "Countries",
+"name": "Czechia",
+"visitors": 1
+},
+{
+"dimension": "Countries",
+"name": "Finland",
+"visitors": 1
+},
+{
+"dimension": "Screens",
+"name": "Phones",
+"visitors": 130
+},
+{
+"dimension": "Screens",
+"name": "Tablets",
+"visitors": 1
+},
+{
+"dimension": "Screens",
+"name": "Computers",
+"visitors": 25
+},
+{
+"dimension": "Screens",
+"name": "Large screens",
+"visitors": 17
+},
+{
+"dimension": "Systems",
+"name": "Android",
+"visitors": 87
+},
+{
+"dimension": "Systems",
+"name": "iOS",
+"visitors": 44
+},
+{
+"dimension": "Systems",
+"name": "macOS",
+"visitors": 21
+},
+{
+"dimension": "Systems",
+"name": "Windows",
+"visitors": 14
+},
+{
+"dimension": "Systems",
+"name": "Linux",
+"visitors": 7
+},
+{
+"dimension": "Browsers",
+"name": "Chrome",
+"visitors": 122
+},
+{
+"dimension": "Browsers",
+"name": "Safari",
+"visitors": 46
+},
+{
+"dimension": "Browsers",
+"name": "Firefox",
+"visitors": 5
+}
+]
+}

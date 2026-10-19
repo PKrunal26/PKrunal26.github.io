@@ -8,6 +8,10 @@
   try { saved = localStorage.getItem('theme'); } catch {}
   if (saved === 'dark' || saved === 'light') root.dataset.theme = saved;
 
+  let fx = null;
+  try { fx = localStorage.getItem('particles'); } catch {}
+  if (fx === 'off') root.dataset.particles = 'off';
+
   const current = () => root.dataset.theme || (system.matches ? 'dark' : 'light');
 
   // The switch itself is a fluid that wells out of the corner (theme-flood.js).
@@ -34,6 +38,25 @@
       label();
     };
 
+    // Particles: off removes the cursor water and the theme flood animation.
+    const fxButton = document.createElement('button');
+    fxButton.className = 'theme-toggle fx-toggle';
+    fxButton.type = 'button';
+    const fxLabel = () => {
+      const on = root.dataset.particles !== 'off';
+      fxButton.textContent = on ? 'Particles on' : 'Particles off';
+      fxButton.setAttribute('aria-pressed', String(on));
+    };
+    fxButton.addEventListener('click', () => {
+      const off = root.dataset.particles !== 'off';
+      if (off) root.dataset.particles = 'off'; else delete root.dataset.particles;
+      try { localStorage.setItem('particles', off ? 'off' : 'on'); } catch {}
+      near = false;
+      if (off) window.themeFlood?.peek(false);
+      fxLabel();
+    });
+    fxLabel();
+
     // Nearing the toggle starts the corner breathing out the other theme;
     // it only winds down once the cursor is clearly away again.
     const NEAR = 110, FAR = 180;
@@ -44,6 +67,7 @@
         const d = Math.hypot(e.clientX - (b.left + b.width / 2), e.clientY - (b.top + b.height / 2));
         // After a switch, wait for the cursor to leave before peeking again.
         if (!armed) { if (d > FAR) armed = true; return; }
+        if (root.dataset.particles === 'off') return;
         if (!near && d < NEAR) { near = true; window.themeFlood?.peek(true); }
         else if (near && d > FAR) { near = false; window.themeFlood?.peek(false); }
       }, { passive: true });
@@ -56,11 +80,11 @@
     button.addEventListener('click', () => {
       near = false;
       armed = false;
-      if (window.themeFlood && !still.matches) window.themeFlood.flood(apply);
+      if (window.themeFlood && !still.matches && root.dataset.particles !== 'off') window.themeFlood.flood(apply);
       else apply();
     });
     system.addEventListener('change', label);
     label();
-    document.body.append(button);
+    document.body.append(fxButton, button);
   });
 })();

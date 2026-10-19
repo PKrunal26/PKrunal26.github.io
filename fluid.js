@@ -692,6 +692,11 @@
   }
 
   function wake () {
+    if (document.documentElement.dataset.particles === 'off') {
+      queue.length = 0;
+      hover.entry = null;
+      return;
+    }
     lastInput = performance.now();
     if (running) return;
     running = true;

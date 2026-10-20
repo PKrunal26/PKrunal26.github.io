@@ -1,7 +1,8 @@
 // Escher case study: the product screens, the generative UI section and the stack logos,
 // all drawn in HTML so they stay sharp, follow the page theme and can move.
 // Writes between <!--ill:NAME--> markers in projects/escher/index.html. Styles live in
-// projects/escher/screens.css and behaviour in screens.js.
+// projects/escher/screens.css and behaviour in screens.js; the One turn demo has its own turn.css
+// and turn.js.
 //
 //   node scripts/escher-screens.mjs
 //
@@ -355,8 +356,130 @@ const builds = `<div class="cols builds">
 <div><span class="n"><span class="lgs">${logo("tauri")}</span>Tauri app</span><h3>The product</h3><p>The shipping desktop app, using this frontend code.</p></div></div>`;
 const tokensPipe = `<div class="tp" aria-label="One token file builds CSS variables, a Tailwind theme and typed TypeScript tokens."><span class="tp-src">${ic("file-text")}<b>tokens</b><small>one source file</small></span><i class="tp-ar"></i><span class="tp-outs"><span>${ic("code")}<b>CSS variables</b></span><span>${logo("tailwindcss")}<b>Tailwind theme</b></span><span>${logo("typescript")}<b>Typed tokens</b></span></span><i class="tp-ar"></i><span class="tp-src">${ic("app-window")}<b>Every app</b><small>prototype, desktop, Tauri</small></span></div>`;
 
+// ── One turn: one question played end to end, with what the browser does docked under the screen.
+// Styles in turn.css, behaviour in turn.js. Tool names, the 3-round cap, the 14-tool Ask catalog,
+// open_report as a captured control tool and the report's own scan_findings run are from the
+// prototype (hooks/use-chat-controller.ts, genui/tool-schemas.ts, genui/report-findings.ts).
+const TQ = "Are any of our S3 buckets actually public right now?";
+// Inline citation pills: {3} is evidence, {3i} an inference.
+const tci = (n, k = "e") => `<i class="tj-ci ${k}">${n}</i>`;
+// Text that streams in word by word. **x** is bold, {n} a citation stuck to the word before it.
+function streamed(s) {
+  return s.split(" ").map((w) => `<span class="w">${w
+    .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/\{(\d)(i?)\}/g, (_, n, i) => tci(n, i ? "i" : "e"))} </span>`).join("");
+}
+const CALLS = [
+  // key, icon, tool, args, result, badge, seconds, section
+  ["c1", "database", "query_resources", 'type: "s3"', "41 buckets in prod", "cached", "0.3s", 1],
+  ["c2", "shield-warning", "analyze_posture", 'type: "s3"', "1 flagged: sellers-exports", "1 flagged", "0.7s", 1],
+  ["c3", "terminal", "aws_cli", "aws s3api get-bucket-policy --bucket sellers-exports", 's3:GetObject for Principal "*"', "live", "1.1s", 2],
+  ["c4", "terminal", "aws_cli", "aws s3api get-public-access-block --bucket sellers-exports", "All 4 block flags are false", "live", "0.9s", 2],
+  ["c5", "terminal", "aws_cli", "aws cloudfront list-distributions", "Origin of exports-cdn", "live", "1.4s", 3],
+];
+const SECS = [
+  [1, "Estate inventory", "Start with the estate: count the buckets, then find any with the public-access block off."],
+  [2, "Live check", "The estate says one is open. Confirm it against AWS before saying so."],
+  [3, "What serves it", "Check what reads from it before suggesting a fix."],
+];
+const tcard = ([k, i, t, a, r, b, s]) => `<div class="tj-card" data-k="${k}"><span class="tj-ico">${ic(i)}</span><p class="tj-c1"><code>${t}</code><span>${esc(a)}</span></p><span class="tj-dur">${s}</span><i class="tj-st"><b class="tj-spin"></b>${ic("check")}</i><p class="tj-c2">${ic("arrow-right")}<span>${esc(r)}</span><em class="${b === "live" ? "live" : b === "cached" ? "" : "bad"}">${b}</em></p></div>`;
+const work1 = `<div class="tj-work" data-k="w1"><p class="tj-wh"><b class="tj-spin"></b>${ic("caret-right", "tj-car")}<b class="tj-wl" data-wl>Working</b><span class="tj-wt" data-wt>0.0s</span><span class="tj-wm">5 calls</span><span class="tj-fresh">${ic("check")}Data fresh</span></p>
+<div class="tj-wb"><div class="tj-wbi">${SECS.map(([n, t, th]) => `<div class="tj-sec" data-k="s${n}"><p class="tj-sh">${t}</p><p class="tj-th">${th}</p>${CALLS.filter((c) => c[7] === n).map(tcard).join("")}</div>`).join("")}</div></div></div>`;
+const met = (k, l, v, n, c, cls = "") => `<div class="tj-met tj-slot" data-k="${k}"><small>${l}</small><b class="${cls}">${v}${c}</b><span>${n}</span></div>`;
+const answer = `<div class="tj-ans" data-k="a1"><span class="tj-from"><img src="media/logo.png" alt="" width="14" height="14">Escher</span>
+<p class="tj-lead tj-slot" data-k="lead">${streamed("Yes, one: **sellers-exports**. Its policy lets anyone read every object,{3} and the public-access block that would stop it is off.{4}")}</p>
+<div class="tj-mets tj-slot" data-k="stats">${met("m1", "Public buckets", "1 of 41", "in prod", tci(1) + tci(2))}${met("m2", "Public-access block", "Off", "all 4 flags false", tci(4), "bad")}${met("m3", "Served by", "exports-cdn", "CloudFront origin", tci(5))}</div>
+<p class="tj-take tj-slot" data-k="take">${streamed("Make it private and let exports-cdn read it through origin access control, rather than delete it.")}</p>
+<div class="tj-fu tj-slot" data-k="next">${["Write it up as a report", "Make it private", "Show the policy"].map((t, i) => `<span${i ? "" : ' class="tj-f1"'}>${ic("arrow-right")}${t}</span>`).join("")}</div></div>`;
+const work2 = `<div class="tj-work tj-w2" data-k="w2"><p class="tj-wh"><b class="tj-spin"></b>${ic("caret-down", "tj-car")}<b class="tj-wl" data-wl2>Thinking</b></p><div class="tj-card ctl" data-k="c6"><span class="tj-ico">${ic("file-text")}</span><p class="tj-c1"><code>open_report</code><span>title: "S3 exposure review"</span></p><em class="tj-cap">captured, not run</em></div></div>`;
+const art = `<div class="tj-art" data-k="art"><span class="tj-ico">${ic("file-text")}</span><span><b>S3 exposure review</b><small>Report · prod · 41 buckets</small></span><em data-art>Writing</em></div>`;
+const tside = side("operate", { analysis: [["chat-circle", "Public S3 buckets"], ["chat-circle", "Public exposure in prod"]] })
+  .replace(`<li class="on">${ic("note-pencil")}`, `<li class="on tj-nn">${ic("note-pencil")}`)
+  .replace(`<li>${ic("chat-circle")}<span>Public S3 buckets</span><small>142d</small>`, `<li class="tj-sess">${ic("chat-circle")}<span>Public S3 buckets</span><b class="tj-pulse"></b><small>now</small>`);
+const tdetails = [
+  ["circle-dashed", "Status", '<span class="sx-pill">Open</span>'], ["shield", "Severity", '<span class="sx-pill crit">↑ Critical</span>'],
+  ["cube", "Resource", "sellers-exports"], ["globe", "Region", "us-east-1"],
+  ["tree-structure", "Source", "Public S3 buckets"], ["tag", "Rule", "<code>s3-public-read</code>"],
+  ["calendar-blank", "Detected", "May 30 · 4:21 PM"], ["user", "Saved by", '<span class="sx-av sm">SR</span> Sam Rivera'],
+];
+const report = `<div class="tj-rep" data-k="rep"><div class="tj-repi"><em class="sx-id">#R-1</em><h5>S3 exposure review<span class="sx-pill warn">Warning</span></h5><p class="tj-rsub">prod · 41 buckets · May 30, 2026</p>
+<div class="tj-kp"><div class="tj-slot" data-k="rk1"><small>Public buckets</small><b>1 of 41${tci(1)}${tci(2)}</b></div><div class="tj-slot" data-k="rk2"><small>Served by</small><b>exports-cdn${tci(5)}</b></div></div>
+<p class="sx-sec">Summary</p><p class="tj-rtext" data-k="rtext">${streamed("sellers-exports lets anyone read its objects,{3} and its public-access block is off.{4} exports-cdn serves it,{5} so make it private behind the CDN rather than delete it.")}</p>
+<p class="sx-sec">Findings</p><div class="sx-fc tj-fc tj-slot" data-k="fc"><p class="sx-fc-h tj-m" data-k="fch"><i class="sx-cb"></i><span>1 finding · 1 critical internet exposure</span><em>model</em></p>
+<div class="sx-fr tj-t" data-k="frow"><i class="sx-cb"></i><span><b>S3 bucket allows public read</b><small>Affects sellers-exports</small></span><em class="sx-sev crit">Critical</em><span class="sx-btn tj-save">${ic("bookmark-simple")}Save</span><span class="sx-saved tj-saved">${ic("check")}Saved</span><em class="tj-tag">scan_findings</em></div>
+<p class="tj-note tj-m" data-k="fnote"><span>Public access block disabled leaves bucket contents open to anonymous read until re-enabled.</span><em>model</em></p></div></div></div>`;
+const finding = `<div class="tj-fnd" data-k="fnd"><em class="sx-id">#ufnd_xysj</em><h5>S3 bucket allows public read</h5><p class="sx-desc">With the public-access block off, anyone on the internet can read every object in sellers-exports.</p>
+<p class="sx-sec">Evidence <span>${ic("arrow-up-right")}Open all</span></p><div class="sx-ev">${["Bucket policy", "Public access block", "CloudFront origin"].map((t) => `<span>${logo("aws")}${t}${ic("arrow-up-right", "dim")}</span>`).join("")}</div>
+<p class="sx-sec">Details ${ic("caret-down")}</p><dl class="sx-dl">${tdetails.map(([i, k, v]) => `<div><dt>${ic(i)}${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div>`;
+const tscreen = fit(
+  tside +
+  `<div class="sx-main tj-main"><div class="tj-home on" data-k="home"><span class="sx-btn sx-art">${ic("sidebar-simple")}Artifacts</span><div class="sx-grid"></div>
+<div class="sx-hc"><h4 class="sx-hi">Good afternoon, <i>Sam</i></h4><div class="sx-comp big tj-comp"><span class="sx-ph" data-ph="What can I help you investigate?">What can I help you investigate?</span><div class="sx-row">${ic("plus")}${scope}${ic("caret-down", "dim")}<span class="sx-sp"></span><span class="sx-seg"><span class="on">${ic("chat-text")}Ask</span><span>${ic("wrench")}Execute</span></span><span class="sx-send dark tj-send">${ic("paper-plane-tilt")}</span></div></div>
+<ul class="sx-sug tj-sug">${PROMPTS.slice(1, 4).map((p) => `<li>${p}${ic("arrow-up-right")}</li>`).join("")}</ul></div></div>
+<div class="tj-thread" data-k="thread"><p class="sx-bar tj-bar">${ic("chat-circle")}<b>Public S3 buckets</b>${scope}</p><div class="tj-view"><div class="tj-col">
+<p class="sx-u tj-u" data-k="u1">${TQ}</p>${work1}${answer}<p class="sx-u tj-u" data-k="u2">Write it up as a report.</p>${work2}${art}</div></div>${composer("Ask a follow-up…")}</div>
+<div class="sx-canvas tj-canvas" data-k="canvas"><p class="sx-cbar"><span class="sx-tab tj-tab" data-tab="rep">${ic("file-text")}Report</span><span class="sx-tab tj-tab" data-tab="fnd" data-k="ftab">${ic("lightbulb")}Finding</span><span class="sx-sp"></span><span class="sx-btn">${ic("download-simple")}Export</span>${ic("arrows-out-simple", "dim")}</p><div class="sx-doc">${report}${finding}</div></div>
+<svg class="tj-cur" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2.5v17.2l4.6-4.4 3 6.9 3.1-1.3-3-6.8h6.4z"/></svg></div>`,
+  { label: "One turn in Escher, played through: the question is typed and sent, five read-only tool calls run in three rounds, the answer streams in as cards, a report is written in a second pass, and its finding is saved.", fx: 244 }
+);
+
+// What the browser does at each step, docked under the screen.
+const DATA_TOOLS = ["query_estate", "query_resources", "query_findings", "scan_findings", "analyze_posture", "build_findings", "search_knowledge", "query_reports", "aws_cli"];
+const CTL_TOOLS = ["open_report", "create_plan", "create_changeset", "run_execution", "ask_user"];
+const kv = (k, name, val, note = "") => `<p class="tj-kv" data-k="${k}"><span>${name}</span><code>${val}</code>${note}</p>`;
+const pReq = `<div class="tj-dp tj-req" data-p="0"><p class="tj-empty" data-k="empty">Nothing sent yet</p><div class="tj-kvs">${kv("r1", "POST", "/api/chat")}${kv("r2", "model", "claude-opus-5-5")}${kv("r3", "system", "chat rules + gen-UI grammar", `<em class="ok">${ic("lightning")}cache hit</em>`)}${kv("r4", "scope", "prod", "<em>frozen for the turn</em>")}${kv("r5", "rounds", "up to 3")}</div>
+<div class="tj-tools"><p class="tj-dh" data-k="th">Tools <b>14</b></p><div class="tj-chips">${DATA_TOOLS.map((t, i) => `<code data-k="t${i}">${t}</code>`).join("")}${CTL_TOOLS.map((t, i) => `<code class="c" data-k="t${i + DATA_TOOLS.length}">${t}</code>`).join("")}</div>
+<p class="tj-leg" data-k="leg"><span><i></i>runs, returns data</span><span><i class="c"></i>captured, never run</span><span class="off"><s>propose_change</s> <s>run_steps</s> not sent in Ask</span></p></div></div>`;
+const TEND = 8;
+const WF = [
+  ["model", "", [[0, 1.2], [1.9, 3.1], [4.2, 5.4]], [6.8, TEND], ""],
+  ["query_resources", 'type: "s3"', [[1.2, 1.5]], null, "41 buckets"],
+  ["analyze_posture", 'type: "s3"', [[1.2, 1.9]], null, "1 flagged"],
+  ["aws_cli", "get-bucket-policy", [[3.1, 4.2]], null, 'Principal "*"'],
+  ["aws_cli", "get-public-access-block", [[3.1, 4.0]], null, "4 flags false"],
+  ["aws_cli", "cloudfront list-distributions", [[5.4, 6.8]], null, "exports-cdn"],
+];
+const ROUNDS = [[1.2, 1.9], [3.1, 4.2], [5.4, 6.8]];
+const pct = (s) => ((s / TEND) * 100).toFixed(2) + "%";
+const bar = ([a, b], cls) => `<i class="tj-wbar ${cls}" data-a="${a}" data-b="${b}" style="left:${pct(a)};width:${pct(b - a)}"></i>`;
+const pLoop = `<div class="tj-dp tj-loop" data-p="1"><div class="tj-wf"><div class="tj-wfh"><span class="tj-key"><i class="think"></i>model<i class="call"></i>call<i class="ans"></i>answer</span><span class="tj-trk">${ROUNDS.map(([a, b], i) => `<em class="tj-rd" data-k="rd${i}" style="left:${pct(a)}"><span>Round </span>${i + 1}</em>`).join("")}</span></div>
+${WF.map(([t, a, bars, ans, out], i) => `<div class="tj-wr${i ? "" : " model"}"><span class="tj-wfl"><code>${t}</code>${a ? `<span>${esc(a)}</span>` : ""}</span><span class="tj-trk">${ROUNDS.map(([a0, b0], r) => `<i class="tj-band" data-a="${a0}" style="left:${pct(a0)};width:${pct(b0 - a0)}"></i>`).join("")}${bars.map((b) => bar(b, i ? "call" : "think")).join("")}${ans ? bar(ans, "ans") : ""}${out ? `<span class="tj-out" data-at="${bars[0][1]}" style="left:calc(${pct(bars[0][1])} + 6px)">${esc(out)}</span>` : ""}</span></div>`).join("")}
+<div class="tj-wff"><span></span><span class="tj-trk">${[0, 2, 4, 6, 8].map((s) => `<small style="left:${pct(s)}">${s}s</small>`).join("")}</span></div><i class="tj-ph" data-playhead></i></div><p class="tj-argv"><span>Each aws_cli call runs as an argument list, with no shell:</span><code>["aws", "s3api", "get-bucket-policy", "--bucket", "sellers-exports", "--profile", "prod"]</code></p></div>`;
+const LANG2 = [
+  ["root", "root = Stack([lead, stats, take, next])"],
+  ["lead", 'lead = TextContent("Yes, one: sellers-exports. Its policy lets…")'],
+  ["stats", 'stats = Stack([m1, m2, m3], "row")'],
+  ["m1", 'm1 = Metric("Public buckets", "1 of 41", null, null, null, "in prod")'],
+  ["m2", 'm2 = Metric("Public-access block", "Off", null, null, "bad")'],
+  ["m3", 'm3 = Metric("Served by", "exports-cdn")'],
+  ["take", 'take = TextContent("Make it private and let exports-cdn…")'],
+  ["next", 'next = FollowUpBlock([FollowUpItem("Write it up as a report"), …])'],
+];
+const pStream = `<div class="tj-dp tj-strm" data-p="2"><ol class="tj-lang">${LANG2.map(([k, s]) => `<li data-k="l-${k}" style="--n:${s.length}"><code>${langHtml(s)}</code></li>`).join("")}</ol>
+<div class="tj-sn"><p class="tj-big"><b data-sc>0</b><span>of ${LANG2.length} statements</span></p><p class="tj-dn">The first line names four parts, so the layout is on screen before any of them is written. Each part fills in when its line parses.</p></div></div>`;
+const pPass = `<div class="tj-dp tj-pass" data-p="3"><div class="tj-pp"><div class="tj-pc" data-k="pc1"><p class="tj-pch"><b>Pass 1</b><span>chat</span></p>${kv("", "tools", "14")}${kv("", "calls", "5 run")}${kv("pc1c", "open_report", "captured, never run")}</div>
+<div class="tj-pa" data-k="pa"><span>5 tool results</span><i></i></div>
+<div class="tj-pc p2" data-k="pc2"><p class="tj-pch"><b>Pass 2</b><span>report</span></p>${kv("", "tools", "none", "")}${kv("", "context", "5 tool results")}${kv("", "writes", "S3 exposure review")}</div></div>
+<p class="tj-dn">Pass 2 has nothing it can call, so the report can only use what pass 1 found.</p></div>`;
+const JSONL = ['{', '  "fingerprint": "s3-public-read:sellers-exports",', '  "ruleSlug": "s3-public-read",', '  "resourceId": "sellers-exports",', '  "severity": "critical",', '  "count": 1', '}'];
+const jsonHtml = (l) => esc(l).replace(/(&quot;[a-zA-Z]+&quot;)(:)/, '<span class="l-r">$1</span>$2').replace(/: (&quot;.*?&quot;)/, ': <span class="l-s">$1</span>').replace(/: (\d+)/, ': <span class="l-c">$1</span>');
+const pRec = `<div class="tj-dp tj-rec" data-p="4"><div class="tj-json"><p class="tj-dh"><code>scan_findings</code><span>run by the app, no model call</span></p><ol>${JSONL.map((l, i) => `<li data-k="j${i}"><code>${jsonHtml(l)}</code></li>`).join("")}</ol></div>
+<div class="tj-whos"><p class="tj-who" data-k="wh1"><i class="t"></i><span><b>Rows</b>From the scan. The model can’t type a severity, a resource or a count.</span></p><p class="tj-who" data-k="wh2"><i class="m"></i><span><b>Headline and notes</b>From the model, keyed to each row’s fingerprint.</span></p>
+<p class="tj-log" data-k="log">${ic("check")}<span>Saved to the findings store</span><code>ufnd_xysj</code></p></div></div>`;
+const STEPS_T = [
+  ["Compose", "The browser builds the prompt and the list of tools the model may call.", "Request"],
+  ["Gather", "The model queries the estate, searches it and runs read-only AWS commands, up to three rounds.", "Tool loop"],
+  ["Answer", "The reply streams back as OpenUI Lang and renders as cards, tables and charts.", "Stream"],
+  ["Second pass", "A report or plan opens as its own pass, so the write-up only uses facts already found.", "Pass 2"],
+  ["Record", "Findings are created from tool results, never from the model’s prose.", "Record"],
+];
+const turn = `<figure class="tj" data-live="turn" data-step="0"><div class="tj-stage"><div class="tj-win">${tscreen}
+<div class="tj-dev"><div class="tj-dbar"><span class="tj-rec-dot"></span><span class="tj-dt">${STEPS_T.map(([, , d], i) => `<b data-i="${i}">${i + 1} · ${d}</b>`).join("")}</span><span class="sx-sp"></span><span class="tj-ds" data-ds aria-live="off"></span><button type="button" class="tj-pp-btn" data-pause aria-label="Pause">${ic("pause")}${ic("play")}</button></div>
+<div class="tj-dps">${pReq}${pLoop}${pStream}${pPass}${pRec}</div></div></div></div>
+<ol class="steps tj-steps">${STEPS_T.map(([t, d], i) => `<li><button type="button" data-i="${i}"${i ? "" : ' aria-current="step"'}><span class="tj-pg"><i></i></span><span class="n">${i + 1}</span><b>${t}</b><span>${d}</span></button></li>`).join("")}</ol></figure>`;
+
 const sprite = `<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute">${[...SPRITE.values()].join("")}</svg>`;
-const ILL = { sprite, "scr-home": home, "scr-ask": ask, "scr-exec": exec, "scr-design": design, "scr-agents": agents, "gu-compare": compare, "gu-stream": stream, "gu-kinds": kinds, "gu-who": who, stack, arch, desktop, builds, "tokens-pipe": tokensPipe };
+const ILL = { sprite, turn, "scr-home": home, "scr-ask": ask, "scr-exec": exec, "scr-design": design, "scr-agents": agents, "gu-compare": compare, "gu-stream": stream, "gu-kinds": kinds, "gu-who": who, stack, arch, desktop, builds, "tokens-pipe": tokensPipe };
 
 let html = readFileSync(PAGE, "utf8");
 for (const [k, v] of Object.entries(ILL)) {

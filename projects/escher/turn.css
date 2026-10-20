@@ -1,0 +1,344 @@
+/* Escher case study: "One turn", a screen that plays one question end to end, with the turn's
+   insides docked under it. Built by scripts/escher-screens.mjs, driven by turn.js. Screen tokens
+   (--x-*) and the sx-* parts come from screens.css. */
+.cs .tj{margin:48px 0 0}
+.cs .tj-stage{background:var(--panel);border-radius:20px;padding:36px}
+.cs .tj-win{position:relative;border-radius:14px;overflow:hidden;background:#141413;box-shadow:0 0 0 1px var(--rule),0 1px 2px #0000000a,0 24px 64px -18px #0000002e;transition:opacity .45s ease}
+.cs .tj.fade .tj-win{opacity:0}
+.cs .tj .sx-box{border-radius:0;box-shadow:none;height:calc(680px * var(--k))}
+.cs .tj .sx{height:680px}
+.cs .tj.instant *,.cs .tj.instant *::before,.cs .tj.instant *::after{transition:none!important;animation:none!important}
+@keyframes tj-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes tj-pulse{50%{opacity:.25}}
+
+/* ── Screen */
+.cs .tj-main{position:relative}
+.cs .tj-home{position:absolute;inset:0;display:grid;place-items:start center;padding-top:150px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .45s ease,transform .45s ease,visibility 0s .45s}
+.cs .tj-home.on{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .45s ease,visibility 0s}
+.cs .tj-sug li{transition:opacity .4s ease}
+.cs .tj-home.typing .tj-sug li{opacity:.35}
+.cs .tj-send{transition:transform .15s ease,background-color .2s ease}
+.cs .tj-send.press{transform:scale(.9)}
+.cs .tj-thread{position:absolute;top:8px;bottom:8px;left:0;right:8px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .45s ease .1s,right .7s cubic-bezier(.4,0,.2,1),visibility 0s .55s}
+.cs .tj-thread.on{opacity:1;visibility:visible;transition:opacity .45s ease .1s,right .7s cubic-bezier(.4,0,.2,1),visibility 0s}
+.cs .tj-main:has(.tj-canvas.on) .tj-thread{right:468px}
+.cs .tj-bar{padding:0 28px;margin:4px 0 0;flex:none}
+.cs .tj-bar .sx-scope{background:var(--x-chip);height:22px;font-size:11.5px}
+.cs .tj-view{position:relative;flex:1;min-height:0;overflow:hidden;-webkit-mask-image:linear-gradient(transparent,#000 22px);mask-image:linear-gradient(transparent,#000 22px)}
+.cs .tj-col{max-width:640px;margin:0 auto;padding:18px 28px 96px;display:flex;flex-direction:column;gap:12px;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.cs .tj-col>*{flex:none}
+.cs .tj-thread>.sx-comp{position:absolute;left:50%;bottom:6px;width:calc(100% - 56px);max-width:584px;transform:translateX(-50%);box-shadow:var(--x-shadow),0 -10px 24px 20px var(--x-bg)}
+.cs .tj-u{display:none}
+.cs .tj-u.on{display:block;animation:tj-in .45s ease both}
+
+/* Sidebar: the session appears when the question is sent */
+.cs .tj-sess{display:none!important}
+.cs .tj-sess.on{display:flex!important;background:var(--x-sel);color:var(--x-ink);font-weight:500;animation:tj-in .45s ease both}
+.cs .tj-sess.on .si{color:var(--x-ink)}
+.cs .tj-pulse{width:6px;height:6px;border-radius:50%;background:var(--x-act);flex:none;animation:tj-pulse 1.4s ease-in-out infinite}
+.cs .tj-sess.idle .tj-pulse{display:none}
+.cs .tj-nn{transition:background-color .3s ease}
+.cs .tj .sx-side:has(.tj-sess.on) .tj-nn{background:none;font-weight:400;color:var(--x-ink2)}
+
+/* Working state */
+.cs .tj-work{display:none;flex-direction:column}
+.cs .tj-work.on{display:flex;animation:tj-in .45s ease both}
+.cs .tj-wh{display:flex;align-items:center;gap:8px;height:24px;font-size:13px}
+.cs .tj-wl{font-weight:500}
+.cs .tj-wt,.cs .tj-wm{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:var(--x-ink3);font-variant-numeric:tabular-nums}
+.cs .tj-wm,.cs .tj-fresh,.cs .tj-car{display:none!important}
+.cs .tj-work.done .tj-car{display:inline-block!important}
+.cs .tj-work.done>.tj-wh>.tj-spin{display:none}
+.cs .tj-work.fold .tj-wm{display:inline!important}
+.cs .tj-work.fold .tj-wt{display:none}
+.cs .tj-fresh{align-items:center;gap:4px;height:20px;padding:0 7px;border-radius:6px;background:var(--x-okbg);color:var(--x-ok);font-size:11px;font-weight:500}
+.cs .tj-work.fold .tj-fresh{display:inline-flex!important}
+.cs .tj-fresh .si{font-size:11px;color:var(--x-ok)}
+.cs .tj-spin{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.6px solid var(--x-line);border-top-color:var(--x-act);animation:sx-spin .8s linear infinite;flex:none}
+.cs .tj-wb{display:grid;grid-template-rows:1fr;transition:grid-template-rows .6s cubic-bezier(.4,0,.2,1),opacity .4s ease}
+.cs .tj-work.fold .tj-wb{grid-template-rows:0fr;opacity:0}
+.cs .tj-wbi{min-height:0;overflow:hidden;padding-left:5px}
+.cs .tj-sec{display:none;position:relative;padding:8px 0 2px 18px;border-left:1.5px solid var(--x-line)}
+.cs .tj-sec.on{display:block;animation:tj-in .45s ease both}
+.cs .tj-sec::before{content:'';position:absolute;left:-4.5px;top:14px;width:7.5px;height:7.5px;border-radius:50%;background:var(--x-card);box-shadow:inset 0 0 0 1.5px var(--x-ink3)}
+.cs .tj-sh{font-size:12.5px;font-weight:500;color:var(--x-ink)}
+.cs .tj-th{font-size:12.5px;line-height:1.55;color:var(--x-ink2);margin-top:1px}
+.cs .tj-card{display:none;grid-template-columns:26px minmax(0,1fr) auto 18px;grid-template-areas:"i c d s" "i r r r";column-gap:10px;row-gap:3px;align-items:center;padding:8px 12px 8px 9px;margin-top:8px;border:1px solid var(--x-line);border-radius:10px;background:var(--x-card)}
+.cs .tj-card.on{display:grid;animation:tj-in .4s ease both}
+.cs .tj-ico{grid-area:i;align-self:start;display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--x-chip)}
+.cs .tj-ico .si{font-size:13px;color:var(--x-ink2)}
+.cs .tj-c1{grid-area:c;display:flex;align-items:baseline;gap:8px;min-width:0;white-space:nowrap}
+.cs .tj-c1 code{background:none;padding:0;font-size:11.5px;font-weight:500;color:var(--x-ink)}
+.cs .tj-c1 span{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:var(--x-ink3);overflow:hidden;text-overflow:ellipsis}
+.cs .tj-dur{grid-area:d;font-family:'Geist Mono',ui-monospace,monospace;font-size:10.5px;color:var(--x-ink3);opacity:0;transition:opacity .3s ease}
+.cs .tj-st{grid-area:s;display:grid;place-items:center;width:18px;height:18px;border-radius:50%}
+.cs .tj-st .si{display:none;font-size:10px;color:#fff}
+.cs .tj-card.done .tj-st{background:var(--x-ok)}
+.cs .tj-card.done .tj-st .tj-spin{display:none}
+.cs .tj-card.done .tj-st .si{display:block}
+.cs .tj-card.done .tj-dur{opacity:1}
+.cs .tj-c2{grid-area:r;display:none;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--x-ink)}
+.cs .tj-card.done .tj-c2{display:flex;animation:tj-in .35s ease both}
+.cs .tj-c2 .si{font-size:11px;color:var(--x-ink3)}
+.cs .tj-c2 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs .tj-c2 em,.cs .tj-cap{font-style:normal;font-size:10px;font-weight:500;padding:1px 6px;border-radius:5px;background:var(--x-chip);color:var(--x-ink2);white-space:nowrap}
+.cs .tj-c2 em.live{background:color-mix(in srgb,var(--x-act) 12%,transparent);color:var(--x-act)}
+.cs .tj-c2 em.bad{background:var(--x-badbg);color:var(--x-bad)}
+.cs .tj-card.ctl{grid-template-columns:26px minmax(0,1fr) auto;grid-template-areas:"i c d";border-style:dashed}
+.cs .tj-cap{grid-area:d;border:1px dashed var(--x-ink3);background:none}
+.cs .tj-w2 .tj-card{margin-top:6px}
+.cs .tj-w2.done .tj-wl{color:var(--x-ink2);font-weight:400}
+
+/* Answer, built from streamed parts. A part shows as a skeleton until its line parses. */
+.cs .tj-ans{display:none;flex-direction:column;gap:12px}
+.cs .tj-ans.on{display:flex;animation:tj-in .4s ease both}
+.cs .tj-from{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--x-ink3)}
+.cs .tj-from img{width:14px;height:14px;border-radius:4px;display:block}
+.cs .tj-slot{position:relative}
+.cs .tj-slot{--sk:color-mix(in srgb,var(--x-ink) 7%,transparent)}
+.cs .tj-slot::before{content:'';position:absolute;inset:0;z-index:1;border-radius:8px;background:var(--sk);animation:tj-sk 1.1s ease-in-out infinite alternate;transition:opacity .35s ease;pointer-events:none}
+.cs .tj-slot.on::before{opacity:0;animation:none}
+.cs .tj-lead.tj-slot::before{border-radius:4px;background:repeating-linear-gradient(180deg,transparent 0 6px,var(--sk) 6px 17px,transparent 17px 23.2px)}
+.cs .tj-take.tj-slot::before{border-radius:4px;right:18%;background:repeating-linear-gradient(180deg,transparent 0 5px,var(--sk) 5px 16px,transparent 16px 21.6px)}
+.cs .tj-fu.tj-slot::before{right:46%;border-radius:999px}
+.cs .tj-mets.tj-slot::before,.cs .tj-kp>.tj-slot::before,.cs .tj-met.tj-slot::before{border-radius:10px}
+.cs .tj-fc.tj-slot::before{border-radius:12px}
+@keyframes tj-sk{from{opacity:.5}to{opacity:1}}
+.cs .tj-slot>*{transition:opacity .35s ease}
+.cs .tj-slot:not(.on)>*{opacity:0}
+.cs .tj .w{opacity:0;transition:opacity .3s ease}
+.cs .tj .w.on{opacity:1}
+.cs .tj-lead{font-size:14.5px;line-height:1.6;color:var(--x-ink)}
+.cs .tj-lead b{font-weight:500}
+.cs .tj-mets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cs .tj-met{display:flex;flex-direction:column;gap:1px;padding:10px 12px;border:1px solid var(--x-line);border-radius:10px;background:var(--x-card);min-width:0}
+.cs .tj-met small,.cs .tj-kp small{font-size:10.5px;color:var(--x-ink3);white-space:nowrap}
+.cs .tj-met b,.cs .tj-kp b{font-size:17px;letter-spacing:-.01em;line-height:1.3;white-space:nowrap}
+.cs .tj-met b.bad{color:var(--x-bad)}
+.cs .tj-met span{font-size:11px;color:var(--x-ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs .tj-take{font-size:13.5px;line-height:1.6;color:var(--x-ink)}
+.cs .tj-fu{display:flex;flex-wrap:wrap;gap:6px}
+.cs .tj-fu>span{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:999px;border:1px solid var(--x-line);background:var(--x-card);font-size:12.5px;color:var(--x-ink);transition:background-color .2s ease,transform .15s ease}
+.cs .tj-fu .si{font-size:12px;color:var(--x-ink3)}
+.cs .tj-fu>span.press{background:var(--x-sel);transform:scale(.97)}
+.cs .tj-ci{display:inline-grid;place-items:center;min-width:15px;height:15px;padding:0 3px;margin-left:3px;border-radius:4px;font:500 9.5px/1 Arial,Helvetica,sans-serif;font-style:normal;vertical-align:2px;letter-spacing:0;background:var(--x-ink);color:var(--x-card)}
+.cs .tj-ci+.tj-ci{margin-left:2px}
+.cs .tj-ci.i{background:none;color:var(--x-ink);box-shadow:inset 0 0 0 1.2px var(--x-ink)}
+.cs .tj-met b .tj-ci,.cs .tj-kp b .tj-ci{vertical-align:4px}
+.cs .tj-art{display:none;align-items:center;gap:12px;width:340px;padding:10px 14px 10px 10px;border:1px solid var(--x-line);border-radius:12px;background:var(--x-card)}
+.cs .tj-art.on{display:flex;animation:tj-in .45s ease both}
+.cs .tj-art>span:nth-child(2){flex:1;display:flex;flex-direction:column;line-height:1.35}
+.cs .tj-art b{font-size:13px}
+.cs .tj-art small{font-size:11px;color:var(--x-ink3)}
+.cs .tj-art em{font-style:normal;font-size:11px;font-weight:500;color:var(--x-ink2)}
+.cs .tj-art em::after{content:'…'}
+.cs .tj-art.ready em{color:var(--x-ok)}
+.cs .tj-art.ready em::after{content:''}
+
+/* Canvas: the report, then the saved finding */
+.cs .tj-canvas{position:absolute;top:8px;right:8px;bottom:8px;width:452px;opacity:0;visibility:hidden;transform:translateX(28px);transition:opacity .5s ease .15s,transform .7s cubic-bezier(.4,0,.2,1),visibility 0s .7s}
+.cs .tj-canvas.on{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease .15s,transform .7s cubic-bezier(.4,0,.2,1),visibility 0s}
+.cs .tj-tab[data-tab=fnd]{display:none}
+.cs .tj-tab[data-tab=fnd].on{display:inline-flex;animation:tj-in .4s ease both}
+.cs .tj-canvas[data-view=rep] .tj-tab[data-tab=rep],.cs .tj-canvas[data-view=fnd] .tj-tab[data-tab=fnd]{background:var(--x-sel);color:var(--x-ink);font-weight:500}
+.cs .tj-canvas .sx-cbar .sx-btn{margin-right:4px}
+.cs .tj-rep,.cs .tj-fnd{position:absolute;inset:0;padding:20px 26px;overflow:hidden;transition:opacity .4s ease,transform .4s ease}
+.cs .tj-rep:not(.on),.cs .tj-fnd:not(.on),.cs .tj-canvas[data-view=fnd] .tj-rep{opacity:0;visibility:hidden}
+.cs .tj-canvas[data-view=rep] .tj-fnd{opacity:0;visibility:hidden}
+.cs .tj-fnd{transform:translateY(6px)}
+.cs .tj-canvas[data-view=fnd] .tj-fnd.on{transform:none}
+.cs .tj-repi{transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.cs .tj-rep h5{justify-content:flex-start;gap:10px;margin:10px 0 2px}
+.cs .tj-rsub{font-size:12px;color:var(--x-ink3);padding-bottom:14px;border-bottom:1px solid var(--x-line)}
+.cs .tj-kp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.cs .tj-kp>div{display:flex;flex-direction:column;padding:10px 12px;border:1px solid var(--x-line);border-radius:10px}
+.cs .tj-rep .sx-sec{margin:16px 0 8px}
+.cs .tj-rtext{font-size:13px;line-height:1.65;color:var(--x-ink)}
+.cs .tj-fc{overflow:visible}
+.cs .tj-fc [data-k]{opacity:0;transition:opacity .4s ease,outline-color .3s ease,background-color .3s ease}
+.cs .tj-fc [data-k].on{opacity:1}
+.cs .tj-m,.cs .tj-t{position:relative;border-radius:8px}
+.cs .tj-fc .sx-fr{border-top:1px solid var(--x-line)}
+.cs .tj-note{padding:8px 14px 11px 38px;font-size:12px;line-height:1.5;color:var(--x-ink2);font-style:italic;border-top:1px solid var(--x-line2)}
+.cs .tj-saved{display:none!important}
+.cs .tj-fc.saved .tj-save{display:none}
+.cs .tj-fc.saved .tj-saved{display:inline-flex!important;animation:tj-in .3s ease both}
+.cs .tj-save{transition:background-color .2s ease,transform .15s ease}
+.cs .tj-save.press{background:var(--x-sel);transform:scale(.95)}
+.cs .tj-m>em,.cs .tj-tag{position:absolute;right:8px;top:-8px;z-index:2;font-style:normal;font-family:'Geist Mono',ui-monospace,monospace;font-size:9.5px;line-height:1;padding:3px 6px;border-radius:4px;opacity:0;transform:translateY(3px);transition:opacity .3s ease,transform .3s ease;pointer-events:none}
+.cs .tj-m>em{background:var(--x-bad);color:#fff}
+.cs .tj-tag{background:var(--x-ink);color:var(--x-card)}
+.cs .tj-fc.prov .tj-m>em,.cs .tj-fc.prov .tj-tag{opacity:1;transform:none}
+.cs .tj-fc.prov .tj-m{outline:1.5px dashed var(--x-bad);outline-offset:-3px;background:color-mix(in srgb,var(--x-bad) 6%,transparent)}
+.cs .tj-fc.prov .tj-t{outline:1.5px solid var(--x-ink);outline-offset:-3px;background:color-mix(in srgb,var(--x-ink) 4%,transparent)}
+.cs .tj-fnd .sx-desc{padding-bottom:14px}
+.cs .tj-fnd .sx-dl dd code{font-size:11px}
+
+/* Scripted pointer */
+.cs .tj-cur{position:absolute;left:0;top:0;z-index:20;width:22px;height:22px;fill:#111;stroke:#fff;stroke-width:1.4;stroke-linejoin:round;filter:drop-shadow(0 2px 3px #00000045);opacity:0;pointer-events:none;transition:transform .85s cubic-bezier(.45,0,.2,1),opacity .3s ease}
+.cs .tj-cur path{transform-origin:5px 2.5px;transition:transform .12s ease}
+.cs .tj-cur.on{opacity:1}
+.cs .tj-cur.jump{transition:opacity .3s ease}
+.cs .tj-cur.down path{transform:scale(.84)}
+.cs .tj-rip{position:absolute;z-index:19;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid var(--x-act);pointer-events:none;animation:tj-rip .55s ease-out forwards}
+@keyframes tj-rip{from{opacity:.7;transform:scale(.3)}to{opacity:0;transform:scale(1.25)}}
+
+/* ── What runs underneath: docked under the screen, dark in both themes */
+.cs .tj-dev{--d-bg:#141413;--d-ink:#ecebe7;--d-ink2:#a3a29d;--d-ink3:#6f6e6a;--d-line:#2a2a28;--d-chip:#242422;background:var(--d-bg);color:var(--d-ink);font-family:'Geist',Arial,sans-serif;border-top:1px solid #000}
+:root[data-theme=dark] .cs .tj-dev{--d-bg:#0c0c0c;border-top-color:var(--d-line)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .cs .tj-dev{--d-bg:#0c0c0c;border-top-color:var(--d-line)}}
+.cs .tj-dev code{font-family:'Geist Mono',ui-monospace,monospace;background:none;padding:0;border-radius:0;color:inherit}
+.cs .tj-dbar{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px 0 16px;border-bottom:1px solid var(--d-line);font-size:12px}
+.cs .tj-rec-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:tj-pulse 1.6s ease-in-out infinite;flex:none}
+.cs .tj.paused .tj-rec-dot{animation:none;background:var(--d-ink3)}
+.cs .tj-dt{display:grid}
+.cs .tj-dt b{grid-area:1/1;font-weight:500;color:var(--d-ink);opacity:0;transform:translateY(3px);transition:opacity .35s ease,transform .35s ease;white-space:nowrap}
+.cs .tj[data-step="0"] .tj-dt b[data-i="0"],.cs .tj[data-step="1"] .tj-dt b[data-i="1"],.cs .tj[data-step="2"] .tj-dt b[data-i="2"],.cs .tj[data-step="3"] .tj-dt b[data-i="3"],.cs .tj[data-step="4"] .tj-dt b[data-i="4"]{opacity:1;transform:none}
+.cs .tj-dbar .sx-sp{flex:1}
+.cs .tj-ds{font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;color:var(--d-ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.cs .tj-pp-btn{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--d-line);background:none;color:var(--d-ink2);cursor:pointer;flex:none;transition:color .2s ease,border-color .2s ease}
+.cs .tj-pp-btn:hover{color:var(--d-ink);border-color:var(--d-ink3)}
+.cs .tj-pp-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.cs .tj-pp-btn .si{font-size:12px}
+.cs .tj-pp-btn .si:last-child,.cs .tj.paused .tj-pp-btn .si:first-child{display:none}
+.cs .tj.paused .tj-pp-btn .si:last-child{display:inline-block}
+.cs .tj-dps{position:relative;display:grid;padding:14px 18px 16px}
+.cs .tj-dp{grid-area:1/1;min-width:0;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .35s ease,transform .35s ease,visibility 0s .35s}
+.cs .tj[data-step="0"] [data-p="0"],.cs .tj[data-step="1"] [data-p="1"],.cs .tj[data-step="2"] [data-p="2"],.cs .tj[data-step="3"] [data-p="3"],.cs .tj[data-step="4"] [data-p="4"]{opacity:1;visibility:visible;transform:none;transition:opacity .35s ease .1s,transform .35s ease .1s,visibility 0s}
+.cs .tj-dh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;color:var(--d-ink2)}
+.cs .tj-dh b{font-weight:500;color:var(--d-ink)}
+.cs .tj-dh code{font-size:12px;color:var(--d-ink)}
+.cs .tj-dh span{font-size:11.5px;color:var(--d-ink3)}
+.cs .tj-dn{margin:0;font-size:12px;line-height:1.5;color:var(--d-ink2)}
+.cs .tj-dev [data-k]:not([data-k=""]){transition:opacity .35s ease,transform .35s ease}
+.cs .tj-dev [data-k]:not([data-k=""]):not(.on){opacity:0;transform:translateY(3px)}
+.cs .tj-dev .l-n{color:#fff;font-weight:500}.cs .tj-dev .l-c{color:#ff8a80}.cs .tj-dev .l-s{color:#a8d9a1}.cs .tj-dev .l-r{color:#9cc3ff}
+
+/* 1 Request */
+.cs .tj-req{position:relative}
+.cs .tj-empty{position:absolute;inset:0;display:grid;place-items:center;margin:0;font-family:'Geist Mono',ui-monospace,monospace;font-size:11.5px;color:var(--d-ink3)}
+.cs .tj-dev .tj-empty[data-k]:not(.on){opacity:1;transform:none}
+.cs .tj-dev .tj-empty.on{opacity:0}
+.cs .tj-req{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:28px}
+.cs .tj-kv{display:flex;align-items:baseline;gap:12px;margin:0;font-size:12px;line-height:1.85;white-space:nowrap;min-width:0}
+.cs .tj-kv>span{width:76px;flex:none;color:var(--d-ink3);font-family:'Geist Mono',ui-monospace,monospace;font-size:11.5px}
+.cs .tj-kv code{font-size:11.5px;color:var(--d-ink);overflow:hidden;text-overflow:ellipsis}
+.cs .tj-kv em{display:inline-flex;align-items:center;gap:4px;font-style:normal;font-size:11px;color:var(--d-ink3)}
+.cs .tj-kv em.ok{color:#7fd492}
+.cs .tj-kv em .si{font-size:11px}
+.cs .tj-chips{display:flex;flex-wrap:wrap;gap:5px}
+.cs .tj-chips code{font-size:11px;line-height:1;padding:5px 7px;border-radius:6px;background:var(--d-chip);color:var(--d-ink)}
+.cs .tj-chips code.c{background:none;box-shadow:inset 0 0 0 1px #5a5955;color:#c9c8c3}
+.cs .tj-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;font-size:11px;color:var(--d-ink3)}
+.cs .tj-leg span{display:inline-flex;align-items:center;gap:6px}
+.cs .tj-leg i{width:9px;height:9px;border-radius:3px;background:var(--d-chip);box-shadow:inset 0 0 0 1px #3a3a38}
+.cs .tj-leg i.c{background:none;box-shadow:inset 0 0 0 1px #6f6e6a}
+.cs .tj-leg s{text-decoration-color:#6f6e6a}
+
+/* 2 Tool loop: a waterfall of the turn */
+.cs .tj-wf{position:relative;--lw:236px}
+.cs .tj-wr,.cs .tj-wfh,.cs .tj-wff{display:grid;grid-template-columns:var(--lw) minmax(0,1fr);align-items:center}
+.cs .tj-wr{height:18px}
+.cs .tj-wfh{height:18px}
+.cs .tj-key{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--d-ink3);white-space:nowrap}
+.cs .tj-key i{width:12px;height:7px;border-radius:2px;margin-left:6px}
+.cs .tj-key i:first-child{margin-left:0}
+.cs .tj-key .think{background:repeating-linear-gradient(-45deg,#6a6964 0 2px,transparent 2px 4.5px);box-shadow:inset 0 0 0 1px #6a6964}
+.cs .tj-key .call{background:#e9e8e3}
+.cs .tj-key .ans{background:var(--red)}
+.cs .tj-wff{height:16px}
+.cs .tj-trk{position:relative;height:100%}
+.cs .tj-wfl{display:flex;align-items:baseline;gap:6px;min-width:0;white-space:nowrap;overflow:hidden;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px}
+.cs .tj-wfl code{color:var(--d-ink)}
+.cs .tj-wfl span{color:var(--d-ink3);overflow:hidden;text-overflow:ellipsis}
+.cs .tj-wr.model .tj-wfl code{color:var(--d-ink2)}
+.cs .tj-band{position:absolute;top:0;bottom:0;background:#ffffff08;opacity:0;transition:opacity .4s ease}
+.cs .tj-band.on{opacity:1}
+.cs .tj-rd{position:absolute;top:2px;font-style:normal;font-size:10px;color:var(--d-ink2);white-space:nowrap}
+.cs .tj-wff small{position:absolute;top:2px;font-size:10px;color:var(--d-ink3);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.cs .tj-wff small:first-child{transform:none}
+.cs .tj-wff small:last-child{transform:translateX(-100%)}
+.cs .tj-wbar{position:absolute;top:5px;height:8px;border-radius:2.5px;transform-origin:0 50%;transform:scaleX(var(--f,0))}
+.cs .tj-wbar.call{background:#e9e8e3}
+.cs .tj-wbar.think{background:repeating-linear-gradient(-45deg,#6a6964 0 2px,transparent 2px 4.5px);box-shadow:inset 0 0 0 1px #6a6964}
+.cs .tj-wbar.ans{background:linear-gradient(90deg,var(--red) 60%,transparent)}
+.cs .tj-out{position:absolute;top:2px;font-family:'Geist Mono',ui-monospace,monospace;font-size:10.5px;line-height:1.2;color:var(--d-ink2);white-space:nowrap;opacity:0;transition:opacity .3s ease}
+.cs .tj-out.on{opacity:1}
+.cs .tj-ph{position:absolute;top:18px;bottom:16px;left:calc(var(--lw) + (100% - var(--lw)) * var(--t,0));width:1px;background:var(--red);opacity:0;transition:opacity .3s ease}
+.cs .tj-ph.on{opacity:.9}
+.cs .tj-argv{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:10px 0 0;font-size:11.5px;color:var(--d-ink3)}
+.cs .tj-argv code{font-size:11px;color:#a8d9a1}
+
+/* 3 Stream */
+.cs .tj-strm{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:28px}
+.cs .tj-lang{list-style:none;margin:0;padding:0;counter-reset:ln;font-family:'Geist Mono',ui-monospace,monospace;font-size:11.5px;line-height:1.75}
+.cs .tj-lang li{position:relative;padding-left:26px;white-space:nowrap;border-radius:3px;transition:background-color .9s ease}
+.cs .tj-lang li::before{counter-increment:ln;content:counter(ln);position:absolute;left:0;width:16px;text-align:right;color:#4d4c49}
+.cs .tj-lang code{display:inline-block;vertical-align:top;max-width:calc(var(--c,999) * 1ch);overflow:hidden;color:var(--d-ink)}
+.cs .tj-lang li.typing code{box-shadow:inset -6px 0 0 var(--red)}
+.cs .tj-lang li.parsed{background:#ffffff0d}
+.cs .tj-lang li.parsed.old{background:transparent}
+.cs .tj-big{display:flex;align-items:baseline;gap:8px;margin:0 0 10px}
+.cs .tj-big b{font-size:36px;line-height:1;font-weight:500;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+.cs .tj-big span{font-size:12px;color:var(--d-ink2)}
+
+/* 4 Second pass */
+.cs .tj-pp{display:grid;grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);align-items:center}
+.cs .tj-pc{padding:10px 14px 8px;border:1px solid var(--d-line);border-radius:10px;min-width:0}
+.cs .tj-pc.p2{border-color:#4a4a47;background:#ffffff05}
+.cs .tj-pch{display:flex;align-items:baseline;gap:8px;margin:0 0 4px;font-size:12px}
+.cs .tj-pch b{font-weight:500}
+.cs .tj-pch span{color:var(--d-ink3);font-size:11.5px}
+.cs .tj-pc .tj-kv{line-height:1.8}
+.cs .tj-pc .tj-kv>span{width:92px}
+.cs .tj-pc.p2 .tj-pch+.tj-kv code{color:#ff8a80}
+.cs .tj-pc [data-k=pc1c].on code{color:#ffd27a}
+.cs .tj-pa{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 12px;font-size:10.5px;color:var(--d-ink2);white-space:nowrap}
+.cs .tj-pa i{position:relative;display:block;width:100%;height:1px;background:var(--d-ink3);transform-origin:0 50%;transform:scaleX(0);transition:transform .7s cubic-bezier(.4,0,.2,1) .1s}
+.cs .tj-pa i::after{content:'';position:absolute;right:-1px;top:-3.5px;border:4px solid transparent;border-left:6px solid var(--d-ink3);border-right:0}
+.cs .tj-pa.on i{transform:none}
+.cs .tj-pass .tj-dn{margin-top:14px}
+
+/* 5 Record */
+.cs .tj-rec{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:28px}
+.cs .tj-json ol{list-style:none;margin:0;padding:0;font-family:'Geist Mono',ui-monospace,monospace;font-size:11.5px;line-height:1.65;white-space:pre}
+.cs .tj-json code{color:var(--d-ink2)}
+.cs .tj-whos{display:flex;flex-direction:column;gap:10px;padding-top:2px}
+.cs .tj-who{display:flex;gap:10px;margin:0;font-size:12px;line-height:1.5;color:var(--d-ink2)}
+.cs .tj-who span{display:flex;flex-direction:column}
+.cs .tj-who b{font-weight:500;color:var(--d-ink)}
+.cs .tj-who i{width:14px;height:14px;margin-top:2px;border-radius:4px;flex:none}
+.cs .tj-who i.t{box-shadow:inset 0 0 0 1.5px var(--d-ink)}
+.cs .tj-who i.m{border:1.5px dashed #ff6f63;background:#ff6f6314}
+.cs .tj-log{display:flex;align-items:center;gap:8px;margin:2px 0 0;padding:8px 10px;border-radius:8px;background:#7fd4921a;font-size:12px;color:#a7e3b4}
+.cs .tj-log .si{font-size:12px}
+.cs .tj-log code{margin-left:auto;font-size:11.5px;color:#fff}
+
+/* ── The steps double as the timeline */
+.cs .tj-steps{margin-top:32px}
+.cs .tj-steps li{border-top:0;padding-top:0}
+.cs .tj-steps button{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cs .tj-steps button:focus-visible{outline:2px solid var(--focus);outline-offset:6px;border-radius:2px}
+.cs .tj-pg{position:relative;display:block;height:1px;margin-bottom:10px;background:var(--rule)}
+.cs .tj-pg i{position:absolute;left:0;top:-.5px;width:100%;height:2px;background:var(--strong);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.cs .tj-steps .n{transition:color .3s ease}
+.cs .tj-steps b{transition:color .3s ease}
+.cs .tj-steps li>button>span:last-child{font-size:14px;line-height:1.55;color:var(--muted);transition:color .3s ease}
+.cs .tj-steps button:not([aria-current]) b{color:var(--soft)}
+.cs .tj-steps button[aria-current] b{color:var(--strong)}
+.cs .tj-steps button[aria-current]>span:last-child{color:var(--soft)}
+.cs .tj-steps button:hover b{color:var(--strong)}
+
+@media(max-width:1000px){.cs .tj-stage{padding:28px}.cs .tj-wf{--lw:180px}.cs .tj-strm{grid-template-columns:minmax(0,1fr)}.cs .tj-sn .tj-dn{display:none}.cs .tj-sn{display:none}}
+@media(max-width:760px){
+  .cs .tj-req,.cs .tj-rec{grid-template-columns:minmax(0,1fr);gap:16px}
+  .cs .tj-pp{grid-template-columns:minmax(0,1fr);gap:8px}
+  .cs .tj-pa{flex-direction:row;justify-content:center;padding:2px 0}
+  .cs .tj-pa i{width:1px;height:16px;transform-origin:50% 0;transform:scaleY(0)}
+  .cs .tj-pa i::after{right:-3.5px;top:auto;bottom:-1px;border:4px solid transparent;border-top:6px solid var(--d-ink3);border-bottom:0}
+  .cs .tj-wf{--lw:128px}
+  .cs .tj-wfl span,.cs .tj-key,.cs .tj-rd span{display:none}
+}
+@media(max-width:600px){.cs .tj-dp{position:absolute;left:12px;right:12px;top:14px}.cs .tj[data-step="0"] [data-p="0"],.cs .tj[data-step="1"] [data-p="1"],.cs .tj[data-step="2"] [data-p="2"],.cs .tj[data-step="3"] [data-p="3"],.cs .tj[data-step="4"] [data-p="4"]{position:relative;left:auto;right:auto;top:auto}.cs .tj-who span{font-size:11.5px}.cs .tj-stage{padding:12px;border-radius:14px}.cs .tj-win{border-radius:10px}.cs .tj-dps{padding:14px 12px 14px}.cs .tj-dbar{padding:0 8px 0 12px}.cs .tj-dbar .sx-sp{flex:1}
+.cs .tj-ds{display:none}.cs .tj-steps{margin-top:24px}}
+@media(prefers-reduced-motion:reduce){.cs .tj-slot::before{animation:none}.cs .tj-rec-dot,.cs .tj-pulse{animation:none}}

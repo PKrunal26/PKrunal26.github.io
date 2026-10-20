@@ -85,6 +85,7 @@ One token file builds CSS variables, a Tailwind theme and typed tokens, and ever
 - Gen-UI over OpenUI Lang. Typed stores behind a Repository.
 - pnpm + Turborepo monorepo: apps plus a shared design-system package.
 - Share links in Vercel Blob. Password-gated deploy.
+- **One turn:** one question ("Are any of our S3 buckets actually public right now?") played through the app in the five steps, with a dark drawer docked under the screen showing what runs underneath: the request (Opus 5.5, cached system prompt, scope frozen, the 14-tool Ask catalog with control tools marked captured-never-run), a waterfall of five read-only calls in three rounds, the OpenUI Lang lines filling the answer, pass 1 vs pass 2 (`tools: none`), and the `scan_findings` row with model-written headline and notes, then the save. A scripted pointer clicks send, the follow-up and Save. The five steps below are the timeline: progress bars, click to jump, pause in the drawer. Built by `scripts/escher-screens.mjs` (`turn.css`, `turn.js`).
 - **Logos:** real marks (Simple Icons, CC0; AWS wordmark from gilbarbara/logos, CC0; AWS service icons from the prototype) on the stack list, the architecture and desktop diagrams, the three builds and the token pipeline in Design system.
 
 ## 13 How we worked

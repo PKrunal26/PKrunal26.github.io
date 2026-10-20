@@ -340,4 +340,37 @@
       io.observe(fig);
     }
   });
+
+  // ---------- Ask: trace a number in the report back to the call it came from ----------
+  $$('[data-live="passes"]').forEach(function (fig) {
+    var cites = $$('.ps-c', fig), calls = $$('.ps-calls li[data-f]', fig);
+    var order = ['2', '1', '4', '3'], at = 0, timer = 0, held = false;
+    function show(f) {
+      fig.classList.toggle('tracing', !!f);
+      cites.forEach(function (c) { c.classList.toggle('on', c.getAttribute('data-f') === f); });
+      calls.forEach(function (li) { li.classList.toggle('on', li.getAttribute('data-f') === f); });
+    }
+    function tour() {
+      clearTimeout(timer);
+      if (held || reduced) return;
+      show(order[at]);
+      at = (at + 1) % order.length;
+      timer = setTimeout(tour, 2200);
+    }
+    cites.forEach(function (c) {
+      var f = c.getAttribute('data-f');
+      function hold() { held = true; clearTimeout(timer); show(f); }
+      function release() { held = false; show(null); timer = setTimeout(tour, 2600); }
+      c.addEventListener('mouseenter', hold);
+      c.addEventListener('focus', hold);
+      c.addEventListener('mouseleave', release);
+      c.addEventListener('blur', release);
+      c.addEventListener('click', hold);
+    });
+    if (hasIO && !reduced) {
+      new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { if (!held) tour(); } else { clearTimeout(timer); if (!held) show(null); }
+      }, { rootMargin: '0px 0px -20% 0px' }).observe(fig);
+    }
+  });
 })();

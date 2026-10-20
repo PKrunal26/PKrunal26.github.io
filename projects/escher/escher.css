@@ -77,7 +77,7 @@ main.cs{max-width:1168px;padding-inline:40px}
 .cs .type{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:24px}
 .cs .type div{background:var(--panel);border-radius:16px;padding:40px}
 .cs .type .g{font-family:'Geist',Arial,sans-serif;font-size:56px;line-height:1;color:var(--strong);letter-spacing:-.02em}
-.cs .type .gm{font-family:'Geist Mono',ui-monospace,monospace;font-size:40px;line-height:1.2;color:var(--strong)}
+.cs .type .gmono{font-family:'Geist Mono',ui-monospace,monospace;font-size:40px;line-height:1.2;color:var(--strong)}
 .cs .type p{font-size:13px;color:var(--muted);margin:20px 0 0}
 
 /* Stack */
@@ -116,7 +116,7 @@ main.cs{max-width:1168px;padding-inline:40px}
   .cs .swatches{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cs .type div{padding:28px}
   .cs .type .g{font-size:44px}
-  .cs .type .gm{font-size:26px}
+  .cs .type .gmono{font-size:26px}
   .cs .stack li{grid-template-columns:1fr;gap:4px}
   .cs footer{margin-top:120px}
 }
@@ -512,3 +512,83 @@ main.cs{max-width:1168px;padding-inline:40px}
 @media(prefers-reduced-motion:reduce){.cs .gv-list .run .gv-i{animation:none}.cs .er-t,.cs .gt-pop,.cs .gv-list li{transition:none}}
 .cs .gv-tool{min-height:5.4em}.cs .gv-code{min-height:12.6em}
 @media(max-width:600px){.cs .gv-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -12px 28px;padding:0 12px 4px;scrollbar-width:none}.cs .gv-chips::-webkit-scrollbar{display:none}.cs .gv-chips button{flex:none}}
+
+/* Who it's for: seven roles. SRE, the primary user, gets the tall dark card. */
+.cs .roles{display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));gap:16px;margin-top:64px}
+.cs .role{display:flex;flex-direction:column;gap:4px;min-width:0;background:var(--panel);border-radius:16px;padding:24px 24px 26px}
+.cs .role-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--bg);border:1px solid var(--rule);color:var(--strong);margin-bottom:18px}
+.cs .role-ic .ic{margin:0}
+.cs .role-ic .ic svg{width:18px;height:18px}
+.cs .role b{font-size:16px;font-weight:500;color:var(--strong)}
+.cs .role p{font-size:14px;line-height:1.5;color:var(--soft);margin:0}
+.cs .role.main{grid-row:span 2;background:var(--strong);padding:28px}
+.cs .role.main .role-ic{background:transparent;border-color:color-mix(in srgb,var(--bg) 25%,transparent);color:var(--bg)}
+.cs .role-tag{margin-top:auto;font-size:12px;color:color-mix(in srgb,var(--bg) 60%,transparent)}
+.cs .role.main b{color:var(--bg);font-size:36px;line-height:1.15;letter-spacing:-.02em}
+.cs .role.main p{color:color-mix(in srgb,var(--bg) 72%,transparent);font-size:15px;margin-top:6px}
+.cs .roles-note{font-size:14px;color:var(--muted);margin:16px 0 0}
+@media(max-width:900px){.cs .roles{grid-template-columns:repeat(2,minmax(0,1fr))}.cs .role.main{grid-row:auto;grid-column:1/-1}.cs .role.main .role-tag{margin-top:12px}}
+@media(max-width:600px){.cs .roles{grid-template-columns:minmax(0,1fr)}}
+
+/* Ask: two passes. Pass 1's tool calls on the left, pass 2's report on the right; each number cites its call. */
+.cs .passes{padding:40px}
+.cs .ps-grid{display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);align-items:start}
+.cs .ps-h{display:flex;align-items:baseline;gap:10px;margin:0 0 14px;font-size:13px;color:var(--muted)}
+.cs .ps-h b{font-size:15px;font-weight:500;color:var(--strong)}
+.cs .ps-calls{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.cs .ps-calls li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:10px 14px 10px 10px;transition:border-color .35s,box-shadow .35s,opacity .35s}
+.cs .ps-n{display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--chip);font:500 11px 'Geist Mono',ui-monospace,monospace;color:var(--strong);transition:background .35s,color .35s}
+.cs .ps-n .ic{margin:0}
+.cs .ps-n .ic svg{width:13px;height:13px}
+.cs .ps-call{display:flex;flex-direction:column;min-width:0}
+.cs .ps-call code{background:none;padding:0;font:12px 'Geist Mono',ui-monospace,monospace;color:var(--strong)}
+.cs .ps-arg{font:11px 'Geist Mono',ui-monospace,monospace;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs .ps-out{font-size:12.5px;color:var(--text);text-align:right}
+.cs .ps-calls .ps-ctl{background:transparent;border-style:dashed}
+.cs .ps-ctl .ps-n{background:transparent;color:var(--red)}
+.cs .ps-ctl .ps-out{color:var(--red)}
+.cs .ps-hand{position:relative;align-self:stretch;display:grid;place-items:center}
+.cs .ps-hand::before{content:"";position:absolute;left:10px;right:10px;top:50%;border-top:1px solid var(--line)}
+.cs .ps-hand::after{content:"";position:absolute;right:10px;top:50%;width:7px;height:7px;border-top:1px solid var(--line);border-right:1px solid var(--line);transform:translate(0,-50%) rotate(45deg);transform-origin:center}
+.cs .ps-hand span{position:relative;writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;color:var(--muted);background:var(--panel);padding:10px 0}
+.cs .ps-doc{background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:20px 20px 22px;box-shadow:0 14px 36px -24px #00000033}
+.cs .ps-title{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:16px;font-weight:500;color:var(--strong);margin:0}
+.cs .ps-st{font-size:11px;font-weight:500;padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red)}
+.cs .ps-sub{font-size:12px;color:var(--muted);margin:2px 0 16px}
+.cs .ps-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.cs .ps-kpis div{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;min-width:0}
+.cs .ps-kpis span{display:block;font-size:11px;line-height:1.4;color:var(--muted)}
+.cs .ps-kpis b{display:flex;align-items:flex-start;gap:3px;margin-top:4px;font-size:24px;font-weight:500;line-height:1.1;letter-spacing:-.01em;color:var(--strong);font-variant-numeric:tabular-nums}
+.cs .ps-text{font-size:14px;line-height:1.65;color:var(--text);margin:0}
+.cs .ps-c{display:inline-grid;place-items:center;min-width:16px;height:16px;padding:0 3px;margin:0 0 0 2px;border:0;border-radius:4px;background:var(--chip);font:500 10px/1 'Geist Mono',ui-monospace,monospace;color:var(--strong);vertical-align:3px;cursor:pointer;transition:background .35s,color .35s}
+.cs .ps-kpis .ps-c{margin-top:2px;vertical-align:0}
+.cs .ps-c:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.cs .ps-c.on{background:var(--red);color:#fff}
+.cs .passes.tracing .ps-calls li:not(.on){opacity:.38}
+.cs .ps-calls li.on{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 14%,transparent)}
+.cs .ps-calls li.on .ps-n{background:var(--red);color:#fff}
+.cs .ps-note{font-size:13px;color:var(--muted);margin:24px 0 0}
+@media(max-width:900px){.cs .ps-grid{grid-template-columns:minmax(0,1fr)}.cs .ps-hand{height:56px}.cs .ps-hand span{writing-mode:horizontal-tb;transform:none;padding:0 10px}.cs .ps-hand::before{left:50%;right:auto;top:8px;bottom:8px;border-top:0;border-left:1px solid var(--line)}.cs .ps-hand::after{right:auto;left:50%;top:auto;bottom:8px;transform:translate(-50%,0) rotate(135deg)}}
+@media(max-width:600px){.cs .passes{padding:20px 14px}.cs .ps-calls li{grid-template-columns:22px minmax(0,1fr)}.cs .ps-out{grid-column:2;text-align:left}.cs .ps-kpis b{font-size:20px}}
+
+/* Choosing the chart: the same data, chosen two ways. */
+.cs .cc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:40px}
+.cs .cc-card{display:flex;flex-direction:column;margin:0;background:var(--panel);border-radius:16px;padding:24px}
+.cs .cc-card figcaption{display:flex;align-items:center;gap:10px;margin:0;max-width:none;font-size:14px;color:var(--strong)}
+.cs .cc-tag{font:500 11px 'Geist Mono',ui-monospace,monospace;padding:3px 8px;border-radius:6px;background:var(--chip);color:var(--muted)}
+.cs .cc-card:not(.bad) .cc-tag{background:var(--strong);color:var(--bg)}
+.cs .cc-stage{flex:1;display:grid;place-items:center;min-height:210px;margin:20px 0}
+.cs .cc-chart{display:flex;align-items:stretch;gap:10px;width:100%;max-width:360px;height:150px;background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:16px 16px 10px}
+.cs .cc-b{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;min-width:0}
+.cs .cc-b i{display:block;width:100%;height:38%;border-radius:3px 3px 0 0;background:color-mix(in srgb,var(--muted) 55%,transparent)}
+.cs .cc-b em{order:-1;font:normal 10px 'Geist Mono',ui-monospace,monospace;color:var(--muted)}
+.cs .cc-b small{font-size:10px;color:var(--muted);white-space:nowrap}
+.cs .cc-metric{max-width:260px}
+.cs .cc-say{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--soft);margin:0}
+.cs .cc-say .ic{margin:0;color:var(--strong)}
+.cs .cc-card.bad .cc-say .ic{color:var(--red)}
+@media(max-width:700px){.cs .cc{grid-template-columns:minmax(0,1fr)}}
+
+/* Diagram fills: plain tokens, no dither. */
+.cs .i-tok{fill:var(--chip)}
+.cs .i-cur{fill:var(--strong);stroke:var(--bg);stroke-width:1.2;stroke-linejoin:round}

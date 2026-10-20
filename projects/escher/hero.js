@@ -975,18 +975,23 @@ function chips(active) {
 const chipsT = [...stage.querySelectorAll(".es-time button")];
 const panes = [...stage.querySelectorAll(".es-st")];
 const n = panes.length;
-let step = -1, t0 = performance.now(), armed = false, visible = false, frame = 0, prev = 0;
+let step = -1, target = 0, local = 0, clock = 0, pin = -1, pinUntil = 0, armed = false, visible = false, frame = 0, prev = 0;
 const promptEl = stage.querySelector('[data-type="prompt"]');
 const promptText = promptEl ? promptEl.dataset.text : "";
 const rowsOf = panes.map((p) => [...p.querySelectorAll(".es-calls li, .es-rows div, .es-code li")]);
+// The scroll sets a target step; the bench plays every step on the way there, faster when it is behind.
 function goTo(i) {
   if (i === step) return;
   step = i;
-  t0 = performance.now();
+  clock = 0;
   chipsT.forEach((c, k) => { c.classList.toggle("on", k === i); c.classList.toggle("done", k < i); c.setAttribute("aria-selected", k === i); });
   panes.forEach((p, k) => { p.classList.toggle("on", k === i); p.toggleAttribute("inert", k !== i); });
   stage.dataset.step = i;
   run();
+}
+function bars() {
+  const played = pin < 0 && target > step ? Math.min(1, clock / DUR[step]) : Math.max(0.04, pin >= 0 ? 0 : local);
+  chipsT.forEach((c, k) => c.style.setProperty("--p", k < step ? 1 : k === step ? played.toFixed(3) : 0));
 }
 function update() {
   const r = story.getBoundingClientRect();
@@ -994,15 +999,22 @@ function update() {
   const e = clamp(1 - r.top / (vh * 0.55));
   stage.style.setProperty("--e", e.toFixed(3));
   root.classList.toggle("cover-full", e > 0.97 && r.bottom > vh * 0.6);
-  if (!armed && r.top < vh * 0.08) { armed = true; t0 = performance.now(); run(); }
+  if (!armed && r.top < vh * 0.08) { armed = true; run(); }
   const span = story.offsetHeight - stage.offsetHeight;
   const p = clamp(-r.top / Math.max(1, span), 0, 0.9999);
-  const i = Math.floor(p * n), local = p * n - i;
-  chipsT.forEach((c, k) => c.style.setProperty("--p", k < i ? 1 : k === i ? Math.max(0.04, local).toFixed(3) : 0));
-  goTo(i);
+  target = Math.floor(p * n);
+  local = p * n - target;
+  if (pin >= 0 && (target === pin || performance.now() > pinUntil)) pin = -1;
+  if (pin < 0 && (step < 0 || target < step || still.matches)) goTo(target);
+  bars();
+  run();
   tags(shown, step);
 }
+// A chip jumps straight to its step; the steps the scroll passes on the way are not replayed.
 chipsT.forEach((c, k) => c.addEventListener("click", () => {
+  pin = k;
+  pinUntil = performance.now() + 1500;
+  goTo(k);
   const span = story.offsetHeight - stage.offsetHeight;
   const top = story.getBoundingClientRect().top + scrollY;
   scrollTo({ top: top + (span * (k + 0.06)) / n + 1, behavior: still.matches ? "auto" : "smooth" });
@@ -1026,7 +1038,11 @@ function tick(now) {
   const dt = prev ? Math.min((now - prev) / 1000, 1 / 20) : 1 / 60;
   prev = now;
   const calm = still.matches;
-  const time = !armed && step === 0 ? 0 : calm ? 99 : (now - t0) / 1000;
+  const behind = pin >= 0 ? 0 : target - step;
+  if (armed || step > 0) clock += dt * (behind > 0 ? Math.min(6, 2 + behind) : 1);
+  if (behind > 0 && clock >= DUR[step] + 0.3) goTo(step + 1);
+  bars();
+  const time = !armed && step === 0 ? 0 : calm ? 99 : clock;
   const goal = sample(step, Math.min(time, DUR[step]));
   const f = calm ? 1 : 1 - Math.exp(-dt / 0.12);
   for (const key of KEYS) shown[key] += (goal[key] - shown[key]) * f;
@@ -1036,7 +1052,7 @@ function tick(now) {
   screen(step, time, st);
   card(step, time);
   tags(shown, step);
-  const busy = time < DUR[step] + 0.8 || !settled;
+  const busy = time < DUR[step] + 0.8 || !settled || behind > 0;
   frame = visible && busy ? requestAnimationFrame(tick) : 0;
 }
 function run() { if (!frame && visible) { prev = 0; frame = requestAnimationFrame(tick); } }

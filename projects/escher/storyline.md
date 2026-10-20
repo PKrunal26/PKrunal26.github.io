@@ -67,7 +67,7 @@ Reports run in two passes. The first finds the facts and the second writes them 
 
 ## 08 Plan and execute
 A fix arrives as a plan you can read like a diff. You approve it, dry-run it and watch it run, with a record of why every step happened.
-- **Visual:** one screen with the canvas tabs Plan, ChangeSet and Execution. It plays through on its own (plan, the three Python files from the seeded change set, then the three steps running with their real times) until the reader picks a tab.
+- **Visual:** the same frame as One turn (screen, dark drawer underneath, steps as the timeline), in seven steps: ask about finding F-1 from its canvas (the finding rides along as context); three options with blast radius from the estate graph (private behind the CDN, account-wide block, delete); three `ask_user` questions (keep exports-cdn, when, who to tell) with what was looked up instead of asked; plan P-1 with five steps (three from the S3 block public access playbook, two new for origin access control), parameters, blast radius graph and rollback; change set C-1 with the two new files reviewed and a dry run; run E-1 approved once, with step 4 asking again; then four fresh reads (access block, anonymous GET 403, exports-cdn 200, posture re-scan) that resolve the finding and post to #seller-platform. Built by `scripts/escher-screens.mjs` (`run.css`, `run.js`, shared `player.js`).
 
 ## 09 Design mode
 Operators write playbooks by talking them through instead of scripting them. Imported runbooks become playbooks too.

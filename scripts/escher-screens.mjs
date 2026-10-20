@@ -137,17 +137,7 @@ ${composer("What can I help you investigate?")}</div>
   { label: "A scan answer listing two findings, one critical. The critical finding is open in the canvas beside the thread, with its evidence, severity, effort and owner.", fx: 744 }
 );
 
-// ── Plan, change set and run: one screen, three canvas tabs
-const STEPS = [
-  ["Snapshot policy", "Captured bucket policy and ACL to the artifact bucket.", "1.1s"],
-  ["Enable public access block", "All four flags enabled at bucket and account scope.", "2.7s"],
-  ["Strip the wildcard grant", "Removed the s3:GetObject statement for principal \"*\".", "1.4s"],
-];
-const FILES = [
-  ["01-snapshot-policy.py", "+2", "", ['policy = s3.get_bucket_policy(Bucket="sellers-exports")', 'write_json("./backup/s3/sellers-exports-policy.json", policy)'], "+"],
-  ["02-enable-pab.py", "+7", "", ["s3.put_public_access_block(", '    Bucket="sellers-exports",', "    PublicAccessBlockConfiguration={", '        "BlockPublicAcls": True, "IgnorePublicAcls": True,', '        "BlockPublicPolicy": True, "RestrictPublicBuckets": True,', "    },", ")"], "+"],
-  ["03-strip-wildcard-grant.py", "+1", "−1", ['{"Effect": "Allow", "Principal": "*", "Action": "s3:GetObject", …}', "# wildcard GetObject statement removed from bucket policy"], "±"],
-];
+// Python with light syntax colour, for the change set files.
 function pyLine(s) {
   return esc(s)
     .replace(/(&quot;[^&]*?&quot;)/g, '<span class="k-s">$1</span>')
@@ -155,35 +145,6 @@ function pyLine(s) {
     .replace(/^(#.*)$/, '<span class="k-c">$1</span>')
     .replace(/\b([a-z_]+)(\()/g, '<span class="k-f">$1</span>$2');
 }
-const code = FILES.map(([f, , , lines, kind], fi) => `<ol class="sx-code" data-file="${fi}"${fi === 1 ? "" : " hidden"}>${lines.map((l, i) => `<li class="${kind === "±" ? (i === 0 ? "del" : "add") : "add"}"><span>${kind === "±" ? (i === 0 ? "−" : "+") : "+"}</span><code>${pyLine(l)}</code></li>`).join("")}</ol>`).join("");
-const tabs = [["lightbulb", "Finding", ""], ["flow-arrow", "Plan", "plan"], ["code", "ChangeSet", "change"], ["play", "Execution", "run"]];
-const planView = `<div class="sx-view" data-v="plan"><em class="sx-id">#P-1</em><h5>Block public access on sellers-exports</h5><p class="sx-desc">Re-enable the public access block on the exposed bucket and remove the wildcard GetObject grant, then verify no public path remains.</p>
-<p class="sx-sec">Steps ${ic("caret-down")}</p><ol class="sx-steps">${STEPS.map(([t], i) => `<li><span>${i + 1}</span><b>${t}</b>${ic("caret-down", "dim")}</li>`).join("")}</ol>
-<p class="sx-sec">Impact ${ic("caret-down")}</p><div class="sx-impact"><div><small>Blast radius</small><b>2 resources</b><span>Resources that depend on this plan’s target</span></div><div><small>Risk level</small><b>Low</b><span>As assessed by Escher</span></div></div>
-<div class="sx-graph"><p><i>Depends on → this plan changes → blast radius (2)</i></p><div class="sx-gn tgt">${logo("aws-s3")}<b>sellers-exports</b><small>S3</small><em>${ic("shield")}</em></div><i class="sx-ge"></i><div class="sx-gn">${logo("aws-cloudfront")}<b>exports-cdn</b><small>CloudFront</small></div><i class="sx-ge"></i><div class="sx-gn">${logo("aws-ec2")}<b>batch</b><small>EC2</small></div></div></div>`;
-const changeView = `<div class="sx-view" data-v="change"><em class="sx-id">#C-1</em><h5>Block public access on sellers-exports ${ic("folder-open", "dim")}</h5><p class="sx-desc">Playbook-sourced change set: snapshot the policy, apply the public access block at bucket and account scope, then strip the wildcard grant.</p>
-<div class="sx-cs"><p class="sx-csh">${logo("python")}<b data-fname>02-enable-pab.py</b><span class="add" data-fadd>+7</span><em>Playbook</em></p><div class="sx-csb"><div class="sx-files"><p>Files <em>3</em><span class="add">+10</span><span class="del">−1</span></p><span class="sx-filter">Filter files</span>
-${FILES.map(([f, a, d], i) => `<p class="sx-file${i === 1 ? " on" : ""}" data-f="${i}">${logo("python")}<span>${f.replace(/\.py$/, "")}<small>.py</small></span><span class="add">${a}</span>${d ? `<span class="del">${d}</span>` : ""}</p>`).join("")}</div>
-<div class="sx-src">${code}</div></div><p class="sx-status">${logo("python")}python<span data-flines>7 lines</span><span class="add">+7</span><span class="sx-sp"></span>Applied<span>UTF-8</span><span>LF</span></p></div></div>`;
-const runView = `<div class="sx-view" data-v="run"><em class="sx-id">#E-1</em><h5>Block public access on sellers-exports</h5><p class="sx-desc">Applied the public access block and removed the wildcard grant; the bucket is no longer world-readable.</p>
-<ol class="sx-run">${STEPS.map(([t, d, s], i) => `<li data-s="${i}"><span class="sx-rn">${i + 1}</span><span><b>${t}</b> ${d}</span><code>${s}</code><i class="sx-ok">${ic("check")}</i></li>`).join("")}</ol>
-<div class="sx-out"><p><span class="on">${ic("terminal")}Output</span><span>${ic("list")}Logs</span>${ic("copy", "dim")}</p>${STEPS.map(([t, d, s], i) => `<div class="sx-log" data-s="${i}"><small>step ${i + 1}/3 · ${t}</small><code>$ ${t}</code><span>${d}</span><code class="ok">✓ exit 0 · ${s}</code></div>`).join("")}</div></div>`;
-const exec = `<figure class="sx-fig" data-live="exec"><div class="sx-stage">${fit(
-  side("operate", { executions: [["play", "Block public acce…", true, "F-1"]] }) +
-  `<div class="sx-main sx-split"><div class="sx-thread"><p class="sx-bar">${ic("play")}<em>F-1</em><b>Block public access on se…</b>${scope}</p>
-${user("Fix it. Block public access on sellers-exports and drop the wildcard grant.")}${worked("Worked for 11s")}
-<p class="sx-a">Drafted a three-step plan from the published <b>S3 block public access</b> playbook rather than writing new code. It has run 34 times with no failures. It is open in the canvas.</p>
-<p class="sx-q"><b>Low risk · blast radius 1</b>One bucket, and the first step records what it looked like beforehand. Rollback restores the captured policy.</p>
-${user("Plan looks right. Prepare the change.")}${worked("Thought for 9s")}
-<p class="sx-a">Change set is ready: three Python files, one per plan step, sourced from the playbook. Say run and I will open the approval gate.</p>
-<div class="sx-gate"><p>${ic("lock-simple")}<b>Run 3 steps on sellers-exports?</b></p><p><span class="sx-btn">Dry run</span><span class="sx-btn dark">Approve and run</span></p></div>
-${composer("What should I resolve?")}</div>
-<div class="sx-canvas" data-tab="plan"><p class="sx-cbar">${tabs.map(([i, t, k]) => `<span class="sx-tab" data-t="${k}">${ic(i)}${t}</span>`).join("")}<span class="sx-sp"></span><span class="sx-re">${ic("arrow-clockwise")}</span>${logo("github", "sm")}</p>
-<div class="sx-doc">${planView}${changeView}${runView}</div></div></div>`,
-  { label: "The fix in the canvas, in three tabs: the plan with its steps, blast radius and risk; the change set as three Python files; and the run, with each step timed and checked.", fx: 744 }
-)}</div>
-<div class="sx-ctl" role="tablist" aria-label="Canvas tab"><button type="button" role="tab" data-t="plan" aria-selected="true">Plan</button><button type="button" role="tab" data-t="change" aria-selected="false">Change set</button><button type="button" role="tab" data-t="run" aria-selected="false">Run</button></div>
-<figcaption data-cap><span data-t="plan">The plan: steps, impact and the resources it touches.</span><span data-t="change" hidden>The change set: one file per step, sourced from a tested playbook.</span><span data-t="run" hidden>The run: every step timed, logged and checked afterwards.</span></figcaption></figure>`;
 
 // ── Design mode: the library, and one playbook
 const PBSTEPS = [["Pre-check & guardrails", "aws.pre_check_guardrails", "reused"], ["Discover targets", "aws.discover_targets", "generated"], ["Evaluate & plan", "aws.evaluate_plan", "reused"], ["Apply the change", "aws.apply_lifecycle", "reused"]];
@@ -382,7 +343,7 @@ const SECS = [
   [2, "Live check", "The estate says one is open. Confirm it against AWS before saying so."],
   [3, "What serves it", "Check what reads from it before suggesting a fix."],
 ];
-const tcard = ([k, i, t, a, r, b, s]) => `<div class="tj-card" data-k="${k}"><span class="tj-ico">${ic(i)}</span><p class="tj-c1"><code>${t}</code><span>${esc(a)}</span></p><span class="tj-dur">${s}</span><i class="tj-st"><b class="tj-spin"></b>${ic("check")}</i><p class="tj-c2">${ic("arrow-right")}<span>${esc(r)}</span><em class="${b === "live" ? "live" : b === "cached" ? "" : "bad"}">${b}</em></p></div>`;
+const tcard = ([k, i, t, a, r, b, s]) => `<div class="tj-card" data-k="${k}"><span class="tj-ico">${ic(i)}</span><p class="tj-c1"><code>${t}</code><span>${esc(a)}</span></p><span class="tj-dur">${s}</span><i class="tj-st"><b class="tj-spin"></b>${ic("check")}</i><p class="tj-c2">${ic("arrow-right")}<span>${esc(r)}</span><em class="${b === "live" ? "live" : /flag/.test(b) ? "bad" : ""}">${b}</em></p></div>`;
 const work1 = `<div class="tj-work" data-k="w1"><p class="tj-wh"><b class="tj-spin"></b>${ic("caret-right", "tj-car")}<b class="tj-wl" data-wl>Working</b><span class="tj-wt" data-wt>0.0s</span><span class="tj-wm">5 calls</span><span class="tj-fresh">${ic("check")}Data fresh</span></p>
 <div class="tj-wb"><div class="tj-wbi">${SECS.map(([n, t, th]) => `<div class="tj-sec" data-k="s${n}"><p class="tj-sh">${t}</p><p class="tj-th">${th}</p>${CALLS.filter((c) => c[7] === n).map(tcard).join("")}</div>`).join("")}</div></div></div>`;
 const met = (k, l, v, n, c, cls = "") => `<div class="tj-met tj-slot" data-k="${k}"><small>${l}</small><b class="${cls}">${v}${c}</b><span>${n}</span></div>`;
@@ -478,8 +439,137 @@ const turn = `<figure class="tj" data-live="turn" data-step="0"><div class="tj-s
 <div class="tj-dps">${pReq}${pLoop}${pStream}${pPass}${pRec}</div></div></div></div>
 <ol class="steps tj-steps">${STEPS_T.map(([t, d], i) => `<li><button type="button" data-i="${i}"${i ? "" : ' aria-current="step"'}><span class="tj-pg"><i></i></span><span class="n">${i + 1}</span><b>${t}</b><span>${d}</span></button></li>`).join("")}</ol></figure>`;
 
+// ── Plan and execute: from a finding to a verified fix, with what runs underneath docked under the
+// screen. Same parts as One turn (turn.css), plus run.css; played by run.js. ask_user, create_plan,
+// create_changeset, the approval gate and the playbook are the prototype's; this story's numbers are
+// the seeded S3 exposure (sellers-exports, exports-cdn, batch, 41 buckets, playbook run 34 times).
+const R_CALLS = [
+  ["x1", "tree-structure", "query_estate", "readers of sellers-exports", "2 readers: exports-cdn, batch", "graph", "0.4s"],
+  ["x2", "terminal", "aws_cli", "aws cloudfront get-distribution-config --id E2K4QX9V", "Origin is the public S3 URL", "live", "0.9s"],
+  ["x3", "tree-structure", "query_estate", "blast radius of 3 options", "2, 41 and 3 resources", "graph", "0.6s"],
+];
+const rwork = (k, label, calls, meta) => `<div class="tj-work" data-k="${k}"><p class="tj-wh"><b class="tj-spin"></b>${ic("caret-right", "tj-car")}<b class="tj-wl" data-wl="${k}">${label}</b><span class="tj-wm">${meta}</span></p><div class="tj-wb"><div class="tj-wbi tx-wbi">${calls}</div></div></div>`;
+const ctl = (k, t, a, cap = "captured, not run") => `<div class="tj-card ctl" data-k="${k}"><span class="tj-ico">${ic("flow-arrow")}</span><p class="tj-c1"><code>${t}</code><span>${esc(a)}</span></p><em class="tj-cap">${cap}</em></div>`;
+const OPTS = [
+  ["o1", "Make it private behind the CDN", "Block public access and let exports-cdn read through origin access control.", [["2 resources", ""], ["Low risk", "ok"], ["Reversible", ""], ["Playbook · 34 runs", ""]], true],
+  ["o2", "Block public access for the account", "Closes every bucket in prod, including two that serve public assets.", [["41 resources", "bad"], ["High risk", "bad"], ["Reversible", ""]]],
+  ["o3", "Delete the bucket", "Removes the exports and breaks exports-cdn and batch.", [["3 resources", "bad"], ["Can’t undo", "bad"]]],
+];
+const QS = [
+  ["q1", "Should exports-cdn keep serving these files?", ["Yes, through origin access control", "No, take it offline"], "exports-cdn: keep, through origin access control"],
+  ["q2", "When should it run?", ["Now", "Next change window · Sat 02:00"], "Run: now"],
+  ["q3", "Who should hear about it?", ["#seller-platform on Slack", "Nobody"], "Tell: #seller-platform"],
+];
+const askCard = `<div class="tx-askc" data-k="askc"><p class="tx-ah"><span class="tx-aq">${ic("chat-text")}</span><b>A few questions before I plan</b><span class="tx-an"><b data-qn>1</b> of 3</span></p>
+<ul class="tx-done">${QS.map(([k, , , sum]) => `<li data-k="${k}d">${ic("check")}<span>${sum}</span></li>`).join("")}</ul>
+${QS.map(([k, q, opts]) => `<div class="tx-q" data-k="${k}"><p>${q}</p>${opts.map((o, i) => `<span class="tx-qo" data-q="${k}" data-o="${i}"><kbd>${i + 1}</kbd>${o}</span>`).join("")}<span class="tx-qo other"><kbd>${ic("pencil-simple-line")}</kbd>Something else…</span></div>`).join("")}</div>`;
+const opts = `<div class="tx-opts tj-slot" data-k="opts"><p class="tx-oh">Three ways to fix it</p>${OPTS.map(([k, t, d, meta, rec]) => `<div class="tx-opt" data-k="${k}"><i class="tx-radio">${ic("check")}</i><div><p><b>${t}</b>${rec ? '<em class="tx-rec">Recommended</em>' : ""}</p><p>${d}</p><p class="tx-meta">${meta.map(([m, c]) => `<span class="${c}">${m}</span>`).join("")}</p></div></div>`).join("")}</div>`;
+const readers = `<div class="tx-rdrs tj-slot" data-k="rdrs">${[["aws-cloudfront", "exports-cdn", "CloudFront", "Reads over the public URL", "Breaks", "bad"], ["aws-ec2", "batch", "EC2", "Reads through its IAM role", "Unaffected", "ok"]].map(([l, n, ty, how, st, c]) => `<div class="tx-rdr">${logo(l)}<span><b>${n}</b><small>${ty} · ${how}</small></span><em class="${c}">${st}</em></div>`).join("")}</div>`;
+const rthread = `<div class="tj-thread tx-thread on"><p class="sx-bar tj-bar">${ic("play")}<em>F-1</em><b>Fix sellers-exports</b>${scope}</p><div class="tj-view"><div class="tj-col">
+<div class="tx-empty"><span>${ic("lightbulb")}</span><b>Start from the finding</b><small>Ask about it, or plan a fix.</small></div>
+<div class="sx-u tj-u tx-u1" data-k="u1"><span class="tx-att">${ic("lightbulb")}F-1 · S3 bucket allows public read</span>What breaks if we close it?</div>
+${rwork("w1", "Working", R_CALLS.slice(0, 2).map(tcard).join(""), "2 calls")}
+<div class="tj-ans" data-k="a1"><span class="tj-from"><img src="media/logo.png" alt="" width="14" height="14">Escher</span><p class="tj-lead tx-lead" data-k="l1">${streamed("Two things read sellers-exports, and closing it outright breaks one of them.{1}")}</p>${readers}
+<div class="tj-fu tj-slot" data-k="fu1"><span class="tx-fplan">${ic("arrow-right")}Plan a fix</span><span>${ic("arrow-right")}Show the policy</span></div></div>
+<p class="sx-u tj-u" data-k="u2">Plan a fix.</p>
+${rwork("w2", "Working", tcard(R_CALLS[2]), "1 call")}
+<div class="tj-ans" data-k="a2">${opts}</div>
+<p class="sx-u tj-u" data-k="u3">Make it private behind the CDN.</p>
+<div class="sx-u tj-u tx-u4" data-k="u4">${QS.map(([, , , sum]) => `<span>${sum}</span>`).join("")}</div>
+${rwork("w3", "Planning", ctl("x4", "create_plan", 'option: "private behind the CDN"'), "")}
+<div class="tj-art tx-art" data-k="art1"><span class="tj-ico">${ic("flow-arrow")}</span><span><b>Make sellers-exports private</b><small>Plan · 5 steps · low risk</small></span><em>Ready</em></div>
+<div class="tj-ans" data-k="a3"><p class="tj-take" data-k="l3">${streamed("exports-cdn gets read access in step 3, before the block goes on in step 4, so seller downloads never stop.")}</p><div class="tj-fu tj-slot" data-k="fu3"><span class="tx-fcs">${ic("arrow-right")}Prepare the change set</span></div></div>
+<p class="sx-u tj-u" data-k="u5">Prepare the change set.</p>
+${rwork("w4", "Thinking", ctl("x5", "create_changeset", 'plan: "P-1"'), "")}
+<div class="tj-art tx-art" data-k="art2"><span class="tj-ico">${ic("code")}</span><span><b>5 files · +27 −1</b><small>Change set · 3 from the playbook, 2 new</small></span><em data-cs>Review</em></div>
+<div class="sx-gate tx-gate" data-k="gate"><p>${ic("lock-simple")}<span><b>Run 5 steps on sellers-exports?</b><small data-gs>Dry run it first.</small></span></p><p><span class="sx-btn tx-dryb">${ic("play")}Dry run</span><span class="sx-btn dark tx-go">Approve and run</span></p></div>
+<div class="tx-runc" data-k="runc"><span class="tj-ico">${ic("play")}</span><span><b data-rc>Running step 1 of 5</b><i class="tx-rbar"><i data-rb></i></i></span></div>
+<div class="tj-ans" data-k="a4"><p class="tj-take" data-k="l4">${streamed("Done, and checked. sellers-exports is private, exports-cdn still serves files, and F-1 is resolved.")}</p><span class="tx-slack tj-slot" data-k="slack">${logo("slack")}Posted to <b>#seller-platform</b></span></div>
+</div></div>
+<div class="sx-comp tx-comp"><span class="tx-att sm" data-k="att">${ic("lightbulb")}F-1</span><span class="sx-ph" data-ph="Ask about this finding…">Ask about this finding…</span><span class="sx-send dark tx-send">${ic("paper-plane-tilt")}</span></div>${askCard}</div>`;
+
+// Canvas: the finding, then the plan, the change set and the run.
+const R_STEPS = [
+  ["Snapshot the policy and ACL", "playbook", "1.1s"],
+  ["Create origin access control", "new", "3.2s"],
+  ["Let exports-cdn read the bucket", "new", "1.3s"],
+  ["Turn on the public access block", "playbook", "2.7s", true],
+  ["Remove the wildcard grant", "playbook", "1.4s"],
+];
+const PARAMS = [["bucket", "sellers-exports"], ["distribution", "exports-cdn · E2K4QX9V"], ["region", "us-east-1"], ["profile", "prod"], ["snapshot", "s3://escher-artifacts/P-1/"], ["notify", "#seller-platform"]];
+const R_FILES = [
+  ["01-snapshot-policy.py", "+3", "", "playbook", ['policy = s3.get_bucket_policy(Bucket="sellers-exports")', 'acl = s3.get_bucket_acl(Bucket="sellers-exports")', 'write_json(SNAPSHOT + "before.json", {"policy": policy, "acl": acl})']],
+  ["02-create-oac.py", "+9", "", "new", ["oac = cloudfront.create_origin_access_control(", "    OriginAccessControlConfig={", '        "Name": "sellers-exports-oac",', '        "OriginAccessControlOriginType": "s3",', '        "SigningBehavior": "always",', '        "SigningProtocol": "sigv4",', "    }", ")", 'attach_oac(distribution="E2K4QX9V", origin="sellers-exports", oac=oac["Id"])']],
+  ["03-allow-cdn-read.py", "+7", "", "new", ["add_statement(bucket=\"sellers-exports\", statement={", '    "Effect": "Allow",', '    "Principal": {"Service": "cloudfront.amazonaws.com"},', '    "Action": "s3:GetObject",', '    "Resource": "arn:aws:s3:::sellers-exports/*",', '    "Condition": {"StringEquals": {"AWS:SourceArn": DISTRIBUTION_ARN}},', "})"]],
+  ["04-enable-pab.py", "+7", "", "playbook", ["s3.put_public_access_block(", '    Bucket="sellers-exports",', "    PublicAccessBlockConfiguration={", '        "BlockPublicAcls": True, "IgnorePublicAcls": True,', '        "BlockPublicPolicy": True, "RestrictPublicBuckets": True,', "    },", ")"]],
+  ["05-strip-wildcard-grant.py", "+1", "−1", "playbook", ['{"Effect": "Allow", "Principal": "*", "Action": "s3:GetObject", …}', "# wildcard GetObject statement removed from the bucket policy"]],
+];
+const rcode = R_FILES.map(([, , d, , lines], fi) => `<ol class="sx-code tx-code" data-file="${fi}">${lines.map((l, i) => { const del = d && i === 0; return `<li class="${del ? "del" : "add"}"><span>${del ? "−" : "+"}</span><code>${pyLine(l)}</code></li>`; }).join("")}</ol>`).join("");
+const DRY = [["2", "CloudFront", "+ origin access control sellers-exports-oac"], ["3", "Bucket policy", "+ allow cloudfront.amazonaws.com, exports-cdn only"], ["4", "Access block", "4 flags false → true"], ["5", "Bucket policy", "− allow Principal \"*\""]];
+const VERIFY = [
+  ["v1", "Public access block", "All 4 flags true", "s3api get-public-access-block"],
+  ["v2", "Anonymous read", "403 AccessDenied", "curl -I sellers-exports.s3.amazonaws.com/…"],
+  ["v3", "exports-cdn", "200 OK through CloudFront", "curl -I exports-cdn/latest.csv"],
+  ["v4", "Posture", "0 public buckets in prod", "analyze_posture type: s3"],
+];
+const fndView = `<div class="tx-view tx-fnd" data-v="fnd"><div class="tx-vi"><p class="tx-fbar"><em class="sx-id">#ufnd_xysj</em><span class="sx-sp"></span><span class="sx-btn tx-askb">${ic("chat-circle")}Ask</span><span class="sx-btn">${ic("wrench")}Resolve</span></p><h5>S3 bucket allows public read</h5><p class="sx-desc">With the public-access block off, anyone on the internet can read every object in sellers-exports.</p>
+<p class="sx-sec">Evidence</p><div class="sx-ev">${["Bucket policy", "Public access block", "CloudFront origin"].map((t) => `<span>${logo("aws")}${t}${ic("arrow-up-right", "dim")}</span>`).join("")}</div>
+<p class="sx-sec">Details</p><dl class="sx-dl tx-dl"><div><dt>${ic("circle-dashed")}Status</dt><dd><span class="sx-pill tx-st"><span>Open</span><span>${ic("check")}Resolved</span></span></dd></div>${[["shield", "Severity", '<span class="sx-pill crit">↑ Critical</span>'], ["cube", "Resource", "sellers-exports"], ["globe", "Region", "us-east-1"], ["tag", "Rule", "<code>s3-public-read</code>"], ["tree-structure", "Source", "Public S3 buckets"]].map(([i, k, v]) => `<div><dt>${ic(i)}${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+<p class="tx-resv" data-k="resv">${ic("check")}<span>Resolved by run E-1 · 4 checks attached as evidence</span></p></div></div>`;
+const planV = `<div class="tx-view tx-plan" data-v="plan"><div class="tx-vi"><em class="sx-id">#P-1</em><h5>Make sellers-exports private behind exports-cdn</h5><p class="sx-desc">From the S3 block public access playbook (34 runs, no failures), plus two new steps for origin access control.</p>
+<div class="tx-ps" data-k="ps"><p class="sx-sec">Steps <span>runs top to bottom</span></p><ol class="tx-psteps">${R_STEPS.map(([t, src, , ask], i) => `<li data-k="ps${i}"><span>${i + 1}</span><b>${t}</b>${ask ? `<em class="tx-askq">${ic("hand-pointing")}asks first</em>` : ""}<em class="tx-src ${src}">${src}</em></li>`).join("")}</ol></div>
+<div class="tx-pp" data-k="pp"><p class="sx-sec">Parameters</p><dl class="tx-params">${PARAMS.map(([k, v], i) => `<div data-k="pp${i}"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div>
+<div class="tx-pb" data-k="pb"><p class="sx-sec">Blast radius</p><div class="tx-imp"><div><small>Resources</small><b>2</b></div><div><small>Risk</small><b class="ok">Low</b></div><div><small>Rollback</small><b>Step 1 snapshot</b></div></div>
+<div class="tx-graph"><div class="tx-gn net" data-k="g0">${ic("globe")}<b>Public internet</b><em class="bad">loses access</em></div><i class="tx-ge bad" data-k="g1"></i><div class="tx-gn tgt" data-k="g2">${logo("aws-s3")}<b>sellers-exports</b><small>S3</small></div><div class="tx-gr"><div class="tx-gx" data-k="g3"><i class="tx-ge ok"></i><div class="tx-gn">${logo("aws-cloudfront")}<b>exports-cdn</b><em class="ok">keeps access</em></div></div><div class="tx-gx" data-k="g4"><i class="tx-ge"></i><div class="tx-gn">${logo("aws-ec2")}<b>batch</b><em>unaffected</em></div></div></div></div></div></div></div>`;
+const csV = `<div class="tx-view tx-cs" data-v="cs"><div class="tx-vi"><p class="tx-csh"><em class="sx-id">#C-1</em><b>5 files</b><span class="add">+27</span><span class="del">−1</span><span class="sx-sp"></span><span class="tx-revn"><b data-rv>0</b> of 2 new files reviewed</span></p>
+<div class="tx-csb"><div class="tx-files">${R_FILES.map(([f, a, d, src], i) => `<p class="tx-file" data-k="f${i}" data-f="${i}">${logo("python")}<span>${f.replace(/\.py$/, "")}</span><span class="add">${a}</span>${d ? `<span class="del">${d}</span>` : ""}${src === "new" ? `<i class="tx-rv" title="needs review">${ic("check")}</i>` : `<i class="tx-pbk">${ic("books")}</i>`}</p>`).join("")}</div>
+<div class="tx-srcp"><p class="tx-srch">${logo("python")}<b data-fname>${R_FILES[0][0]}</b><em data-fsrc>playbook</em></p>${rcode}</div></div>
+<div class="tx-dry" data-k="dry"><p class="tx-dh">${ic("play")}<b>Dry run</b><span>reads live state, writes nothing</span></p>${DRY.map(([n, w, c], i) => `<p class="tx-dr" data-k="d${i}"><span>${n}</span><b>${w}</b><code>${esc(c)}</code></p>`).join("")}<p class="tx-dok" data-k="dok">${ic("check")}No errors · 2 resources change · exports-cdn keeps access</p></div></div></div>`;
+const runV = `<div class="tx-view tx-run" data-v="run"><div class="tx-vi"><em class="sx-id">#E-1</em><h5>Make sellers-exports private<span class="sx-pill tx-rst"><span>Running</span><span>${ic("check")}Done</span></span></h5>
+<ol class="sx-run tx-rsteps">${R_STEPS.map(([t, , s], i) => `<li data-s="${i}"><span class="sx-rn">${i + 1}</span><span><b>${t}</b></span><code>${s}</code><i class="sx-ok">${ic("check")}</i></li>${i === 3 ? `<li class="tx-conf" data-k="conf"><span>${ic("hand-pointing")}</span><span>Step 4 closes public access. Continue?</span><span class="sx-btn">Stop run</span><span class="sx-btn dark tx-cont">Continue</span></li>` : ""}`).join("")}</ol>
+<div class="tx-vf" data-k="vf"><p class="sx-sec">Verification <span>fresh reads, not the steps’ own output</span></p>${VERIFY.map(([k, t, r, c]) => `<div class="tx-v" data-k="${k}"><i class="tx-vs"><b class="tj-spin"></b>${ic("check")}</i><span><b>${t}</b><small>${esc(c)}</small></span><em>${r}</em></div>`).join("")}</div>
+<p class="tx-resv" data-k="vres">${ic("check")}<span>F-1 resolved · sellers-exports is private</span></p></div></div>`;
+const rcanvas = `<div class="sx-canvas tj-canvas tx-canvas on" data-view="fnd"><p class="sx-cbar">${[["fnd", "lightbulb", "Finding"], ["plan", "flow-arrow", "Plan"], ["cs", "code", "Change set"], ["run", "play", "Run"]].map(([k, i, t]) => `<span class="sx-tab tx-tab" data-tab="${k}"${k === "fnd" ? "" : ` data-k="tab-${k}"`}>${ic(i)}${t}</span>`).join("")}<span class="sx-sp"></span>${ic("arrows-out-simple", "dim")}</p><div class="sx-doc">${fndView}${planV}${csV}${runV}</div></div>`;
+const rside = side("operate", { active: "none", analysis: [["chat-circle", "Public S3 buckets", true]], executions: [["play", "Fix sellers-exports", false, "F-1"]] })
+  .replace(`<li class="on">${ic("chat-circle")}<span>Public S3 buckets</span>`, `<li class="on tx-prev">${ic("chat-circle")}<span>Public S3 buckets</span>`)
+  .replace(`<li>${ic("play")}<em>F-1</em><span>Fix sellers-exports</span><small>142d</small>`, `<li class="tj-sess">${ic("play")}<em>F-1</em><span>Fix sellers-exports</span><b class="tj-pulse"></b><small>now</small>`)
+  .replace('Executions ' + ic("caret-right"), 'Executions ' + ic("caret-down"));
+const rscreen = fit(
+  rside + `<div class="sx-main tj-main tx-main">${rthread}${rcanvas}<svg class="tj-cur" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2.5v17.2l4.6-4.4 3 6.9 3.1-1.3-3-6.8h6.4z"/></svg></div>`,
+  { label: "Fixing a finding in Escher, played through: a question about the finding, three ways to fix it, three questions back, a plan with its parameters and blast radius, a reviewed and dry-run change set, an approved run, and fresh reads that confirm the fix.", fx: 244 }
+);
+
+// Underneath, one panel per step.
+const pAsk = `<div class="tj-dp tx-pask" data-p="0"><p class="tj-empty" data-k="r-empty">Nothing sent yet</p><div><p class="tj-dh">Sent with the question</p>${kv("r-0", "finding", "ufnd_xysj")}${kv("r-1", "rule", "s3-public-read")}${kv("r-2", "resource", "sellers-exports")}${kv("r-3", "evidence", "3 items")}${kv("r-4", "scope", "prod", "<em>frozen for the session</em>")}</div>
+<div><p class="tj-dh" data-k="r-gh">Estate graph</p>${[["exports-cdn", "public URL"], ["batch", "IAM role batch-runner"]].map(([a, how], i) => `<p class="tx-edge" data-k="r-e${i}"><code>${a}</code><i></i><span>reads</span><i></i><code>sellers-exports</code><em>${how}</em></p>`).join("")}<p class="tj-dn" data-k="r-n">Asking from a finding sends the record with the question, so the answer starts from it.</p></div></div>`;
+const pOpts = `<div class="tj-dp tx-popt" data-p="1"><table class="tx-tbl"><thead><tr><th>Option</th><th>Resources</th><th>Undo</th><th>Track record</th></tr></thead><tbody>${[["Private behind the CDN", "2", "yes", "playbook · 34 runs, 0 failed"], ["Account-wide block", "41", "yes", "none"], ["Delete the bucket", "3", "no", "none"]].map((r, i) => `<tr data-k="t-${i}">${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table><p class="tj-dn" data-k="t-n">Blast radius is a walk of the estate graph, not a guess by the model. The model writes the options; the numbers come from the tool.</p></div>`;
+const pQs = `<div class="tj-dp tx-pqs" data-p="2"><div><p class="tj-dh"><code>ask_user</code><span>the turn waits for answers</span></p>${QS.map(([k, q, o], i) => `<p class="tx-qrow" data-k="a-${i}"><code>${["cdn", "when", "notify"][i]}</code><span>${q}</span><em data-k="a-${i}a">${esc(o[0].split(" · ")[0].replace(" on Slack", ""))}</em></p>`).join("")}</div>
+<div><p class="tj-dh" data-k="a-lh">Looked up, not asked</p>${[["Who reads the bucket", "estate graph"], ["How batch reads it", "IAM role"], ["Has this fix worked before", "34 playbook runs"]].map(([q, src], i) => `<p class="tx-look" data-k="a-l${i}">${ic("check")}<span>${q}</span><em>${src}</em></p>`).join("")}</div></div>`;
+const PLANJ = ['"steps": [', '  { "n": 1, "source": "playbook", "id": "snapshot-policy" },', '  { "n": 2, "source": "generated", "id": "create-oac" },', '  { "n": 3, "source": "generated", "id": "allow-cdn-read" },', '  { "n": 4, "source": "playbook", "id": "enable-pab", "gate": "ask" },', '  { "n": 5, "source": "playbook", "id": "strip-wildcard" }', '],', '"rollback": "restore:step-1"'];
+const pPlan = `<div class="tj-dp tx-pplan" data-p="3"><div class="tj-json"><p class="tj-dh"><code>create_plan</code><span>captured, then written in its own pass</span></p><ol>${PLANJ.map((l, i) => `<li data-k="p-${i}"><code>${jsonHtml(l)}</code></li>`).join("")}</ol></div>
+<div class="tx-pk">${kv("p-k0", "steps", "5", "<em>3 playbook, 2 new</em>")}${kv("p-k1", "gate", "step 4", "<em>asks before it runs</em>")}${kv("p-k2", "order", "3 before 4", "<em>exports-cdn never loses access</em>")}${kv("p-k3", "rollback", "step 1 snapshot")}${kv("p-k4", "blast", "2 resources", "<em>from the estate graph</em>")}</div></div>`;
+const pCs = `<div class="tj-dp tx-pcs" data-p="4"><div>${R_FILES.map(([f, a, d, src], i) => `<p class="tx-frow" data-k="c-${i}"><code>${f}</code><span class="${src}">${src === "new" ? "new · review" : "playbook v1, unchanged"}</span></p>`).join("")}</div>
+<div><p class="tj-dh" data-k="c-dh"><code>dry run</code><span>simulated against live state</span></p>${kv("c-k0", "reads", "4", "<em>policy, ACL, access block, distribution</em>")}${kv("c-k1", "writes", "0")}${kv("c-k2", "changes", "2 resources")}${kv("c-k3", "errors", "0")}</div></div>`;
+const RLOG = [["10:42:03", "run E-1 approved by Sam Rivera"], ["10:42:03", "step 1  snapshot → s3://escher-artifacts/P-1/before.json"], ["10:42:04", "step 2  create-origin-access-control → oac-7f3a"], ["10:42:07", "step 3  put-bucket-policy, +1 statement"], ["10:42:08", "step 4  waiting for confirmation"], ["10:42:11", "step 4  confirmed by Sam Rivera · put-public-access-block"], ["10:42:14", "step 5  put-bucket-policy, −1 statement"]];
+const pRun = `<div class="tj-dp tx-prun" data-p="5"><ol class="tx-log">${RLOG.map(([ts, l], i) => `<li data-k="g-${i}"><span>${ts}</span><code>${esc(l)}</code></li>`).join("")}</ol><p class="tj-dn" data-k="g-n">The model has no path to the write endpoint. Each step is its own request, sent after a person approves it.</p></div>`;
+const pVer = `<div class="tj-dp tx-pver" data-p="6"><table class="tx-tbl"><thead><tr><th>Check</th><th>Before</th><th>After</th></tr></thead><tbody>${[["Access block flags on", "0 of 4", "4 of 4"], ["Anonymous GET", "200", "403"], ["exports-cdn GET", "200", "200"], ["Public buckets in prod", "1", "0"]].map(([c, a, z], i) => `<tr data-k="v-${i}"><td>${c}</td><td>${a}</td><td class="ok">${z}</td></tr>`).join("")}</tbody></table>
+<div class="tx-vlog"><p class="tj-log" data-k="v-r">${ic("check")}<span>ufnd_xysj resolved, 4 reads attached</span><code>E-1</code></p><p class="tx-sl" data-k="v-s">${logo("slack")}<span>Posted to #seller-platform</span></p><p class="tj-dn" data-k="v-n">Verification runs its own reads. It doesn’t trust a step’s exit code.</p></div></div>`;
+const RUN_T = [
+  ["Ask", "Open a finding and ask about it.", "Context"],
+  ["Options", "Escher lays out ways to fix it. You pick one.", "Blast radius"],
+  ["Questions", "It asks only what the estate can’t answer.", "ask_user"],
+  ["Plan", "Steps, parameters and blast radius, before any code.", "Plan"],
+  ["Change set", "One file per step. Review it, then dry-run it.", "Change set"],
+  ["Run", "You approve the run. Risky steps ask again.", "Execution log"],
+  ["Verify", "Fresh reads prove the change landed.", "Verification"],
+];
+const runFig = `<figure class="tj tx" data-live="run" data-step="0"><div class="tj-stage"><div class="tj-win">${rscreen}
+<div class="tj-dev"><div class="tj-dbar"><span class="tj-rec-dot"></span><span class="tj-dt">${RUN_T.map(([, , d], i) => `<b data-i="${i}">${i + 1} · ${d}</b>`).join("")}</span><span class="sx-sp"></span><span class="tj-ds" data-ds aria-live="off"></span><button type="button" class="tj-pp-btn" data-pause aria-label="Pause">${ic("pause")}${ic("play")}</button></div>
+<div class="tj-dps">${pAsk}${pOpts}${pQs}${pPlan}${pCs}${pRun}${pVer}</div></div></div></div>
+<ol class="steps tj-steps tx-steps">${RUN_T.map(([t, d], i) => `<li><button type="button" data-i="${i}"${i ? "" : ' aria-current="step"'}><span class="tj-pg"><i></i></span><span class="n">${i + 1}</span><b>${t}</b><span>${d}</span></button></li>`).join("")}</ol></figure>`;
+
 const sprite = `<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute">${[...SPRITE.values()].join("")}</svg>`;
-const ILL = { sprite, turn, "scr-home": home, "scr-ask": ask, "scr-exec": exec, "scr-design": design, "scr-agents": agents, "gu-compare": compare, "gu-stream": stream, "gu-kinds": kinds, "gu-who": who, stack, arch, desktop, builds, "tokens-pipe": tokensPipe };
+const ILL = { sprite, turn, "scr-home": home, "scr-ask": ask, "scr-exec": runFig, "scr-design": design, "scr-agents": agents, "gu-compare": compare, "gu-stream": stream, "gu-kinds": kinds, "gu-who": who, stack, arch, desktop, builds, "tokens-pipe": tokensPipe };
 
 let html = readFileSync(PAGE, "utf8");
 for (const [k, v] of Object.entries(ILL)) {

@@ -136,51 +136,6 @@
     }, null, '0px 0px -30% 0px');
   });
 
-  // ── Plan, change set, run: canvas tabs that play through on their own until touched.
-  $$('[data-live="exec"]').forEach(function (fig) {
-    var canvas = $('.sx-canvas', fig), ctl = $$('.sx-ctl button', fig), caps = $$('[data-cap] [data-t]', fig);
-    var runRows = $$('.sx-run li', fig), logs = $$('.sx-log', fig);
-    var files = $$('.sx-file', fig), codes = $$('.sx-code', fig);
-    var T = timers(), auto = !still, visible = false;
-    var FN = [['01-snapshot-policy.py', '+2', '2 lines'], ['02-enable-pab.py', '+7', '7 lines'], ['03-strip-wildcard-grant.py', '+1 −1', '2 lines']];
-    function file(i) {
-      files.forEach(function (f, j) { f.classList.toggle('on', i === j); });
-      codes.forEach(function (c, j) { c.hidden = i !== j; });
-      $('[data-fname]', fig).textContent = FN[i][0];
-      $('[data-fadd]', fig).textContent = FN[i][1];
-      $('[data-flines]', fig).textContent = FN[i][2];
-    }
-    function runState(n, running) {
-      runRows.forEach(function (r, i) { r.dataset.st = i < n ? 'done' : i === n && running ? 'run' : ''; if (!r.dataset.st) delete r.dataset.st; });
-      logs.forEach(function (l, i) { if (i < n) l.dataset.st = 'done'; else delete l.dataset.st; });
-    }
-    function show(t) {
-      canvas.dataset.tab = t;
-      ctl.forEach(function (b) { b.setAttribute('aria-selected', b.dataset.t === t); });
-      caps.forEach(function (c) { c.hidden = c.dataset.t !== t; });
-    }
-    function cycle() {
-      T.clear();
-      if (!auto || !visible) return;
-      show('plan'); file(1); runState(0);
-      T.at(function () { show('change'); }, 3600);
-      T.at(function () { file(0); }, 5200);
-      T.at(function () { file(2); }, 6400);
-      T.at(function () { file(1); }, 7600);
-      T.at(function () { show('run'); runState(0, true); }, 8600);
-      T.at(function () { runState(1, true); }, 9700);
-      T.at(function () { runState(2, true); }, 11400);
-      T.at(function () { runState(3); }, 12500);
-      T.at(cycle, 17000);
-    }
-    function stop() { auto = false; T.clear(); }
-    ctl.forEach(function (b) { b.addEventListener('click', function () { stop(); show(b.dataset.t); if (b.dataset.t === 'run') runState(3); }); });
-    $$('.sx-tab', fig).forEach(function (tab) { tab.addEventListener('click', function () { if (!tab.dataset.t) return; stop(); show(tab.dataset.t); if (tab.dataset.t === 'run') runState(3); }); });
-    files.forEach(function (f, i) { f.addEventListener('click', function () { stop(); file(i); }); });
-    show('plan'); file(1); runState(still ? 3 : 0);
-    inView(fig, function () { if (!visible) { visible = true; cycle(); } }, function () { visible = false; T.clear(); });
-  });
-
   // ── Design mode: library and playbook.
   $$('[data-live="views"]').forEach(function (fig) {
     var main = $('.sx-dz', fig), ctl = $$('.sx-ctl button', fig), caps = $$('[data-cap] [data-t]', fig);

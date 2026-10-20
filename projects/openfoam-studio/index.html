@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenFOAM Studio — Krunal Prajapati</title><meta name="description" content="OpenFOAM Studio: describe a CFD simulation in plain English, and the app writes the case, runs OpenFOAM in Docker and checks the result."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="openfoam-studio.css?v=17"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OpenFOAM Studio — Krunal Prajapati</title><meta name="description" content="OpenFOAM Studio: describe a CFD simulation in plain English, and the app writes the case, runs OpenFOAM in Docker and checks the result."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="openfoam-studio.css?v=19"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
 <body><main class="project of">
 <nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav>
 
@@ -134,65 +134,30 @@
 <section id="problem">
   <div class="prose">
     <h2>Problem</h2>
-    <p>OpenFOAM is one of the most capable CFD solvers there is, and one of the hardest to use. A case is a tree of hand-edited text files with no schema, and when a run fails, <code>FOAM FATAL ERROR</code> says something broke but rarely why.</p>
-    <p>I first hit this during my bachelor’s thesis, then saw students in a CFD course get stuck the same way. I work in product design now, and this project is my way back into that field.</p>
+    <p>OpenFOAM is one of the most capable CFD solvers there is, and one of the hardest to use. An engineer can describe a case in one sentence. OpenFOAM needs it as a folder of plain text files with no schema, and the files have to agree with each other.</p>
   </div>
-  <figure class="diagram" data-fluid-quiet>
-    <svg viewBox="0 0 880 330" class="patches" id="patches" role="img" aria-label="Three case files. blockMeshDict names the patches movingWall, fixedWalls and frontAndBack. 0/U uses the same names. 0/p has a typo, movingwall, and the solver stops with a fatal error.">
-      <rect class="n" x="0" y="0" width="260" height="214" rx="10"/>
-      <text class="t" x="20" y="30">system/blockMeshDict</text>
-      <path class="l" d="M0 46H260"/>
-      <text class="tm" x="20" y="74">boundary</text>
-      <text class="tm" x="20" y="96">(</text>
-      <text class="tm a" x="40" y="118" data-patch="moving">movingWall</text>
-      <text class="tm a" x="40" y="146" data-patch="fixed">fixedWalls</text>
-      <text class="tm a" x="40" y="174" data-patch="front">frontAndBack</text>
-      <text class="tm" x="20" y="198">);</text>
-
-      <rect class="n" x="310" y="0" width="260" height="214" rx="10"/>
-      <text class="t" x="330" y="30">0/U</text>
-      <path class="l" d="M310 46H570"/>
-      <text class="tm" x="330" y="74">boundaryField</text>
-      <text class="tm" x="330" y="96">{</text>
-      <text class="tm a" x="350" y="118" data-patch="moving">movingWall</text>
-      <text class="tm a" x="350" y="146" data-patch="fixed">fixedWalls</text>
-      <text class="tm a" x="350" y="174" data-patch="front">frontAndBack</text>
-      <text class="tm" x="330" y="198">}</text>
-
-      <rect class="n" x="620" y="0" width="260" height="214" rx="10"/>
-      <text class="t" x="640" y="30">0/p</text>
-      <path class="l" d="M620 46H880"/>
-      <text class="tm" x="640" y="74">boundaryField</text>
-      <text class="tm" x="640" y="96">{</text>
-      <text class="tm r" x="660" y="118" data-patch="moving" id="typo">movingwall</text>
-      <text class="tm a" x="660" y="146" data-patch="fixed">fixedWalls</text>
-      <text class="tm a" x="660" y="174" data-patch="front">frontAndBack</text>
-      <text class="tm" x="640" y="198">}</text>
-
-      <path class="la pl" data-patch="moving" d="M150 114H346"/>
-      <path class="la pl" data-patch="fixed" d="M150 142H346M460 142H656"/>
-      <path class="la pl" data-patch="front" d="M168 170H346M478 170H656"/>
-      <path class="lr pl" data-patch="moving" id="typo-link" d="M460 114H656" stroke-dasharray="4 5"/>
-      <g id="typo-err">
-        <circle class="dot-r" cx="748" cy="114" r="4"/>
-        <path class="lr" d="M748 118V262"/>
-        <rect class="n-r" x="0" y="262" width="880" height="60" rx="10"/>
-        <text class="tm r" x="20" y="290">--&gt; FOAM FATAL ERROR:</text>
-        <text class="tm" x="20" y="310">Cannot find patchField entry for movingWall</text>
-      </g>
-      <g id="typo-ok" opacity="0">
-        <rect class="n-ok" x="0" y="262" width="880" height="60" rx="10"/>
-        <text class="tm ok" x="20" y="290">[foamRun exited with code 0]</text>
-        <text class="tm" x="20" y="310">Every patch matches, so the run goes through.</text>
-      </g>
-    </svg>
-    <div class="fig-bar"><button class="fbtn" id="typo-btn" type="button" aria-pressed="false">Fix the typo</button><span class="hint">Hover a patch name to follow it across files.</span></div>
-    <figcaption>Every field file has to name the same patches as the mesh. One wrong letter stops the run.</figcaption>
+  <figure class="cw" id="cw" data-fluid-quiet>
+    <div class="cw-top">
+      <div class="cw-say"><p class="cw-k">What you mean</p><p class="cw-prompt">“Lid-driven cavity, Re=100, 2D, incompressible, run for 10 seconds”</p></div>
+      <dl class="cw-count">
+        <div><dt>Files</dt><dd>8</dd></div>
+        <div><dt>Lines</dt><dd>349</dd></div>
+        <div><dt>Checked before a run</dt><dd>0</dd></div>
+      </dl>
+    </div>
+    <div class="cw-tabs" role="tablist" aria-label="Views of the case">
+      <button type="button" role="tab" aria-selected="true" data-tab="files"><b>1</b>Files</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="links"><b>2</b>Links</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="fails"><b>3</b>Failures</button>
+    </div>
+    <div class="cw-body">
+      <div class="cw-side" id="cw-side" role="tabpanel" aria-live="polite"></div>
+      <div class="cw-wall" id="cw-wall"><p class="cw-load">Loading the case…</p></div>
+    </div>
+    <figcaption>What OpenFOAM needs for that sentence: the eight files of the cavity case on this page, one bar per line. The failures are real runs from building the app.</figcaption>
   </figure>
-  <div class="cols">
-    <div><span class="spot" data-ic="pencil-simple-line"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,90.34,192,120,136,64l29.66-29.66a8,8,0,0,1,11.31,0L221.66,79A8,8,0,0,1,221.66,90.34Z" opacity="0.2"/><path d="M227.32,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.32l112-112A16,16,0,0,0,227.32,73.37ZM48,163.31l88-88L180.69,120l-88,88H48Zm144-54.62L147.32,64l24-24L216,84.69Z"/></svg></span><h3>Manual</h3><p>Every case starts by copying a tutorial and editing <code>blockMeshDict</code>, <code>fvSchemes</code> and <code>fvSolution</code> by hand.</p></div>
-    <div><span class="spot" data-ic="link-break"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M204.28,108.28l-96,96a40,40,0,0,1-56.56-56.56l96-96a40,40,0,0,1,56.56,56.56Z" opacity="0.2"/><path d="M198.63,57.37a32,32,0,0,0-45.19-.06L141.79,69.52a8,8,0,0,1-11.58-11l11.72-12.29a1.59,1.59,0,0,1,.13-.13,48,48,0,0,1,67.88,67.88,1.59,1.59,0,0,1-.13.13l-12.29,11.72a8,8,0,0,1-11-11.58l12.21-11.65A32,32,0,0,0,198.63,57.37ZM114.21,186.48l-11.65,12.21a32,32,0,0,1-45.25-45.25l12.21-11.65a8,8,0,0,0-11-11.58L46.19,141.93a1.59,1.59,0,0,0-.13.13,48,48,0,0,0,67.88,67.88,1.59,1.59,0,0,0,.13-.13l11.72-12.29a8,8,0,1,0-11.58-11ZM216,152H192a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16ZM40,104H64a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16Zm120,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V192A8,8,0,0,0,160,184ZM96,72a8,8,0,0,0,8-8V40a8,8,0,0,0-16,0V64A8,8,0,0,0,96,72Z"/></svg></span><h3>Fragile</h3><p>One wrong patch name or a Windows line ending breaks a case without a clear message.</p></div>
-    <div><span class="spot" data-ic="eye-slash"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,112a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z" opacity="0.2"/><path d="M53.92,34.62A8,8,0,1,0,42.08,45.38L61.32,66.55C25,88.84,9.38,123.2,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208a127.11,127.11,0,0,0,52.07-10.83l22,24.21a8,8,0,1,0,11.84-10.76Zm47.33,75.84,41.67,45.85a32,32,0,0,1-41.67-45.85ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.16,133.16,0,0,1,25,128c4.69-8.79,19.66-33.39,47.35-49.38l18,19.75a48,48,0,0,0,63.66,70l14.73,16.2A112,112,0,0,1,128,192Zm6-95.43a8,8,0,0,1,3-15.72,48.16,48.16,0,0,1,38.77,42.64,8,8,0,0,1-7.22,8.71,6.39,6.39,0,0,1-.75,0,8,8,0,0,1-8-7.26A32.09,32.09,0,0,0,134,96.57Zm113.28,34.69c-.42.94-10.55,23.37-33.36,43.8a8,8,0,1,1-10.67-11.92A132.77,132.77,0,0,0,231.05,128a133.15,133.15,0,0,0-23.12-30.77C185.67,75.19,158.78,64,128,64a118.37,118.37,0,0,0-19.36,1.57A8,8,0,1,1,106,49.79,134,134,0,0,1,128,48c34.88,0,66.57,13.26,91.66,38.35,18.83,18.83,27.3,37.62,27.65,38.41A8,8,0,0,1,247.31,131.26Z"/></svg></span><h3>Opaque</h3><p>Solver logs are long, and a fix means knowing which of hundreds of keywords to change.</p></div>
+  <div class="prose after">
+    <p>I first hit this during my bachelor’s thesis, then saw students in a CFD course get stuck the same way. I work in product design now, and this project is my way back into that field.</p>
   </div>
   <p class="pull">The hard part is the tooling, not the physics.</p>
 </section>
@@ -461,19 +426,47 @@ FOAM exiting
 <section id="results">
   <div class="prose">
     <h2>Results</h2>
-    <p>A 3D viewer shows the solved case in the app, modelled on ANSYS CFD-Post: field colouring, time animation, slices, clips, iso-surfaces, streamlines, vector glyphs, point probes and a side-by-side compare.</p>
+    <p>Solved cases open in a 3D viewer inside the app, modelled on ParaView and ANSYS CFD-Post. A result is a pipeline: the mesh coloured by any field, then slices, clips, iso-surfaces, streamlines and vector glyphs, each with its own settings, played over every saved time.</p>
   </div>
-  <ul class="chips">
-    <li>Field colouring</li><li>Time animation</li><li>Slice</li><li>Clip</li><li>Iso-surface</li><li>Streamlines</li><li>Vector glyphs</li><li>Point probe</li><li>Compare</li>
-  </ul>
-  <div class="gallery">
-    <figure class="g-cyl"><div class="plate tight"><img src="media/field-cylinder.webp" alt="Velocity magnitude around a cylinder: fast flow on both sides and a long slow wake behind it." width="1600" height="800" loading="lazy"></div><figcaption><b>“Create a flow around cylinder”</b> Velocity magnitude.</figcaption></figure>
-    <figure class="g-cav"><div class="plate tight"><img src="media/field-cavity.webp" alt="Velocity magnitude in the lid-driven cavity: fast along the lid, a slow core where the vortex centres." width="960" height="960" loading="lazy"></div><figcaption><b>“Lid-driven cavity, Re=100”</b> Velocity magnitude.</figcaption></figure>
-    <figure class="g-step"><div class="plate tight"><img src="media/field-step.webp" alt="Velocity magnitude in a backward-facing step: a fast core leaving the step and slow regions at the walls." width="1600" height="225" loading="lazy"></div><figcaption><b>“Pitz daily 2D, re 10”</b> Velocity magnitude. Height ×3.</figcaption></figure>
-    <figure class="g-ch"><div class="plate tight"><img src="media/field-channel.webp" alt="Temperature in a channel with a heated bottom wall: a warm layer grows along the floor." width="1600" height="128" loading="lazy"></div><figcaption><b>“Channel flow with a heated bottom wall”</b> Temperature, 300 to 319 K. Height ×4.</figcaption></figure>
+  <figure class="rv block" id="rv" data-fluid-quiet>
+    <div class="win rv-win">
+      <div class="w-bar"><span class="w-dots"><i></i><i></i><i></i></span><span class="w-title" id="rv-title">create a flow around cylinder</span><span class="w-chip" id="rv-solver">incompressibleFluid</span><span class="w-sp"></span><span class="w-tab">Logs</span><span class="w-tab on">Results</span></div>
+      <div class="rv-body">
+        <div class="rv-main">
+          <div class="rv-cases" role="tablist" aria-label="Runs">
+            <button type="button" role="tab" aria-selected="true" data-case="cylinder">Cylinder</button>
+            <button type="button" role="tab" aria-selected="false" data-case="cavity" tabindex="-1">Cavity</button>
+            <button type="button" role="tab" aria-selected="false" data-case="badapple" tabindex="-1">Bad Apple!!</button>
+            <span class="rv-meta" id="rv-meta"></span>
+          </div>
+          <div class="rv-view" id="rv-view" role="img" aria-label="The solved field of the selected run, with the pipeline’s streamlines, glyphs, iso-lines and line probe drawn over it. Move the pointer over it to read the values at any point.">
+            <canvas id="rv-field"></canvas>
+            <canvas id="rv-over"></canvas>
+            <div class="rv-bar" id="rv-bar"></div>
+            <div class="rv-plot" id="rv-plot" hidden></div>
+            <div class="rv-probe" id="rv-probe" hidden></div>
+          </div>
+          <div class="rv-time">
+            <button type="button" class="rv-play" id="rv-play" aria-label="Play"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="pl" d="M4.5 2.8v10.4L13 8z"/><path class="pa" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg></button>
+            <input type="range" id="rv-slider" min="0" max="20" step="1" value="20" aria-label="Saved time">
+            <span class="rv-t" id="rv-t">t = 10.0 s</span>
+            <span class="rv-n" id="rv-n">21 saved times</span>
+          </div>
+        </div>
+        <aside class="rv-side">
+          <p class="w-h">Pipeline</p>
+          <ul class="rv-pipe" id="rv-pipe"></ul>
+          <p class="w-h">Properties</p>
+          <div class="rv-props" id="rv-props"></div>
+        </aside>
+      </div>
+    </div>
+    <figcaption>The same pipeline in 2D, on three runs from the app, read from each run’s saved fields. Slices and clips need a third dimension, so they’re left out here. Bad Apple!! is a scripted stress test: 24 video frames seeded one after another into a water and air solve.</figcaption>
+  </figure>
+  <div class="strips">
+    <figure><div class="plate tight"><img src="media/field-step.webp" alt="Velocity magnitude in a backward-facing step: a fast core leaving the step and slow regions at the walls." width="1600" height="225" loading="lazy"></div><figcaption><b>“Pitz daily 2D, re 10”</b> Velocity magnitude. Height ×3.</figcaption></figure>
+    <figure><div class="plate tight"><img src="media/field-channel.webp" alt="Temperature in a channel with a heated bottom wall: a warm layer grows along the floor." width="1600" height="128" loading="lazy"></div><figcaption><b>“Channel flow with a heated bottom wall”</b> Temperature, 300 to 319 K. Height ×4.</figcaption></figure>
   </div>
-  <div class="scale"><span>0</span><i></i><span>max</span></div>
-  <p class="cap">Four runs from the app, each from one sentence. Drawn for this page from each run’s output files.</p>
 </section>
 
 <section id="setup">
@@ -867,6 +860,8 @@ FOAM exiting
 </main>
 <script type="module" src="cover3d.js?v=14"></script>
 <script src="flow.js?v=3" defer></script>
-<script src="interact.js" defer></script>
+<script src="interact.js?v=2" defer></script>
+<script src="problem.js" defer></script>
+<script src="results.js" defer></script>
 <script src="../../fluid.js" defer></script>
 </body></html>

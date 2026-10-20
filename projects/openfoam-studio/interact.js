@@ -22,22 +22,49 @@
     });
   }
 
-  // ── Problem: follow a patch name, fix the typo ──────────────────────────
-  const patches = $('#patches');
-  if (patches) {
-    linkHover($$('text[data-patch]', patches), (el) => { patches.dataset.hl = el.dataset.patch; }, () => { delete patches.dataset.hl; });
-    const btn = $('#typo-btn'), typo = $('#typo'), link = $('#typo-link');
-    btn.addEventListener('click', () => {
-      const fixed = btn.getAttribute('aria-pressed') !== 'true';
-      btn.setAttribute('aria-pressed', String(fixed));
-      btn.textContent = fixed ? 'Show the typo' : 'Fix the typo';
-      typo.textContent = fixed ? 'movingWall' : 'movingwall';
-      typo.classList.toggle('r', !fixed); typo.classList.toggle('a', fixed);
-      link.classList.toggle('lr', !fixed); link.classList.toggle('la', fixed);
-      link.setAttribute('stroke-dasharray', fixed ? 'none' : '4 5');
-      patches.classList.toggle('fixed', fixed);
+  // ── Wide figures: on a narrow screen diagrams, charts and code panes scroll
+  // sideways, with a bar that stays visible (touch browsers hide native
+  // scrollbars). Drag the bar or tap the track to move.
+  function hscroll(box) {
+    const bar = document.createElement('div');
+    bar.className = 'hs-bar';
+    bar.setAttribute('aria-hidden', 'true');
+    const thumb = document.createElement('i');
+    bar.append(thumb);
+    box.after(bar);
+    const sync = () => {
+      const over = box.scrollWidth - box.clientWidth;
+      box.classList.toggle('wide', over > 1);
+      if (over <= 1) return;
+      const r = box.clientWidth / box.scrollWidth, p = box.scrollLeft / over;
+      thumb.style.width = `${r * 100}%`;
+      thumb.style.transform = `translateX(${(p * (1 - r) / r) * 100}%)`;
+      box.classList.toggle('at-start', p < 0.01);
+      box.classList.toggle('at-end', p > 0.99);
+    };
+    box.addEventListener('scroll', sync, { passive: true });
+    new ResizeObserver(sync).observe(box);
+    bar.addEventListener('pointerdown', (e) => {
+      const rect = bar.getBoundingClientRect();
+      const over = box.scrollWidth - box.clientWidth, tw = rect.width * (box.clientWidth / box.scrollWidth);
+      const left = (box.scrollLeft / over) * (rect.width - tw);
+      let grab = e.clientX - rect.left - left;
+      if (grab < 0 || grab > tw) grab = tw / 2;
+      const move = (ev) => { box.scrollLeft = ((ev.clientX - rect.left - grab) / (rect.width - tw)) * over; };
+      move(e);
+      bar.setPointerCapture(e.pointerId);
+      bar.onpointermove = move;
+      bar.onpointerup = bar.onpointercancel = () => { bar.onpointermove = null; };
     });
   }
+  $$('.diagram > svg, .chart > .plot, .chart > svg').forEach((el) => {
+    const box = document.createElement('div');
+    box.className = 'hs';
+    el.before(box);
+    box.append(el);
+    hscroll(box);
+  });
+  $$('.pane pre').forEach((pre) => { pre.classList.add('hs', 'hs-own'); hscroll(pre); });
 
   // ── Describe: a phrase in the prompt and the file it becomes ────────────
   const map = $('.map');

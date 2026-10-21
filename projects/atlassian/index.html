@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cloud migration assistant - Atlassian</title><meta name="description" content="My product design internship at Atlassian: three flows in the Cloud Migration Assistant, redesigned so admins could trust their move to Cloud."><link rel="preconnect" href="https://rsms.me/"><link rel="stylesheet" href="https://rsms.me/inter/inter.css"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="atlassian.css?v=5"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<body><main class="project at">
+<nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav>
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk" d="M0 1L9 5L0 9Z"/></marker>
+<marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-a" d="M0 1L9 5L0 9Z"/></marker>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-r" d="M0 1L9 5L0 9Z"/></marker>
+<linearGradient id="jira-g" x1="98.0308675%" y1="0.160599572%" x2="58.8877062%" y2="40.7655246%"><stop stop-color="#0052CC" offset="18%"/><stop stop-color="#2684FF" offset="100%"/></linearGradient>
+<linearGradient id="trk" gradientUnits="userSpaceOnUse" x1="10" x2="870" y1="0" y2="0"><stop offset="0" class="g0"/><stop offset="1" class="g1"/></linearGradient>
+</defs></svg>
+
+<header class="hero">
+  <h1>Cloud migration assistant - Atlassian</h1>
+  <p class="lede">My product design internship at Atlassian. I redesigned three flows in the tool admins use to move Jira from their own servers to Atlassian Cloud, so they could trust it.</p>
+  <dl class="facts">
+    <div><dt>Company</dt><dd>Atlassian, Migrations team</dd></div>
+    <div><dt>Role</dt><dd>Product design intern</dd></div>
+    <div><dt>Time</dt><dd>Two months in 2023, remote</dd></div>
+    <div><dt>Output</dt><dd>Research, a trust framework and three redesigned flows</dd></div>
+  </dl>
+</header>
+
+<figure class="hero-fig">
+  <div class="shot wide-me">
+    <div class="win" aria-hidden="true"><i></i><i></i><i></i><span class="url">jira.acme.com</span></div>
+    <div class="app" data-app="new" aria-label="The redesigned Choose step of the Cloud Migration Assistant"></div>
+  </div>
+  <figcaption>The redesigned Choose step. Pick a section on the left and tick what to move; the summary on the right adds up size and time. Screens on this page are redrawn with made-up data.</figcaption>
+</figure>
+
+<nav class="toc" aria-label="Contents">
+  <p class="toc-h">Contents</p>
+  <ol>
+    <li><a href="#context">Context</a></li>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#trust">Trust</a></li>
+    <li><a href="#users">Users</a></li>
+    <li><a href="#pain">Pain points</a></li>
+    <li><a href="#journey">Migration journey</a></li>
+    <li><a href="#journeys">Three journeys</a></li>
+  </ol>
+  <ol>
+    <li><a href="#j1">1. Creating a plan</a></li>
+    <li><a href="#j2">2. First impressions</a></li>
+    <li><a href="#j3">3. Changing a plan</a></li>
+  </ol>
+  <ol>
+    <li><a href="#learned">What I learned</a></li>
+    <li><a href="#outcome">Outcome</a></li>
+  </ol>
+</nav>
+
+<article>
+
+<section id="context">
+  <div class="prose">
+    <h2>Context</h2>
+    <p>In October 2020, Atlassian announced the end of support for its Server products and began moving customers to Cloud. A migration takes months.</p>
+    <p>The Cloud Migration Assistant is the tool admins use to plan, test and run it. I worked on its flows.</p>
+  </div>
+  <figure class="ctx">
+    <div class="ctx-row">
+      <div class="ctx-card"><span class="spot" data-ic="hard-drives"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M216,152v48a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152a8,8,0,0,1,8-8H208A8,8,0,0,1,216,152ZM208,48H48a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V56A8,8,0,0,0,208,48Z" opacity="0.2"/><path d="M208,136H48a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm0,64H48V152H208v48Zm0-160H48A16,16,0,0,0,32,56v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V56A16,16,0,0,0,208,40Zm0,64H48V56H208v48ZM192,80a12,12,0,1,1-12-12A12,12,0,0,1,192,80Zm0,96a12,12,0,1,1-12-12A12,12,0,0,1,192,176Z"/></svg></span><h3>Server and Data Center</h3><p>Hosted by the customer. Server support is ending.</p></div>
+      <span class="ctx-arrow" aria-hidden="true"></span>
+      <div class="ctx-card on"><span class="spot" data-ic="path"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M224,200a24,24,0,1,1-24-24A24,24,0,0,1,224,200Z" opacity="0.2"/><path d="M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z"/></svg></span><h3>Cloud Migration Assistant</h3><p>Plans, tests and runs the move. Where I worked.</p></div>
+      <span class="ctx-arrow" aria-hidden="true"></span>
+      <div class="ctx-card"><span class="spot" data-ic="cloud"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M240,128a80,80,0,0,1-80,80H72A56,56,0,1,1,85.92,97.74l0,.1A80,80,0,0,1,240,128Z" opacity="0.2"/><path d="M160,40A88.09,88.09,0,0,0,81.29,88.67,64,64,0,1,0,72,216h88a88,88,0,0,0,0-176Zm0,160H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.11A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,72,72Z"/></svg></span><h3>Atlassian Cloud</h3><p>Hosted and kept up to date by Atlassian.</p></div>
+    </div>
+    <ol class="ctx-time">
+      <li><b>Oct 2020</b><span>End of Server support announced</span></li>
+      <li class="mid"><b>Months</b><span>Plan, test and move, one customer at a time</span></li>
+      <li><b>Feb 2024</b><span>Server support ends</span></li>
+    </ol>
+  </figure>
+</section>
+
+<section id="problem">
+  <div class="prose">
+    <h2>Problem</h2>
+    <p>The brief was to build trust in the migration process. I broke it into questions, answered each one, and wrote the problem out again.</p>
+  </div>
+  <figure class="ps">
+    <p class="ps-text"><mark data-q="trust">Build trust</mark> in the <mark data-q="journey">migration process</mark> with predictable, reliable and transparent flows that help <mark data-q="users">admins</mark> make decisions with <mark data-q="pain">confidence</mark>.</p>
+    <ol class="ps-qs">
+      <li><a href="#trust" data-q="trust"><span>What does trust mean?</span><small>Trust</small></a></li>
+      <li><a href="#trust" data-q="trust"><span>How do you build it?</span><small>Trust</small></a></li>
+      <li><a href="#journey" data-q="journey"><span>What is the migration process?</span><small>Migration journey</small></a></li>
+      <li><a href="#users" data-q="users"><span>Who are we solving for?</span><small>Users</small></a></li>
+      <li><a href="#pain" data-q="pain"><span>Why does the problem exist?</span><small>Pain points</small></a></li>
+    </ol>
+    <figcaption>The problem statement, rewritten after research. Each question links to the section that answers it.</figcaption>
+  </figure>
+</section>
+
+<section id="process">
+  <div class="prose">
+    <h2>Process</h2>
+    <p>Four phases over two months.</p>
+  </div>
+  <div class="phases">
+    <div><h3>Understanding</h3><ul><li>Current customers</li><li>Trust</li><li>Migrations</li><li>Customer journey</li><li>Goals and results</li><li>Design sparring</li></ul></div>
+    <div><h3>Research</h3><ul><li>Blockers and frustrations</li><li>Trust framework</li><li>Interviews</li><li>Secret shopper</li><li>Trust audit</li><li>Problem statement</li></ul></div>
+    <div><h3>Ideation</h3><ul><li>Feedback from dev, PM and data science</li><li>Scoping down</li><li>Customer stories</li><li>How might we</li><li>Ideation workshop</li><li>Design critiques</li><li>New customer journeys</li></ul></div>
+    <div><h3>Design</h3><ul><li>Lo-fi screens</li><li>Hi-fi screens</li><li>Iterations from feedback</li></ul></div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="prose">
+    <h2>Trust</h2>
+    <p>I read articles from NN Group and IxDF, research such as HBR’s The Neuroscience of Trust, talks by Simon Sinek and James Davis, and Atlassian’s own research and design docs. Three qualities kept coming up.</p>
+    <p>To explain them to the team, I used a story about learning to drive. Imagine a car with no indicators, steering that turns left when you turn right, and blacked-out windows. Would you feel confident driving it?</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 330" role="img" aria-label="The car has no indicators, which breaks predictability; steering that turns the wrong way, which breaks reliability; and blacked-out windows, which break transparency. Predictable, reliable and transparent experiences give admins confidence, and confidence builds trust.">
+      <text class="tz" x="0" y="14">The car</text><text class="tz" x="304" y="14">What it breaks</text><text class="tz" x="644" y="14">What it builds</text>
+      <rect class="n-r" x="0.5" y="42.5" width="230" height="72" rx="12"/><text class="t" x="20" y="74">No indicators</text><text class="ts" x="20" y="94">No one can tell what comes next</text>
+      <rect class="n-r" x="0.5" y="142.5" width="230" height="72" rx="12"/><text class="t" x="20" y="174">Steering turns the wrong way</text><text class="ts" x="20" y="194">Left when you turn right</text>
+      <rect class="n-r" x="0.5" y="242.5" width="230" height="72" rx="12"/><text class="t" x="20" y="274">Blacked-out windows</text><text class="ts" x="20" y="294">You can’t see where you are</text>
+      <path class="l" d="M231 78H298" marker-end="url(#ah)"/><path class="l" d="M231 178H298" marker-end="url(#ah)"/><path class="l" d="M231 278H298" marker-end="url(#ah)"/>
+      <rect class="p-p" x="304.5" y="42.5" width="250" height="72" rx="12"/><text class="tp" x="324" y="74">Predictable</text><text class="ts" x="324" y="94">You can tell what will happen next</text>
+      <rect class="p-r" x="304.5" y="142.5" width="250" height="72" rx="12"/><text class="tr2" x="324" y="174">Reliable</text><text class="ts" x="324" y="194">It works the same way every time</text>
+      <rect class="p-t" x="304.5" y="242.5" width="250" height="72" rx="12"/><text class="tt" x="324" y="274">Transparent</text><text class="ts" x="324" y="294">The information is accurate and honest</text>
+      <path class="l" d="M555 78H600M555 178H600M555 278H600M600 78V278"/><path class="l" d="M600 178H638" marker-end="url(#ah)"/>
+      <rect class="n-s" x="644.5" y="142.5" width="112" height="72" rx="12"/><text class="t" x="700" y="174" text-anchor="middle">Confidence</text><text class="ts" x="700" y="194" text-anchor="middle">for admins</text>
+      <path class="la" d="M757 178H778" marker-end="url(#aa)"/>
+      <rect class="n-a" x="784" y="142" width="96" height="73" rx="12"/><text class="tk" x="832" y="183" text-anchor="middle">Trust</text>
+    </svg>
+    <figcaption>The trust framework. Predictable, reliable and transparent experiences give admins confidence in the process, and that builds trust. The car breaks all three.</figcaption>
+  </figure>
+</section>
+
+<section id="users">
+  <div class="prose">
+    <h2>Users</h2>
+    <p>Migrations are grouped by the customer’s size and how complex their setup is. I focused on complex enterprise customers.</p>
+  </div>
+  <figure class="seg">
+    <div class="seg-grid">
+      <span class="seg-y" aria-hidden="true">Complexity</span>
+      <div class="seg-cell"><i style="--s:.62"></i><b>Complex SMB</b><small>Small and medium business</small></div>
+      <div class="seg-cell on"><i style="--s:1"></i><b>Complex enterprise</b><small>My focus</small></div>
+      <div class="seg-cell"><i style="--s:.42"></i><b>Standard SMB</b><small>Small and medium business</small></div>
+      <div class="seg-cell"><i style="--s:.7"></i><b>Standard enterprise</b><small>Large, simpler setup</small></div>
+      <span class="seg-x" aria-hidden="true">Size</span>
+    </div>
+    <figcaption>Customer groups by size and by how complex their setup is.</figcaption>
+  </figure>
+  <div class="prose after"><p>Inside each customer, three kinds of admin take part.</p></div>
+  <div class="cols">
+    <div><span class="spot" data-ic="user-gear"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M168,100a60,60,0,1,1-60-60A60,60,0,0,1,168,100Z" opacity="0.2"/><path d="M144,157.68a68,68,0,1,0-71.9,0c-20.65,6.76-39.23,19.39-54.17,37.17a8,8,0,1,0,12.24,10.3C50.25,181.19,77.91,168,108,168s57.75,13.19,77.87,37.15a8,8,0,0,0,12.26-10.3C183.18,177.07,164.6,164.44,144,157.68ZM56,100a52,52,0,1,1,52,52A52.06,52.06,0,0,1,56,100Zm196.25,43.07-4.66-2.69a23.6,23.6,0,0,0,0-8.76l4.66-2.69a8,8,0,1,0-8-13.86l-4.67,2.7a23.92,23.92,0,0,0-7.58-4.39V108a8,8,0,0,0-16,0v5.38a23.92,23.92,0,0,0-7.58,4.39l-4.67-2.7a8,8,0,1,0-8,13.86l4.66,2.69a23.6,23.6,0,0,0,0,8.76l-4.66,2.69a8,8,0,0,0,8,13.86l4.67-2.7a23.92,23.92,0,0,0,7.58,4.39V164a8,8,0,0,0,16,0v-5.38a23.92,23.92,0,0,0,7.58-4.39l4.67,2.7a7.92,7.92,0,0,0,4,1.07,8,8,0,0,0,4-14.93ZM224,144a8,8,0,1,1,8-8A8,8,0,0,1,224,144Z"/></svg></span><h3>Primary admin</h3><p>Runs the software, and owns the tools used across the company.</p></div>
+    <div><span class="spot" data-ic="wrench"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M224,96a64,64,0,0,1-94.94,56L73,217A24,24,0,0,1,39,183L104,126.94a64,64,0,0,1,80-90.29L144,80l5.66,26.34L176,112l43.35-40A63.8,63.8,0,0,1,224,96Z" opacity="0.2"/><path d="M226.76,69a8,8,0,0,0-12.84-2.88l-40.3,37.19-17.23-3.7-3.7-17.23,37.19-40.3A8,8,0,0,0,187,29.24,72,72,0,0,0,88,96,72.34,72.34,0,0,0,94,124.94L33.79,177c-.15.12-.29.26-.43.39a32,32,0,0,0,45.26,45.26c.13-.13.27-.28.39-.42L131.06,162A72,72,0,0,0,232,96,71.56,71.56,0,0,0,226.76,69ZM160,152a56.14,56.14,0,0,1-27.07-7,8,8,0,0,0-9.92,1.77L67.11,211.51a16,16,0,0,1-22.62-22.62L109.18,133a8,8,0,0,0,1.77-9.93,56,56,0,0,1,58.36-82.31l-31.2,33.81a8,8,0,0,0-1.94,7.1L141.83,108a8,8,0,0,0,6.14,6.14l26.35,5.66a8,8,0,0,0,7.1-1.94l33.81-31.2A56.06,56.06,0,0,1,160,152Z"/></svg></span><h3>Secondary admin</h3><p>A technical expert who helps solve complex, specialised problems.</p></div>
+    <div><span class="spot" data-ic="share-network"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M208,200a32,32,0,1,1-32-32A32,32,0,0,1,208,200ZM176,88a32,32,0,1,0-32-32A32,32,0,0,0,176,88Z" opacity="0.2"/><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></span><h3>Satellite admin</h3><p>Outside the IT team. Runs a separate instance that Atlassian has approved.</p></div>
+  </div>
+</section>
+
+<section id="pain">
+  <div class="prose">
+    <h2>Pain points</h2>
+    <p>I read reports and documents to find out why trust was low. Seven pain points came out of them. The most pressing, for the customers I focused on, was low confidence in the tooling.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 340" role="img" aria-label="Five sources: learnings from SMB migrations, top frustrations and tasks, last quarter's analysis, team goals and strategy, and customer feedback, lead to seven pain points: lack of control over the migration, lack of security information, lack of transparency, low admin confidence in tooling, unpredictability, confusing and inefficient flows, and data and privacy concerns. Low admin confidence in tooling is the most pressing.">
+      <rect class="n" x="0.5" y="18.5" width="270" height="44" rx="10"/><text class="t2" x="18" y="45">Learnings from SMB migrations</text>
+      <rect class="n" x="0.5" y="82.5" width="270" height="44" rx="10"/><text class="t2" x="18" y="109">Top frustrations and tasks</text>
+      <rect class="n" x="0.5" y="146.5" width="270" height="44" rx="10"/><text class="t2" x="18" y="173">Last quarter’s analysis</text>
+      <rect class="n" x="0.5" y="210.5" width="270" height="44" rx="10"/><text class="t2" x="18" y="237">Team goals and strategy</text>
+      <rect class="n" x="0.5" y="274.5" width="270" height="44" rx="10"/><text class="t2" x="18" y="301">Customer feedback</text>
+      <path class="l" d="M271 40H316M271 104H316M271 168H316M271 232H316M271 296H316M316 40V296"/><path class="l" d="M316 168H372" marker-end="url(#ah)"/>
+      <rect class="n" x="380.5" y="5.5" width="499" height="38" rx="9"/><text class="t2" x="400" y="29">Lack of control over the migration</text>
+      <rect class="n" x="380.5" y="53.5" width="499" height="38" rx="9"/><text class="t2" x="400" y="77">Lack of security information</text>
+      <rect class="n" x="380.5" y="101.5" width="499" height="38" rx="9"/><text class="t2" x="400" y="125">Lack of transparency</text>
+      <rect class="n-a" x="380" y="149" width="500" height="39" rx="9"/><text class="tk" x="400" y="173">Low admin confidence in tooling</text><text class="tk2" x="862" y="173" text-anchor="end">Most pressing</text>
+      <rect class="n" x="380.5" y="197.5" width="499" height="38" rx="9"/><text class="t2" x="400" y="221">Unpredictability</text>
+      <rect class="n" x="380.5" y="245.5" width="499" height="38" rx="9"/><text class="t2" x="400" y="269">Confusing and inefficient flows</text>
+      <rect class="n" x="380.5" y="293.5" width="499" height="38" rx="9"/><text class="t2" x="400" y="317">Data and privacy concerns</text>
+    </svg>
+    <figcaption>Where the pain points came from. Low confidence in the tooling was the most pressing, based on existing reports and the customers we were designing for.</figcaption>
+  </figure>
+</section>
+
+<section id="journey">
+  <div class="prose">
+    <h2>Migration journey</h2>
+    <p>A migration has six stages, spread over weeks or months. Admins use the assistant in four of them. The rest happens in Atlassian’s admin console, in meetings and in documents.</p>
+    <p>My three journeys sit where admins first open the assistant, and where they create, run and fix migration plans.</p>
+  </div>
+  <figure class="mj">
+    <div class="mj-grid wide-me">
+      <span class="mj-c" aria-hidden="true"></span>
+      <div class="mj-s" data-c="1"><i aria-hidden="true">1</i><h3>Assess</h3><p>Find out what the company has, what it needs, and which cloud plan fits.</p></div>
+      <div class="mj-s" data-c="2"><i aria-hidden="true">2</i><h3>Plan</h3><p>Set up the cloud organisation, and agree on a plan with everyone involved.</p></div>
+      <div class="mj-s" data-c="3"><i aria-hidden="true">3</i><h3>Prep</h3><p>Get the team, the environments and the data ready to move.</p></div>
+      <div class="mj-s" data-c="4"><i aria-hidden="true">4</i><h3>Test</h3><p>Run test migrations to find problems before the real one.</p></div>
+      <div class="mj-s" data-c="5"><i aria-hidden="true">5</i><h3>Migrate</h3><p>Move the production data, with support on hand.</p></div>
+      <div class="mj-s" data-c="6"><i aria-hidden="true">6</i><h3>Launch</h3><p>Switch users over to Cloud, and review the move.</p></div>
+      <span class="mj-l">Work</span>
+      <ul class="mj-w" data-c="1"><li>Assess requirements</li><li>Compare cloud options</li><li>Build a migration team</li><li>Demos and customer prep</li><li>Finalise the contract</li></ul>
+      <ul class="mj-w" data-c="2"><li>Set up the organisation</li><li>Connect and verify the domain</li><li>Refine the plan with stakeholders</li><li>Draft a runbook</li><li>Check each app’s features and security in Cloud</li></ul>
+      <ul class="mj-w" data-c="3"><li>Prepare the team</li><li>Prepare environments</li><li>Clean up and optimise data</li></ul>
+      <ul class="mj-w" data-c="4"><li>Run several test migrations</li><li>Find risks and blockers</li><li>Resolve customer tickets</li></ul>
+      <ul class="mj-w" data-c="5"><li>Fix last-minute issues</li><li>Run the production migration</li><li>Support around the clock</li></ul>
+      <ul class="mj-w" data-c="6"><li>Tell users what changed</li><li>Review the migration</li><li>Help users switch over</li></ul>
+      <span class="mj-l">In the assistant</span>
+      <div class="mj-in" data-c="1"><span class="mj-chip">Assess your apps</span></div>
+      <div class="mj-in" data-c="2"><span class="mj-out">Outside the assistant</span></div>
+      <div class="mj-in" data-c="3"><span class="mj-chip">Prepare your apps</span><span class="mj-chip">Prepare your users</span><span class="mj-chip">Review email domains</span></div>
+      <div class="mj-in" data-c="4"><span class="mj-chip">Create a migration plan</span><span class="mj-chip">Run it on a test site</span></div>
+      <div class="mj-in" data-c="5"><span class="mj-chip">Run the migration</span><span class="mj-chip">Migrations dashboard</span></div>
+      <div class="mj-in" data-c="6"><span class="mj-out">Outside the assistant</span></div>
+      <span class="mj-l">My journeys</span>
+      <div class="mj-j" data-c="1"><a href="#j2"><b>2</b>First impressions</a></div>
+      <div class="mj-j" data-c="2"></div>
+      <div class="mj-j" data-c="3"></div>
+      <div class="mj-j" data-c="4"><a href="#j1"><b>1</b>Creating a plan</a><a href="#j3"><b>3</b>Changing a plan</a></div>
+      <div class="mj-j" data-c="5"><a href="#j1"><b>1</b>Creating a plan</a><a href="#j3"><b>3</b>Changing a plan</a></div>
+      <div class="mj-j" data-c="6"></div>
+    </div>
+    <figcaption>The six stages of a migration: what happens in each, the work involved, and where the assistant and my three journeys come in.</figcaption>
+  </figure>
+</section>
+
+<section id="journeys">
+  <div class="prose">
+    <h2>Three journeys</h2>
+    <p>Inside the assistant, I worked on three journeys.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="-10 0 900 230" role="img" aria-label="The assistant's home is journey 2, first impressions. The five steps Connect, Choose, Check, Review and Migrate are journey 1, creating a migration plan. The migrations dashboard, and editing a saved plan from it back into Choose, is journey 3.">
+      <circle class="badge" cx="6" cy="22" r="11"/><text class="tb" x="6" y="26" text-anchor="middle">2</text><text class="tz" x="24" y="26">First impressions</text>
+      <circle class="badge" cx="172" cy="22" r="11"/><text class="tb" x="172" y="26" text-anchor="middle">1</text><text class="tz" x="190" y="26">Creating a migration plan</text>
+      <circle class="badge" cx="762" cy="22" r="11"/><text class="tb" x="762" y="26" text-anchor="middle">3</text><text class="tz" x="780" y="26">Saved plans</text>
+      <rect class="zone-a" x="-8" y="48" width="138" height="92" rx="14"/>
+      <rect class="zone-a" x="156" y="48" width="564" height="92" rx="14"/>
+      <rect class="zone-a" x="746" y="48" width="142" height="92" rx="14"/>
+      <rect class="n" x="0.5" y="68.5" width="120" height="52" rx="10"/><text class="t" x="60" y="99" text-anchor="middle">Home</text>
+      <path class="l" d="M121 94H162" marker-end="url(#ah)"/>
+      <rect class="n" x="168.5" y="68.5" width="96" height="52" rx="10"/><text class="t" x="216" y="99" text-anchor="middle">Connect</text>
+      <rect class="n-s" x="278.5" y="68.5" width="96" height="52" rx="10"/><text class="t" x="326" y="99" text-anchor="middle">Choose</text>
+      <rect class="n" x="388.5" y="68.5" width="96" height="52" rx="10"/><text class="t" x="436" y="99" text-anchor="middle">Check</text>
+      <rect class="n" x="498.5" y="68.5" width="96" height="52" rx="10"/><text class="t" x="546" y="99" text-anchor="middle">Review</text>
+      <rect class="n" x="608.5" y="68.5" width="96" height="52" rx="10"/><text class="t" x="656" y="99" text-anchor="middle">Migrate</text>
+      <path class="l" d="M265 94H274" marker-end="url(#ah)"/><path class="l" d="M375 94H384" marker-end="url(#ah)"/><path class="l" d="M485 94H494" marker-end="url(#ah)"/><path class="l" d="M595 94H604" marker-end="url(#ah)"/>
+      <path class="l" d="M705 94H752" marker-end="url(#ah)"/>
+      <rect class="n" x="758.5" y="68.5" width="120" height="52" rx="10"/><text class="t" x="818" y="99" text-anchor="middle">Dashboard</text>
+      <path class="la" d="M818 121V196H326V126" marker-end="url(#aa)"/>
+      <rect class="lbl" x="500" y="185" width="170" height="22"/><text class="ta" x="585" y="200" text-anchor="middle">Edit a saved plan</text>
+    </svg>
+    <figcaption>Where each journey sits in the assistant. App migration is a topic of its own, since other companies make the apps, so I left it out.</figcaption>
+  </figure>
+  <div class="jcards">
+    <a href="#j1"><span class="jn">1</span><h3>Creating a migration plan</h3><p>“As an admin, I want to create a migration plan after preparing my instance, by choosing the data to move and the cloud site to move it to.”</p></a>
+    <a href="#j2"><span class="jn">2</span><h3>First impressions</h3><p>“As an admin, I want an overview of the data in my instance and access to the policies, so I can see the overall status.”</p></a>
+    <a href="#j3"><span class="jn">3</span><h3>Changing a saved plan</h3><p>“As an admin, I want to change a saved plan, because it failed and I want to move what’s left, or because our strategy changed.”</p></a>
+  </div>
+</section>
+
+<section class="part" id="j1">
+  <h2><span class="jn" aria-hidden="true">1</span>Creating a migration plan</h2>
+  <p>Five steps: connect to a cloud site, choose the data, check it, review the plan and migrate.</p>
+</section>
+
+<section id="current">
+  <div class="prose">
+    <h2>Current flow</h2>
+    <p>Admins create a plan from the assistant’s home: Migrate your data, then Create a migration. Five steps follow, from picking the cloud site to running the migration.</p>
+    <p>I went through each step as an admin and noted what got in the way of trust. Here is each step as it was.</p>
+  </div>
+  <figure class="flow" data-flow>
+    <div class="flow-tabs" role="tablist" aria-label="Steps of the flow before the redesign"></div>
+    <div class="shot wide-me">
+      <div class="win" aria-hidden="true"><i></i><i></i><i></i><span class="url">jira.acme.com</span></div>
+      <div class="app old" role="tabpanel"></div>
+    </div>
+    <div class="flow-info">
+      <div><h3 class="flow-t"></h3><p class="flow-d"></p></div>
+      <div><p class="flow-ph"><span>Pain points</span><span class="legend"><span class="lp"><i></i>Predictable</span><span class="lr"><i></i>Reliable</span><span class="lt"><i></i>Transparent</span></span></p><ol class="flow-pains"></ol></div>
+    </div>
+    <figcaption>The flow before my redesign, redrawn. Pick a step, then hover a pain point to find it on the screen. Each colour is the part of trust that point breaks, my reading.</figcaption>
+  </figure>
+</section>
+
+<section id="audit">
+  <div class="prose">
+    <h2>Trust audit</h2>
+    <p>Eighteen pain points in five steps. Choose had the most, so I scoped down to it.</p>
+  </div>
+  <figure class="chart">
+    <p class="chart-h"><span class="legend"><span class="lp"><i></i>Predictable</span><span class="lr"><i></i>Reliable</span><span class="lt"><i></i>Transparent</span></span></p>
+    <div class="sbars">
+      <div class="sbar"><span class="sb-l">Connect</span><span class="sb-t"><i class="k-t" style="--n:2"></i></span><span class="sb-v">2</span></div>
+      <div class="sbar on"><span class="sb-l">Choose</span><span class="sb-t"><i class="k-p" style="--n:3"></i><i class="k-r" style="--n:1"></i><i class="k-t" style="--n:3"></i></span><span class="sb-v">7</span></div>
+      <div class="sbar"><span class="sb-l">Check</span><span class="sb-t"><i class="k-p" style="--n:1"></i><i class="k-t" style="--n:2"></i></span><span class="sb-v">3</span></div>
+      <div class="sbar"><span class="sb-l">Review</span><span class="sb-t"><i class="k-r" style="--n:1"></i><i class="k-t" style="--n:2"></i></span><span class="sb-v">3</span></div>
+      <div class="sbar"><span class="sb-l">Migrate</span><span class="sb-t"><i class="k-p" style="--n:1"></i><i class="k-r" style="--n:1"></i><i class="k-t" style="--n:1"></i></span><span class="sb-v">3</span></div>
+    </div>
+    <figcaption>Pain points in each step of the old flow, by the part of trust each one breaks.</figcaption>
+  </figure>
+</section>
+
+<section id="condense">
+  <div class="prose">
+    <h2>Six pages</h2>
+    <p>Choose was six pages: the migration options, then one page per kind of data, each laid out differently. Admins clicked back and forth to compare them.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 300" role="img" aria-label="Before: six pages, one after another, for migration options, Advanced Roadmaps, projects, users and groups, customers and apps. After: one page with five tabs on the left, the selection in the middle and a summary on the right.">
+      <g class="stack">
+        <rect class="pg" x="0.5" y="10.5" width="230" height="150" rx="8"/><text class="tpg" x="12" y="24">Migration options</text>
+        <rect class="pg" x="26.5" y="28.5" width="230" height="150" rx="8"/><text class="tpg" x="38" y="42">Advanced Roadmaps</text>
+        <rect class="pg" x="52.5" y="46.5" width="230" height="150" rx="8"/><text class="tpg" x="64" y="60">Projects</text>
+        <rect class="pg" x="78.5" y="64.5" width="230" height="150" rx="8"/><text class="tpg" x="90" y="78">Users and groups</text>
+        <rect class="pg" x="104.5" y="82.5" width="230" height="150" rx="8"/><text class="tpg" x="116" y="96">Customers</text>
+        <rect class="pg" x="130.5" y="100.5" width="230" height="150" rx="8"/><text class="tpg" x="142" y="114">Apps</text>
+        <rect class="bar" x="142" y="130" width="120" height="8" rx="4"/><rect class="bar2" x="142" y="146" width="190" height="6" rx="3"/><rect class="bar2" x="142" y="158" width="160" height="6" rx="3"/>
+        <rect class="bar2" x="142" y="182" width="12" height="12" rx="3"/><rect class="bar2" x="162" y="185" width="110" height="6" rx="3"/>
+        <rect class="bar2" x="142" y="202" width="12" height="12" rx="3"/><rect class="bar2" x="162" y="205" width="90" height="6" rx="3"/>
+        <rect class="btn" x="300" y="226" width="48" height="16" rx="4"/>
+      </g>
+      <text class="tz" x="180" y="288" text-anchor="middle">Before: six pages, one after another</text>
+      <path class="la" d="M396 130H452" marker-end="url(#aa)"/>
+      <g class="one">
+        <rect class="pg" x="480.5" y="10.5" width="399" height="240" rx="10"/>
+        <path class="pl" d="M596 11V250M772 11V250"/>
+        <text class="tpg" x="494" y="34">Migration options</text>
+        <rect class="tab" x="488" y="48" width="102" height="24" rx="5"/><text class="ttab" x="498" y="64">Roadmaps</text>
+        <rect class="tab on" x="488" y="76" width="102" height="24" rx="5"/><text class="ttab on" x="498" y="92">Projects</text>
+        <rect class="tab" x="488" y="104" width="102" height="24" rx="5"/><text class="ttab" x="498" y="120">Users and groups</text>
+        <rect class="tab" x="488" y="132" width="102" height="24" rx="5"/><text class="ttab" x="498" y="148">Customers</text>
+        <rect class="tab" x="488" y="160" width="102" height="24" rx="5"/><text class="ttab" x="498" y="176">Apps</text>
+        <rect class="bar" x="606" y="28" width="110" height="8" rx="4"/><rect class="bar2" x="606" y="44" width="150" height="6" rx="3"/>
+        <rect class="bar2" x="606" y="64" width="46" height="26" rx="4"/><rect class="bar2" x="658" y="64" width="46" height="26" rx="4"/><rect class="bar2" x="710" y="64" width="46" height="26" rx="4"/>
+        <rect class="bar2" x="606" y="104" width="12" height="12" rx="3"/><rect class="bar2" x="626" y="107" width="100" height="6" rx="3"/>
+        <rect class="bar2" x="606" y="126" width="12" height="12" rx="3"/><rect class="bar2" x="626" y="129" width="84" height="6" rx="3"/>
+        <rect class="bar2" x="606" y="148" width="12" height="12" rx="3"/><rect class="bar2" x="626" y="151" width="110" height="6" rx="3"/>
+        <rect class="bar2" x="606" y="170" width="12" height="12" rx="3"/><rect class="bar2" x="626" y="173" width="70" height="6" rx="3"/>
+        <text class="tpg" x="784" y="34">Summary</text>
+        <rect class="bar2" x="784" y="48" width="82" height="6" rx="3"/><rect class="bar2" x="784" y="62" width="64" height="6" rx="3"/><rect class="bar2" x="784" y="76" width="74" height="6" rx="3"/>
+        <path class="pl" d="M784 200H866"/><rect class="bar" x="784" y="210" width="50" height="8" rx="4"/>
+      </g>
+      <text class="tz a" x="680" y="288" text-anchor="middle">After: one page, five tabs</text>
+    </svg>
+    <figcaption>Choose before and after. The six pages became one, with every section a tab away.</figcaption>
+  </figure>
+</section>
+
+<section id="feedback">
+  <div class="prose">
+    <h2>Feedback</h2>
+    <p>I took the audit to engineering, product management and data science. Each saw a different side of the problem.</p>
+  </div>
+  <div class="cols">
+    <div><span class="spot" data-ic="code"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M240,128l-48,40H64L16,128,64,88H192Z" opacity="0.2"/><path d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"/></svg></span><h3>Engineering</h3><p>Some errors have to block a migration, or it fails later. A recommended plan was already being built.</p></div>
+    <div><span class="spot" data-ic="target"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M176,128a48,48,0,1,1-48-48A48,48,0,0,1,176,128Z" opacity="0.2"/><path d="M221.87,83.16A104.1,104.1,0,1,1,195.67,49l22.67-22.68a8,8,0,0,1,11.32,11.32l-96,96a8,8,0,0,1-11.32-11.32l27.72-27.72a40,40,0,1,0,17.87,31.09,8,8,0,1,1,16-.9,56,56,0,1,1-22.38-41.65L184.3,60.39a87.88,87.88,0,1,0,23.13,29.67,8,8,0,0,1,14.44-6.9Z"/></svg></span><h3>Product management</h3><p>Predicted times were often wrong, and failed plans cost trust. Complex migrations needed help from solution partners.</p></div>
+    <div><span class="spot" data-ic="chart-bar"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M208,40V208H152V40Z" opacity="0.2"/><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></svg></span><h3>Data science</h3><p>Earlier PURE and click-through studies showed which features admins left untouched. They helped me test my hypotheses.</p></div>
+  </div>
+</section>
+
+<section id="ideation">
+  <div class="prose">
+    <h2>Ideation</h2>
+    <p>From there I scoped down to the Choose screen, and ran an ideation workshop with other designers. It showed where my flow depended on theirs.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 150" role="img" aria-label="Secret shopper, feedback from dev, PM and data science, PURE analysis, scoping down to the Choose screen, an ideation workshop, design critiques, and iteration.">
+      <path class="trk" d="M10 88H870"/>
+      <path class="l" d="M60 88V110M310 88V110M570 88V110M820 88V110M185 88V64M695 88V64"/>
+      <path class="la" d="M440 88V40"/>
+      <circle class="dot" cx="60" cy="88" r="6"/><circle class="dot" cx="185" cy="88" r="6"/><circle class="dot" cx="310" cy="88" r="6"/><circle class="dot a" cx="440" cy="88" r="8"/><circle class="dot" cx="570" cy="88" r="6"/><circle class="dot" cx="695" cy="88" r="6"/><circle class="dot" cx="820" cy="88" r="6"/>
+      <text class="t2" x="60" y="132" text-anchor="middle">Secret shopper</text>
+      <text class="t2" x="185" y="54" text-anchor="middle">Feedback from dev, PM and data science</text>
+      <text class="t2" x="310" y="132" text-anchor="middle">PURE analysis</text>
+      <rect class="n-a" x="380" y="6" width="120" height="30" rx="15"/><text class="tk" x="440" y="26" text-anchor="middle">Choose screen</text>
+      <path class="la" d="M440 88V110"/><text class="ta" x="440" y="132" text-anchor="middle">Scoping down</text>
+      <text class="t2" x="570" y="132" text-anchor="middle">Ideation workshop</text>
+      <text class="t2" x="695" y="54" text-anchor="middle">Design critiques</text>
+      <text class="t2" x="820" y="132" text-anchor="middle">Iterate</text>
+    </svg>
+    <figcaption>How the Choose screen took shape, in order.</figcaption>
+  </figure>
+  <dl class="defs2">
+    <div><dt>Secret shopper</dt><dd>Use the product for the first time, through a test instance, and note everything that gets in the way.</dd></div>
+    <div><dt>PURE analysis</dt><dd>A group rates the mental load and effort each step of a task takes.</dd></div>
+  </dl>
+</section>
+
+<section id="final">
+  <div class="prose">
+    <h2>Final design</h2>
+    <p>Two hypotheses shaped the final screen. The customer story behind both: as an admin, I want more context about each choice and its consequences while I pick what to migrate, so I can decide deliberately.</p>
+  </div>
+  <div class="hyps">
+    <div class="hyp"><h3>Condense the flow</h3><p>A shorter, consistent flow means less friction, so trust grows.</p><dl><dt>Vertical tabs</dt><dd>Six pages become one. The tabs show the way through every section, and progress reads the same everywhere.</dd></dl></div>
+    <div class="hyp"><h3>Add context</h3><p>When admins see what each choice costs, they decide deliberately, fewer outcomes surprise them, and trust grows.</p><dl><dt>Selection summary</dt><dd>A collapsed summary for each section, the size and time of each, and the total time to migrate.</dd></dl></div>
+  </div>
+  <figure class="annot-fig">
+    <div class="annot-wrap">
+      <div class="shot wide-me">
+        <div class="win" aria-hidden="true"><i></i><i></i><i></i><span class="url">jira.acme.com</span></div>
+        <div class="app annot" data-app="annot" aria-label="The final Choose screen with six numbered details"></div>
+      </div>
+      <ol class="pins-key">
+        <li data-k="1"><b>Vertical tabs</b><span>Every section on one page, with its status.</span></li>
+        <li data-k="2"><b>Page description</b><span>What the page is for, and why.</span></li>
+        <li data-k="3"><b>Same options</b><span>Every section offers its choices the same way.</span></li>
+        <li data-k="4"><b>Migrated column</b><span>Shows what already moved, to avoid duplicates.</span></li>
+        <li data-k="5"><b>Selection summary</b><span>Size and time for each section, and the total.</span></li>
+        <li data-k="6"><b>Cloud destination</b><span>Always in view.</span></li>
+      </ol>
+    </div>
+    <figcaption>The final Choose screen. Hover a detail to find it on the screen.</figcaption>
+  </figure>
+  <p class="note"><span class="ic" data-ic="info"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg></span><span>Some of my ideas, such as uploading a file to select projects, were already being built by other designers. The workshop caught that early.</span></p>
+</section>
+
+<section class="part" id="j2">
+  <h2><span class="jn" aria-hidden="true">2</span>First impressions</h2>
+  <p>The assistant’s home is an admin’s first look at the product. It listed tasks, but said little about the instance being moved.</p>
+</section>
+
+<section id="home">
+  <div class="prose">
+    <h2>Home</h2>
+    <p>Three problems on the old home: little context about the instance, names that didn’t match their sections, and nothing on data access, security certification or privacy settings.</p>
+  </div>
+  <figure class="ba" data-ba>
+    <div class="ba-seg" role="group" aria-label="Show the home before or after"><button type="button" data-v="before" aria-pressed="false">Before</button><button type="button" data-v="after" aria-pressed="true">After</button></div>
+    <div class="shot wide-me">
+      <div class="win" aria-hidden="true"><i></i><i></i><i></i><span class="url">jira.acme.com</span></div>
+      <div class="ba-panes">
+        <div class="app home before" data-pane="before" aria-label="The old Migration Assistant home" hidden>
+          <div class="a-top" aria-hidden="true"></div>
+          <div class="h-main">
+            <p class="h-title">Migration Assistant home</p>
+            <p class="h-desc">This tool helps you assess and create your migration plan. You’ll then be able to test and migrate to a cloud-hosted site.</p>
+            <p class="h-sec">Assess</p>
+            <div class="h-card"><span class="h-ic a"><span class="ic" data-ic="magnifying-glass"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span><div><b>Assess your apps</b><p>Assess and select the apps you need to migrate to Cloud before you prepare them.</p></div><span class="h-btn">View app assessment</span></div>
+            <p class="h-sec">Prepare</p>
+            <div class="h-card"><span class="h-ic b"><span class="ic" data-ic="puzzle-piece"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M220.27,158.54a8,8,0,0,0-7.7-.46,20,20,0,1,1,0-36.16A8,8,0,0,0,224,114.69V72a16,16,0,0,0-16-16H171.78a35.36,35.36,0,0,0,.22-4,36.11,36.11,0,0,0-11.36-26.24,36,36,0,0,0-60.55,23.62,36.56,36.56,0,0,0,.14,6.62H64A16,16,0,0,0,48,72v32.22a35.36,35.36,0,0,0-4-.22,36.12,36.12,0,0,0-26.24,11.36,35.7,35.7,0,0,0-9.69,27,36.08,36.08,0,0,0,33.31,33.6,35.68,35.68,0,0,0,6.62-.14V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V165.31A8,8,0,0,0,220.27,158.54ZM208,208H64V165.31a8,8,0,0,0-11.43-7.23,20,20,0,1,1,0-36.16A8,8,0,0,0,64,114.69V72h46.69a8,8,0,0,0,7.23-11.43,20,20,0,1,1,36.16,0A8,8,0,0,0,161.31,72H208v32.23a35.68,35.68,0,0,0-6.62-.14A36,36,0,0,0,204,176a35.36,35.36,0,0,0,4-.22Z"/></svg></span></span><div><b>Prepare your apps</b><p>Connect to a cloud site, install your apps and consent to app data migration.</p></div><span class="h-btn pri">Begin preparing</span></div>
+            <div class="h-card" data-pin="2"><span class="h-ic c"><span class="ic" data-ic="users"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg></span></span><div><b>Assess and prepare your users</b><p>Check that all your users have valid and unique email addresses.</p></div><span class="h-btn">View results</span></div>
+            <div class="h-card"><span class="h-ic d"><span class="ic" data-ic="shield-check"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/></svg></span></span><div><b>Review all email domains</b><p>Review the email domains in your user base and decide which to trust.</p></div><span class="h-btn">Review</span></div>
+          </div>
+          <aside class="h-side">
+            <div data-pin="1"><p class="h-sec">About your product</p><ul class="h-nums"><li>3</li><li>6</li><li>0</li><li>132</li><li>25</li><li>0 KB</li><li>15</li></ul></div>
+            <div data-pin="3"><p class="h-sec">Additional resources</p><p class="h-link">Preparing for migration</p><p class="h-link">Cloud Migration Assistant guide</p></div>
+          </aside>
+        </div>
+        <div class="app home after" data-pane="after" aria-label="The redesigned Migration Assistant home">
+          <div class="a-top" aria-hidden="true"></div>
+          <div class="h-main">
+            <p class="h-title">Migration Assistant home</p>
+            <p class="h-desc">This tool helps you assess and create your migration plan. You’ll then be able to test and migrate to a cloud-hosted site.</p>
+            <p class="h-sec">Overview</p>
+            <p class="h-sub">Your instance at a glance. Hover a part to see its size, or click it to keep it open.</p>
+            <div class="tmap" role="group" aria-label="Map of the instance by size">
+              <button type="button" class="tm" style="left:0;top:0;width:57.1%;height:100%" data-k="Projects" data-n="40 projects" data-s="28 GB" data-t="about 2 hr"><span>Projects</span></button>
+              <button type="button" class="tm" style="left:57.1%;top:0;width:18.4%;height:100%" data-k="Customers" data-n="610 customers" data-s="9 GB" data-t="about 40 min"><span>Customers</span></button>
+              <button type="button" class="tm" style="left:75.5%;top:0;width:12.2%;height:100%" data-k="Users and groups" data-n="1,140 users in 24 groups" data-s="6 GB" data-t="about 25 min"><span>Groups</span></button>
+              <button type="button" class="tm" style="left:87.7%;top:0;width:12.3%;height:66.7%" data-k="Apps" data-n="12 apps" data-s="4 GB" data-t="about 20 min"><span>Apps</span></button>
+              <button type="button" class="tm" style="left:87.7%;top:66.7%;width:12.3%;height:33.3%" data-k="Advanced Roadmaps" data-n="8 plans" data-s="2 GB" data-t="about 10 min"><span>Plans</span></button>
+            </div>
+            <p class="tm-read" aria-live="polite"><span><b>40</b> projects</span><span><b>1,140</b> users</span><span><b>610</b> customers</span><span><b>12</b> apps</span><span><b>49 GB</b> in all</span></p>
+            <p class="h-sec">Assess</p>
+            <div class="h-card"><span class="h-ic a"><span class="ic" data-ic="magnifying-glass"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span><div><b>Assess your apps</b><p>Assess and select the apps you need to migrate to Cloud before you prepare them.</p></div><span class="h-btn">Begin assessing</span></div>
+            <p class="h-sec">Prepare</p>
+            <div class="h-card"><span class="h-ic b"><span class="ic" data-ic="puzzle-piece"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M220.27,158.54a8,8,0,0,0-7.7-.46,20,20,0,1,1,0-36.16A8,8,0,0,0,224,114.69V72a16,16,0,0,0-16-16H171.78a35.36,35.36,0,0,0,.22-4,36.11,36.11,0,0,0-11.36-26.24,36,36,0,0,0-60.55,23.62,36.56,36.56,0,0,0,.14,6.62H64A16,16,0,0,0,48,72v32.22a35.36,35.36,0,0,0-4-.22,36.12,36.12,0,0,0-26.24,11.36,35.7,35.7,0,0,0-9.69,27,36.08,36.08,0,0,0,33.31,33.6,35.68,35.68,0,0,0,6.62-.14V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V165.31A8,8,0,0,0,220.27,158.54ZM208,208H64V165.31a8,8,0,0,0-11.43-7.23,20,20,0,1,1,0-36.16A8,8,0,0,0,64,114.69V72h46.69a8,8,0,0,0,7.23-11.43,20,20,0,1,1,36.16,0A8,8,0,0,0,161.31,72H208v32.23a35.68,35.68,0,0,0-6.62-.14A36,36,0,0,0,204,176a35.36,35.36,0,0,0,4-.22Z"/></svg></span></span><div><b>Prepare your apps</b><p>Connect to a cloud site, install your apps and consent to app data migration.</p></div><span class="h-btn">Begin preparing</span></div>
+            <div class="h-card"><span class="h-ic c"><span class="ic" data-ic="users"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg></span></span><div><b>Prepare your users</b><p>Check that every user has a valid, unique email address.</p></div><span class="h-btn">View results</span></div>
+            <p class="h-sec">Migrate</p>
+            <div class="h-card"><span class="h-ic d"><span class="ic" data-ic="cloud"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M160,40A88.09,88.09,0,0,0,81.29,88.67,64,64,0,1,0,72,216h88a88,88,0,0,0,0-176Zm0,160H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.11A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,72,72Z"/></svg></span></span><div><b>Migrate your data</b><p>Move users, groups, projects and apps in stages, or all at once.</p></div><span class="h-btn pri">Create a migration</span></div>
+          </div>
+          <aside class="h-side">
+            <p class="h-sec">Resource monitor</p>
+            <div class="rm"><p><span>Network</span><b>3 MB/s</b></p><svg viewBox="0 0 200 36" aria-hidden="true"><path d="M0 22 L20 20 L40 24 L60 18 L80 21 L100 12 L120 16 L140 10 L160 19 L180 15 L200 17"/></svg></div>
+            <div class="rm"><p><span>Memory</span><b>2 of 12 GB</b></p><svg viewBox="0 0 200 36" aria-hidden="true"><path d="M0 28 L20 26 L40 27 L60 22 L80 24 L100 25 L120 18 L140 21 L160 20 L180 23 L200 22"/></svg></div>
+            <div class="rm"><p><span>Disk</span><b>2 of 12 TB</b></p><svg viewBox="0 0 200 36" aria-hidden="true"><path d="M0 30 L20 30 L40 29 L60 29 L80 27 L100 27 L120 26 L140 26 L160 25 L180 25 L200 24"/></svg></div>
+            <p class="h-sec">Privacy and security</p>
+            <p class="h-link"><span class="lk"></span>Who can access your data</p>
+            <p class="h-link"><span class="lk"></span>Trust and security in Cloud</p>
+            <p class="h-link"><span class="lk"></span>Permissions and rules</p>
+            <p class="h-sec">Additional resources</p>
+            <p class="h-link">Preparing for migration</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+    <ol class="ba-key" data-for="before" hidden>
+      <li data-k="1">Numbers about the instance, with little context.</li>
+      <li data-k="2">“Assess users” sat under Prepare.</li>
+      <li data-k="3">Nothing on data access, security or privacy.</li>
+    </ol>
+    <figcaption>The home before and after. Switch between them above.</figcaption>
+  </figure>
+  <div class="hyps">
+    <div class="hyp"><h3>Show the data</h3><p>If admins can see their instance, the system feels intuitive and transparent, and their confidence grows.</p><dl><dt>Map of the instance</dt><dd>Each part sized by its data. Hover for its size; click to open it.</dd></dl></div>
+    <div class="hyp"><h3>Be open about security</h3><p>If security and resources are out in the open, enterprise admins avoid their biggest blockers, and trust grows.</p><dl><dt>Resource monitor</dt><dd>Current use, to spot trends and decide on them.</dd><dt>Security information</dt><dd>Links to the documents admins need, where they need them.</dd></dl></div>
+  </div>
+</section>
+
+<section class="part" id="j3">
+  <h2><span class="jn" aria-hidden="true">3</span>Changing a saved plan</h2>
+  <p>Every migration starts as a plan: the cloud site, the data and the options. Plans are saved on the migrations dashboard. Admins come back to one when a run fails and they want to move what’s left, or when their strategy changes.</p>
+</section>
+
+<section id="saved">
+  <div class="prose">
+    <h2>Saved plans</h2>
+    <p>An example. The Q3 move had seven projects. Five migrated and two failed. The admin wants to retry the two, and add two projects that haven’t moved yet.</p>
+  </div>
+  <figure class="hero-fig sub">
+    <div class="shot wide-me">
+      <div class="win" aria-hidden="true"><i></i><i></i><i></i><span class="url">jira.acme.com</span></div>
+      <div class="app" data-app="dash" aria-label="The migrations dashboard. The Q3 move is incomplete: five projects migrated, two failed."></div>
+    </div>
+    <figcaption>The migrations dashboard before the redesign. View details was the way back into a saved plan.</figcaption>
+  </figure>
+</section>
+
+<section id="edit-problem">
+  <div class="prose">
+    <h2>Problem</h2>
+    <p>View details opened the plan at Review, near the end of the flow. To change it, the admin walked the flow backwards, then forwards again.</p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 150" role="img" aria-label="Before: view details opened the plan at Review. The admin went back through Check to Choose, which listed all nine projects, then through Check and Review again to Migrate: six steps, two of them backwards and two repeated."><rect class="n" x="0.5" y="30.5" width="100" height="52" rx="10"/><text class="t" x="50" y="61" text-anchor="middle">View details</text><rect class="n-r" x="130.5" y="30.5" width="100" height="52" rx="10"/><text class="t" x="180" y="61" text-anchor="middle">Review</text><rect class="n-r" x="260.5" y="30.5" width="100" height="52" rx="10"/><text class="t" x="310" y="61" text-anchor="middle">Check</text><rect class="n-r" x="390.5" y="30.5" width="100" height="52" rx="10"/><text class="t" x="440" y="53" text-anchor="middle">Choose</text><text class="ts" x="440" y="71" text-anchor="middle">All 9 projects</text><rect class="n-r" x="520.5" y="30.5" width="100" height="52" rx="10"/><text class="t" x="570" y="61" text-anchor="middle">Check</text><rect class="n-r" x="650.5" y="30.5" width="100" height="52" rx="10"/><text class="t" x="700" y="61" text-anchor="middle">Review</text><rect class="n" x="780.5" y="30.5" width="99" height="52" rx="10"/><text class="t" x="830" y="61" text-anchor="middle">Migrate</text><path class="l" d="M101 56H126" marker-end="url(#ah)"/><path class="l" d="M231 56H256" marker-end="url(#ah)"/><path class="l" d="M361 56H386" marker-end="url(#ah)"/><path class="l" d="M491 56H516" marker-end="url(#ah)"/><path class="l" d="M621 56H646" marker-end="url(#ah)"/><path class="l" d="M751 56H776" marker-end="url(#ah)"/><path class="lr" d="M131 94V102H360V94"/><path class="lr" d="M521 94V102H750V94"/><circle class="pinb" cx="200" cy="126" r="11"/><text class="tpin" x="200" y="130" text-anchor="middle">1</text><text class="tr" x="218" y="130">Backwards</text><circle class="pinb" cx="590" cy="126" r="11"/><text class="tpin" x="590" y="130" text-anchor="middle">2</text><text class="tr" x="608" y="130">Repeated</text><circle class="pinb" cx="490" cy="30" r="11"/><text class="tpin" x="490" y="34" text-anchor="middle">3</text></svg>
+    <figcaption>Changing a saved plan before the redesign. Every step after View details is one the admin had to sit through.</figcaption>
+  </figure>
+  <ol class="probs">
+    <li><b>1</b><div><h3>Backwards</h3><p>The plan opened at Review. To change what moves, the admin stepped back through Check to Choose: the opposite of how the plan was made.</p></div></li>
+    <li><b>2</b><div><h3>Repeated steps</h3><p>After Choose, Check and Review ran a second time. Six steps for one change.</p></div></li>
+    <li><b>3</b><div><h3>No record of what moved</h3><p>Choose listed every project as if nothing had happened. The admin had to work out which five were done and untick them, or move them twice.</p></div></li>
+  </ol>
+</section>
+
+<section id="edit-fix">
+  <div class="prose">
+    <h2>Fix</h2>
+    <p>Hypothesis: a simpler flow makes the tooling consistent, so it’s easier to use, and admin confidence and trust grow.</p>
+  </div>
+  <figure class="diagram slim">
+    <svg viewBox="0 0 880 72" role="img" aria-label="After: edit opens Choose, prefilled with the saved plan, then Check, Review and Migrate: four steps, forwards."><rect class="n" x="0.5" y="10.5" width="100" height="52" rx="10"/><text class="t" x="50" y="41" text-anchor="middle">Edit</text><rect class="n-s" x="130.5" y="10.5" width="100" height="52" rx="10"/><text class="t" x="180" y="33" text-anchor="middle">Choose</text><text class="ta" x="180" y="51" text-anchor="middle">Prefilled</text><rect class="n" x="260.5" y="10.5" width="100" height="52" rx="10"/><text class="t" x="310" y="41" text-anchor="middle">Check</text><rect class="n" x="390.5" y="10.5" width="100" height="52" rx="10"/><text class="t" x="440" y="41" text-anchor="middle">Review</text><rect class="n" x="520.5" y="10.5" width="100" height="52" rx="10"/><text class="t" x="570" y="41" text-anchor="middle">Migrate</text><path class="la" d="M101 36H126" marker-end="url(#aa)"/><path class="l" d="M231 36H256" marker-end="url(#ah)"/><path class="l" d="M361 36H386" marker-end="url(#ah)"/><path class="l" d="M491 36H516" marker-end="url(#ah)"/><text class="tz a" x="660" y="41">Four steps, forwards</text></svg>
+    <figcaption>Changing a saved plan after the redesign.</figcaption>
+  </figure>
+  <div class="pf">
+    <div class="pf-row"><p class="pf-p"><b>1</b>Backwards</p><span class="pf-to" aria-hidden="true"></span><div class="pf-f"><h3>Straight to Choose</h3><p>Edit opens Choose with the saved plan filled in. The flow runs forwards, the way the plan was made.</p></div></div>
+    <div class="pf-row"><p class="pf-p"><b>2</b>Repeated steps</p><span class="pf-to" aria-hidden="true"></span><div class="pf-f"><h3>Four steps</h3><p>Choose, Check, Review and Migrate, each once. Two steps fewer.</p></div></div>
+    <div class="pf-row"><p class="pf-p"><b>3</b>No record of what moved</p><span class="pf-to" aria-hidden="true"></span><div class="pf-f"><h3>Trimmed selection</h3><p>A Migrated column shows what already moved, and those projects leave the selection on their own. One click restores them.</p></div></div>
+    <div class="pf-row"><p class="pf-p"><b>3</b>Working out what’s left</p><span class="pf-to" aria-hidden="true"></span><div class="pf-f"><h3>Recommended plan</h3><p>Suggests what to move next from the migration’s stage and earlier runs: here, the two failed projects and the two that haven’t moved.</p></div></div>
+  </div>
+  <figure class="hero-fig sub">
+    <div class="shot wide-me">
+      <div class="win" aria-hidden="true"><i></i><i></i><i></i><span class="url">jira.acme.com</span></div>
+      <div class="app" data-app="edit" aria-label="Choose, opened from the saved Q3 move"></div>
+    </div>
+    <figcaption>Choose, opened from the saved Q3 move. The five projects that migrated are already out of the selection. Try Use plan, or Restore.</figcaption>
+  </figure>
+</section>
+
+<section id="learned">
+  <div class="prose"><h2>What I learned</h2></div>
+  <div class="cols">
+    <div><span class="spot" data-ic="book-open"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M232,56V200H160a32,32,0,0,0-32,32,32,32,0,0,0-32-32H24V56H96a32,32,0,0,1,32,32,32,32,0,0,1,32-32Z" opacity="0.2"/><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg></span><h3>Documentation</h3><p>Good documentation argues for a design when I’m not in the room, and keeps everyone talking.</p></div>
+    <div><span class="spot" data-ic="compass"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M128,32a96,96,0,1,0,96,96A96,96,0,0,0,128,32Zm16,112L80,176l32-64,64-32Z" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216ZM172.42,72.84l-64,32a8.05,8.05,0,0,0-3.58,3.58l-32,64A8,8,0,0,0,80,184a8.1,8.1,0,0,0,3.58-.84l64-32a8.05,8.05,0,0,0,3.58-3.58l32-64a8,8,0,0,0-10.74-10.74ZM138,138,97.89,158.11,118,118l40.15-20.07Z"/></svg></span><h3>Complexity</h3><p>Complex environments take patience to understand. The learning doesn’t stop.</p></div>
+    <div><span class="spot" data-ic="trend-up"><svg aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor"><path d="M232,56v64L168,56Z" opacity="0.2"/><path d="M232,48H168a8,8,0,0,0-5.66,13.66L188.69,88,136,140.69l-34.34-34.35a8,8,0,0,0-11.32,0l-72,72a8,8,0,0,0,11.32,11.32L96,123.31l34.34,34.35a8,8,0,0,0,11.32,0L200,99.31l26.34,26.35A8,8,0,0,0,240,120V56A8,8,0,0,0,232,48Zm-8,52.69L187.31,64H224Z"/></svg></span><h3>Challenges</h3><p>Every problem needs its own understanding. Other disciplines see what I miss.</p></div>
+  </div>
+</section>
+
+<section id="outcome">
+  <div class="prose">
+    <h2>Outcome</h2>
+    <p>I handed the designs over at the end of the internship. It was too early to measure how they did.</p>
+    <p class="thanks">Thanks to Soo Basu, my manager, Amanda Rondonuwu, my mentor, and Nebin Biju, my buddy.</p>
+  </div>
+</section>
+
+<section class="next">
+  <a class="next-card" href="../openfoam-studio/" data-fluid="../../thumbs/openfoam-studio.png">
+    <span class="next-text"><span class="next-label">Next project</span><span class="next-title">OpenFOAM Studio</span><span class="next-line">Describe a CFD simulation in plain English, and run the real solver.</span><span class="next-go">Read the case study →</span></span>
+    <img src="../openfoam-studio/media/field-cavity.webp" alt="" width="960" height="960" loading="lazy">
+  </a>
+</section>
+
+</article>
+<footer><a href="../../">All projects</a></footer>
+</main>
+<script src="atlassian.js?v=2" defer></script>
+<script src="../../fluid.js" defer></script>
+</body></html>

@@ -29,6 +29,8 @@ PROJECTS = {
     "vietnam": dict(file="vietnam.jpg", crop=(0, 41, 2000, 1291), dark=False, contrast=1.15, paper=1.0),
     # Paradime: the community screen redrawn for its case study (projects/paradime), captured at 2x
     "paradime": dict(file="paradime.png", crop=(0, 0, 2112, 1320), dark=False, contrast=1.05, paper=0.96),
+    # Cloud Migration Assistant: the Choose screen redrawn for its case study (projects/atlassian), captured at 2x
+    "atlassian-cma": dict(file="atlassian-cma.png", crop=(0, 0, 2336, 1460), dark=False, contrast=1.05, paper=0.96),
     # Lucide icons (file-user, linkedin, mail) as coloured strokes on transparent
     "cv": dict(file="cv-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
     "linkedin": dict(file="linkedin-icon.png", crop=(-170, -60, 378, 283), dark=False, contrast=1.0, paper=1.0, clear_pad=True),

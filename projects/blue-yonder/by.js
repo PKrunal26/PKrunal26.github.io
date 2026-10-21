@@ -59,11 +59,11 @@
   ];
   const CHAIN_SOL = {
     all: [null, 'Last-mile delivery is the largest source in the chain.'],
-    lastmile: [[8, 11], '<b>Last mile optimisation</b> · delivery slots and daily re-routing · 20–25% less carbon'],
-    warehouse: [[3, 5, 8, 10], '<b>Warehouse automation</b> · every storage stage · 2× less carbon than manual'],
-    tertiary: [[1, 2, 4], '<b>Tertiary packaging</b> · bulk loads before the fulfilment centre · 20% less carbon'],
-    bag: [[6, 7, 12], '<b>Delivery bag</b> · from packing to the customer’s door · 21% less carbon per delivery'],
-    waste: [[3, 5, 'rt'], '<b>Waste management</b> · returns and deadstock · 3.5 t of carbon credits per km of road'],
+    plant: [[1, 2, 4], '<b>1 Leaving the plant</b> · slip sheets for the bulk loads · 20% less carbon · <a href="#plant">Read</a>'],
+    warehouse: [[3, 5, 8, 10], '<b>2 In the warehouse</b> · every storage stage · 2× less carbon than manual · <a href="#warehouse">Read</a>'],
+    packing: [[6, 7, 12], '<b>3 Packing the order</b> · from packing to unpacking · 21% less carbon per delivery · <a href="#packing">Read</a>'],
+    lastmile: [[8, 11], '<b>4 The last mile</b> · slots and daily re-routing · 20–25% less carbon · <a href="#last-mile">Read</a>'],
+    returns: [[3, 5, 'rt'], '<b>5 Coming back</b> · returns and deadstock · 3.5 t of carbon credits per km of road · <a href="#returns">Read</a>'],
   };
   function chain() {
     const host = $('[data-fig="chain"]');
@@ -233,38 +233,27 @@
     });
     return svgOf(W, 220, out, { 'data-dom': 'pk', 'aria-label': 'Packaging stages' });
   }
-  const DOM_READ = {
-    wh: 'Goods move through four stages. Cross-docking skips storage and sends goods from receiving straight to shipping.',
-    tr: 'Goods travel by road, rail, sea or air to the warehouse and fulfilment centre, then by road to the consumer. Some loads skip the warehouse.',
-    rt: 'Returned goods are collected, inspected and sorted, then disposed, recycled, reused or sent back into the forward supply chain.',
-    pk: 'Primary packaging holds the product. Secondary packaging and pallets carry it in bulk, until it is unpacked and repacked to each order.',
-  };
   function domains() {
-    const host = $('[data-fig="domains"]');
-    if (!host) return;
-    host.innerHTML = dWarehousing() + dTransport() + dReturns() + dPackaging();
-    const pick = (k) => { $$('svg[data-dom]', host).forEach((s) => s.classList.toggle('on', s.dataset.dom === k)); read('domains', DOM_READ[k]); };
-    pick('wh');
-    seg($('.seg', host.closest('.fig')), 'dom', pick);
-  }
-
-  // ── Nine problems: the lens switch ──────────────────────────────────────────────────────────────────────────
-  function problems() {
-    const bar = $('.lens-bar'), m = $('.matrix');
-    if (bar && m) seg($('.seg', bar), 'lens', (k) => { m.dataset.lens = k; });
+    [['d-tr', dTransport], ['d-wh', dWarehousing], ['d-pk', dPackaging], ['d-rt', dReturns]].forEach(([k, f]) => {
+      const host = $(`[data-fig="${k}"]`);
+      if (host) host.innerHTML = f();
+    });
   }
 
   // ── Fig 4 · Problems to solutions ───────────────────────────────────────────────────────────────────────────
   const PROB = [
-    ['wh', 'Lack of digitisation', [1]], ['wh', 'Lack of automation', [1]], ['wh', 'Poor use of storage', [1, 2]],
-    ['pk', 'Single-use plastic', [3, 4]], ['pk', 'Packaging design', [3]], ['pk', 'No circular alternatives', [3, 4]],
-    ['tr', 'Unoptimised last-mile routes', [0]], ['tr', 'Unused truck space', [2]], ['tr', 'Last-mile pickups', [0, 4]],
+    ['tr', 'Unused truck space', [0]],
+    ['wh', 'Lack of digitisation', [1]], ['wh', 'Lack of automation', [1]], ['wh', 'Poor use of storage', [1, 0]],
+    ['pk', 'Single-use plastic', [2, 4]], ['pk', 'Packaging design', [2]],
+    ['tr', 'Unoptimised last-mile routes', [3]], ['tr', 'Last-mile pickups', [3, 4]],
+    ['pk', 'No circular alternatives', [2, 4]],
   ];
-  const SOLS = ['Last mile optimisation', 'Warehouse and inventory automation', 'Sustainable tertiary packaging', 'Convertible delivery bag', 'Systematic waste management'];
+  const PROB_GROUP = [0, 1, 1, 1, 2, 2, 3, 3, 4];
+  const SOLS = ['Sustainable tertiary packaging', 'Warehouse and inventory automation', 'Convertible delivery bag', 'Last mile optimisation', 'Systematic waste management'];
   function priorities() {
     const host = $('[data-fig="priorities"]');
     if (!host) return;
-    const W = 1000, H = 440, py = (i) => 40 + i * 40 + Math.floor(i / 3) * 24, sy = (j) => 40 + j * 92, L = 376, R = 640;
+    const W = 1000, H = 476, py = (i) => 40 + i * 40 + PROB_GROUP[i] * 22, sy = (j) => 40 + j * 99, L = 376, R = 640;
     let links = '', rows = '';
     PROB.forEach(([d, n, to], i) => {
       to.forEach((j) => { links += h('path', { d: `M${L},${py(i)} C${(L + R) / 2},${py(i)} ${(L + R) / 2},${sy(j)} ${R},${sy(j)}`, class: `lnk s-${d}`, 'data-p': i, 'data-s': j }); });
@@ -747,13 +736,13 @@
 
   // ── Fig 14 · Five years. Bars are each solution's phases; drag the line to read a year. ─────────────────────
   const GANTT = [
-    ['Last mile\noptimisation', [[0, 1, 'Tier 1'], [1, 2, 'Tier 2 and 3'], [2, 5, 'R&D', 1]]],
-    ['Warehouse and\ninventory automation', [[0, 1, '35%'], [1, 2, '65%'], [2, 5, 'R&D', 1]]],
     ['Sustainable tertiary\npackaging', [[1, 2, '14%'], [2, 3, '24.75%'], [3, 4, '61.25%']]],
-    ['Systematic waste\nmanagement', [[2, 3, 'Tier 1'], [3, 4, 'Tier 2 and 3'], [4, 5, 'R&D', 1]]],
+    ['Warehouse and\ninventory automation', [[0, 1, '35%'], [1, 2, '65%'], [2, 5, 'R&D', 1]]],
     ['Convertible\ndelivery bag', [[0, 1, 'R&D', 1], [1, 2, '10%'], [2, 3, '18.5%'], [3, 4, '30%'], [4, 5, '41.5%']]],
+    ['Last mile\noptimisation', [[0, 1, 'Tier 1'], [1, 2, 'Tier 2 and 3'], [2, 5, 'R&D', 1]]],
+    ['Systematic waste\nmanagement', [[2, 3, 'Tier 1'], [3, 4, 'Tier 2 and 3'], [4, 5, 'R&D', 1]]],
   ];
-  const SHORT = ['Last mile', 'Warehouse', 'Tertiary packaging', 'Waste', 'Delivery bag'];
+  const SHORT = ['Tertiary packaging', 'Warehouse', 'Delivery bag', 'Last mile', 'Waste'];
   function gantt() {
     const host = $('[data-fig="gantt"]');
     if (!host) return;
@@ -859,6 +848,51 @@
     $$('.seg-b', host).forEach((r) => { r.addEventListener('pointerenter', () => lit(r)); r.addEventListener('pointerleave', () => lit(null)); });
   }
 
+  // ── Chapter locators: the chain from Fig 2 in miniature, with the chapter's stages in colour ──────────────
+  function locators() {
+    const K = 0.62, GAP = 6, CY = 26;
+    const rad = (s) => (s.k ? 3 : s.r * K);
+    const xs = [];
+    CHAIN.forEach((s, i) => xs.push(i ? xs[i - 1] + rad(CHAIN[i - 1]) + GAP + rad(s) : 6));
+    const W = xs[xs.length - 1] + 8;
+    $$('.loc[data-loc]').forEach((host) => {
+      const on = (CHAIN_SOL[host.dataset.loc] || [[]])[0] || [];
+      let out = h('line', { x1: xs[0], y1: CY, x2: xs[xs.length - 1], y2: CY, class: 'ln' });
+      CHAIN.forEach((s, i) => {
+        const lit = on.includes(i);
+        out += s.k ? h('rect', { x: xs[i] - 3, y: CY - 3, width: 6, height: 6, rx: 1, style: 'fill:var(--g0)' })
+          : h('circle', { cx: xs[i], cy: CY, r: rad(s), class: lit ? `f-${s.d}` : '', style: lit ? '' : 'fill:var(--g3)' });
+      });
+      if (on.includes('rt')) out += h('path', { d: `M${xs[13]},${CY + 6} V48 H${xs[8]} V${CY + 13}`, class: 'ln s-rt', style: 'stroke-width:1.5', 'marker-end': 'url(#ah-rt)' });
+      host.innerHTML = svgOf(W, 56, out, { 'aria-hidden': 'true' });
+    });
+  }
+
+  // ── Covers: isometric drawings built by scripts/blue-yonder-covers.mjs, fetched as they come near ─────────────
+  function covers() {
+    const load = (el) => fetch(`covers/${el.dataset.cover}.svg`).then((r) => (r.ok ? r.text() : '')).then((t) => {
+      el.innerHTML = t;
+      el.classList.add('in');
+      if (el.dataset.cover === 'journey') journey(el);
+    }).catch(() => {});
+    const els = $$('[data-cover]');
+    if (!('IntersectionObserver' in window)) return els.forEach(load);
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); load(e.target); } }), { rootMargin: '900px 0px' });
+    els.forEach((el) => io.observe(el));
+  }
+  // The hero row: each tile goes to its chapter, and lifts with its label on hover.
+  function journey(el) {
+    const ids = ['plant', 'warehouse', 'packing', 'last-mile', 'returns'], links = $$('.stops a');
+    $$('g[data-stop]', el).forEach((g, i) => {
+      const lit = (on) => { g.classList.toggle('on', on); links[i] && links[i].classList.toggle('on', on); };
+      g.addEventListener('pointerenter', () => lit(true));
+      g.addEventListener('pointerleave', () => lit(false));
+      g.addEventListener('click', () => document.getElementById(ids[i]).scrollIntoView({ behavior: still ? 'auto' : 'smooth' }));
+      links[i] && links[i].addEventListener('pointerenter', () => lit(true));
+      links[i] && links[i].addEventListener('pointerleave', () => lit(false));
+    });
+  }
+
   // ── Wide figures: on a narrow screen diagrams scroll sideways, with a bar that stays visible (touch browsers
   // hide native scrollbars). Drag the bar or tap the track to move. ────────────────────────────────────────────
   function hscroll(box) {
@@ -892,7 +926,7 @@
     });
   }
   function wrapWide() {
-    $$('.diagram:not(.stack) > svg, .diagram.stack').forEach((el) => {
+    $$('.diagram > svg, .journey .j-in').forEach((el) => {
       const box = document.createElement('div');
       box.className = 'hs';
       el.before(box);
@@ -926,11 +960,11 @@
     const ro = new IntersectionObserver((es) => {
       es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -8% 0px' });
-    $$('.by .fig:not(.hero-fig), .by .stats, .by .targets').forEach((el) => ro.observe(el));
+    $$('.by .fig:not(.hero-fig), .by .stats, .by .targets, .by .ch-head, .by .probs, .by .steps').forEach((el) => ro.observe(el));
   }
 
   const build = () => {
-    [chain, waffle, domains, problems, priorities, reply, route, wms, pick, truck, flip, loop, disp, road, gantt, rollout].forEach((f) => {
+    [chain, waffle, domains, priorities, reply, route, wms, pick, truck, flip, loop, disp, road, gantt, rollout, locators, covers].forEach((f) => {
       try { f(); } catch (err) { console.error(f.name, err); }
     });
     wrapWide();

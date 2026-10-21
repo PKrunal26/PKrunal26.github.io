@@ -29,8 +29,8 @@ PROJECTS = {
     "vietnam": dict(file="vietnam.jpg", crop=(0, 41, 2000, 1291), dark=False, contrast=1.15, paper=1.0),
     # Paradime: the community screen redrawn for its case study (projects/paradime), captured at 2x
     "paradime": dict(file="paradime.png", crop=(0, 0, 2112, 1320), dark=False, contrast=1.05, paper=0.96),
-    # Sustainable Supply Chain: the carbon-by-stage figure from its case study (projects/blue-yonder), captured at 2x
-    "blue-yonder": dict(file="blue-yonder.png", crop=(880, 0, 1795, 572), dark=False, contrast=1.05, paper=0.96),
+    # Sustainable Supply Chain: the loading-dock cover from its case study (projects/blue-yonder), captured at 2x
+    "blue-yonder": dict(file="blue-yonder.png", crop=(100, 110, 1220, 810), dark=False, contrast=1.05, paper=0.96),
     # Cloud Migration Assistant: the Choose screen redrawn for its case study (projects/atlassian), captured at 2x
     "atlassian-cma": dict(file="atlassian-cma.png", crop=(0, 0, 2336, 1460), dark=False, contrast=1.05, paper=0.96),
     # Lucide icons (file-user, linkedin, mail) as coloured strokes on transparent

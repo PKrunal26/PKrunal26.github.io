@@ -153,35 +153,69 @@ main.by{max-width:1248px;padding-inline:40px}
 .by .w-legend li em{font-style:normal;color:var(--soft);text-align:right;font-variant-numeric:tabular-nums}
 .by .waffle.hl .w-legend li:not(.on){opacity:.4}
 
-/* Fig 3: domain diagrams share one cell and crossfade */
-.by .stack{display:grid}
-.by .stack>svg{grid-area:1/1;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s .4s}
-.by .stack>svg.on{opacity:1;visibility:visible;transition:opacity .4s ease .05s,visibility 0s}
-
-/* Nine problems */
-.by .lens-bar{position:sticky;top:16px;z-index:3;display:flex;margin-top:40px;width:max-content;max-width:100%;border-radius:999px;box-shadow:0 8px 24px -12px #0000003d}
-.by .lens-bar .seg{background:color-mix(in srgb,var(--chip) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.by .matrix{margin-top:32px;display:grid;gap:48px}
-.by .m-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 20px}
-.by .m-dom{grid-column:1/-1;display:flex;align-items:center;gap:9px;font-size:14px;color:var(--soft);font-weight:500;margin:0}
-.by .m-dom i{width:8px;height:8px;border-radius:50%}
-.by .m-card{position:relative;background:var(--panel);border-radius:16px;padding:24px 24px 26px;min-height:168px}
-.by .m-card::before{content:'';position:absolute;left:24px;top:0;width:28px;height:2px;border-radius:0 0 2px 2px}
-.by .m-card.wh::before{background:var(--wh)}.by .m-card.pk::before{background:var(--pk)}.by .m-card.tr::before{background:var(--tr)}
-.by .m-card h4{font-size:16px;line-height:1.35;font-weight:500;color:var(--strong);margin:0 0 14px;letter-spacing:-.005em}
-.by .m-card p{font-size:15px;line-height:1.55;color:var(--text);margin:0}
-.by .m-card p.none{color:var(--muted)}
-.by .m-card p b{font-weight:500;color:var(--strong);font-size:1.3em;line-height:1;letter-spacing:-.02em}
-.by .m-card{display:grid;grid-template-rows:auto 1fr}
-.by .m-card>p{grid-area:2/1;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1);pointer-events:none}
-.by .matrix[data-lens=impact] p[data-l=impact],.by .matrix[data-lens=cost] p[data-l=cost],.by .matrix[data-lens=co2] p[data-l=co2],.by .matrix[data-lens=customer] p[data-l=customer]{opacity:1;transform:none;pointer-events:auto;transition-delay:.08s}
-
 /* Fig 4: priorities */
 .by .prio .row{cursor:default;transition:opacity .3s ease}
 .by .prio .lnk{fill:none;stroke-width:1.5;opacity:.55;transition:opacity .3s ease,stroke-width .3s ease}
 .by .prio.hl .row:not(.on){opacity:.28}
 .by .prio.hl .lnk:not(.on){opacity:.07}
 .by .prio.hl .lnk.on{opacity:1;stroke-width:2}
+
+/* Hero: the five chapters as a row of tiles */
+.by .journey{margin:0 0 0;position:relative}
+.by .journey .j-in{position:relative}
+.by .journey-art{min-height:120px}
+.by .journey-art svg{display:block;width:100%;height:auto}
+.by .journey g[data-stop]{cursor:pointer;transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
+.by .journey g[data-stop].on{transform:translateY(-6px)}
+.by .stops{list-style:none;margin:0;padding:0;position:relative;height:44px}
+.by .stops li{position:absolute;top:2px;transform:translateX(-50%);white-space:nowrap}
+.by .stops a{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--text);text-decoration:none;padding:4px 8px;border-radius:8px;transition:color .25s ease,background .25s ease}
+.by .stops a:hover,.by .stops a.on{color:var(--strong);background:var(--chip)}
+.by .stops .sol-n.s{margin:0}
+.by .journey>figcaption{margin:28px 0 0;max-width:720px}
+
+/* Approach: five steps on one line */
+.by .steps{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px;margin:56px 0 0;padding:0;position:relative}
+.by .steps::before{content:'';position:absolute;left:5px;right:0;top:5px;height:1px;background:var(--rule2)}
+.by .steps li{position:relative}
+.by .steps span{display:block;width:11px;height:11px;border-radius:50%;background:var(--strong);box-shadow:0 0 0 5px var(--bg);margin:0 0 22px;position:relative}
+.by .steps b{display:block;font-size:16px;font-weight:500;color:var(--strong);margin-bottom:6px}
+.by .steps p{font-size:14px;line-height:1.55;color:var(--soft);margin:0}
+
+/* Chapters: a cover band, then Today, Problems and the fix */
+.by .chapter{margin-top:220px}
+.by .ch-head{display:grid;grid-template-columns:minmax(0,4.4fr) minmax(0,7.6fr);gap:32px 48px;align-items:center;background:var(--panel);border-radius:24px;padding:48px 40px 48px 56px;overflow:hidden}
+.by .ch-text .sol-n{width:40px;height:40px;font-size:16px;margin:0 0 28px}
+.by .ch-text h2{font-size:52px;line-height:1.04;letter-spacing:-.035em;margin-bottom:20px}
+.by .ch-text>p{font-size:18px;line-height:1.55;color:var(--text);margin:0;max-width:440px}
+.by .ch-text .ch-fix{font-size:15px;color:var(--soft);margin-top:20px}
+.by .ch-text .ch-fix a{color:var(--strong)}
+.by .loc{margin-top:36px;max-width:380px}
+.by .loc svg{display:block;width:100%;height:auto}
+.by .cover{min-height:200px}
+.by .cover svg{display:block;width:100%;height:auto}
+.by [data-cover]>svg{animation:cover-in .9s cubic-bezier(.2,.7,.2,1) both}
+@keyframes cover-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.by .sub{margin-top:120px;padding-top:28px;border-top:1px solid var(--rule)}
+.by .sub>h3{font-size:24px;line-height:1.3;letter-spacing:-.015em;margin-bottom:0}
+.by .sub>h3+.prose{margin-top:20px}
+.by .sub>.fig:first-of-type,.by .sub>.probs{margin-top:32px}
+.by .plan-key{margin-top:18px;font-size:13px}
+.by .plan+section{margin-top:120px}
+
+/* Problem cards: every lens from the report on one card */
+.by .probs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.by .probs.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.by .prob{position:relative;background:var(--panel);border-radius:16px;padding:26px 26px 22px}
+.by .prob::before{content:'';position:absolute;left:26px;top:0;width:28px;height:2px;border-radius:0 0 2px 2px}
+.by .prob.wh::before{background:var(--wh)}.by .prob.pk::before{background:var(--pk)}.by .prob.tr::before{background:var(--tr)}.by .prob.rt::before{background:var(--rt)}
+.by .prob h4{font-size:17px;line-height:1.35;font-weight:500;color:var(--strong);margin:0 0 16px;letter-spacing:-.01em}
+.by .prob dl{margin:0;display:grid;gap:0}
+.by .prob dl>div{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:10px 0;border-top:1px solid var(--rule)}
+.by .prob dt{font-size:13px;color:var(--muted);padding-top:1px}
+.by .prob dd{margin:0;font-size:14.5px;line-height:1.55;color:var(--text)}
+.by .prob dd.none{color:var(--muted)}
+.by .prob dd b{font-weight:600;color:var(--strong)}
 
 /* Solutions */
 .by .sol-head{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0 8px;align-items:start}
@@ -352,8 +386,8 @@ main.by{max-width:1248px;padding-inline:40px}
 .by .next-card:hover .next-go{color:#fff;text-decoration-color:#fff}
 
 /* Reveal: figures and numbers ease in once */
-.reveal .by .fig:not(.in):not(.hero-fig),.reveal .by .stats:not(.in),.reveal .by .targets:not(.in){opacity:0;transform:translateY(14px)}
-.reveal .by .fig,.reveal .by .stats,.reveal .by .targets{transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal .by .fig:not(.in):not(.hero-fig),.reveal .by .stats:not(.in),.reveal .by .targets:not(.in),.reveal .by .ch-head:not(.in),.reveal .by .probs:not(.in),.reveal .by .steps:not(.in){opacity:0;transform:translateY(14px)}
+.reveal .by .fig,.reveal .by .stats,.reveal .by .targets,.reveal .by .ch-head,.reveal .by .probs,.reveal .by .steps{transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
 
 /* Sideways scrolling for wide figures on narrow screens */
 .by .hs{overflow:visible}
@@ -364,6 +398,10 @@ main.by{max-width:1248px;padding-inline:40px}
 .by .hs-bar:active i{background:var(--strong)}
 
 @media(max-width:1100px){
+  .by .ch-head{grid-template-columns:minmax(0,1fr);padding:40px 32px}
+  .by .probs.n3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .by .steps{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .by .steps::before{display:none}
   .by .fit dl{grid-template-columns:repeat(2,minmax(0,1fr))}
   .by .notes{grid-template-columns:repeat(2,minmax(0,1fr))}
   .by .reply{grid-template-columns:minmax(0,1fr);justify-items:center}
@@ -372,13 +410,17 @@ main.by{max-width:1248px;padding-inline:40px}
   .by .multiples{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:900px){
-  .by .m-row{grid-template-columns:minmax(0,1fr)}
-  .by .m-card{min-height:0}
   .by .waffle{grid-template-columns:minmax(0,1fr);gap:32px}
   .by .waffle .plot{max-width:300px}
 }
 @media(max-width:700px){
   main.by{padding-inline:20px}
+  .by .probs,.by .probs.n3,.by .steps{grid-template-columns:minmax(0,1fr)}
+  .by .ch-head{padding:28px 18px;border-radius:18px}
+  .by .ch-text h2{font-size:36px}
+  .by .chapter{margin-top:140px}
+  .by .sub{margin-top:80px}
+  .by .prob dl>div{grid-template-columns:64px minmax(0,1fr)}
   .by .back{margin-bottom:56px}
   .by h1{font-size:44px}
   .by .lede{font-size:19px;margin-bottom:40px}
@@ -401,7 +443,8 @@ main.by{max-width:1248px;padding-inline:40px}
   .by .fig-bar{flex-direction:column;align-items:flex-start;margin-bottom:20px}
   .by .hs{overflow-x:auto;overflow-y:hidden;margin:0 -14px;padding:2px 14px;scrollbar-width:none;overscroll-behavior-x:contain}
   .by .hs::-webkit-scrollbar{display:none}
-  .by .diagram .hs>svg,.by .hs>.stack{min-width:720px}
+  .by .diagram .hs>svg{min-width:720px}
+  .by .hs>.j-in{min-width:980px}
   .by .road-out{grid-template-columns:1fr;gap:16px}
   .by .readout{text-align:left;margin-left:0}
   .by .vbar-note{margin-left:0}

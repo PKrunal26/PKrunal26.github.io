@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sustainable Supply Chain — Krunal Prajapati</title><meta name="description" content="A five-year plan to cut carbon across an Indian FMCG and e-commerce supply chain: nine problems, five solutions and a rollout plan. Blue Yonder's brief at Inter IIT Tech Meet."><link rel="preconnect" href="https://rsms.me/"><link rel="stylesheet" href="https://rsms.me/inter/inter.css"><link rel="stylesheet" href="../../style.css?v=2"><link rel="stylesheet" href="by.css?v=1"><script src="../../theme.js"></script><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a3a3a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='22' text-anchor='middle' fill='white'%3Ek%3C/text%3E%3C/svg%3E"></head>
+<body><main class="project by">
+<nav aria-label="Home"><a class="back" href="../../">Krunal Prajapati</a></nav>
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path class="mk" d="M0 1.2L9 5L0 8.8Z"/></marker>
+<marker id="ah-s" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path class="mk-s" d="M0 1.2L9 5L0 8.8Z"/></marker>
+<marker id="ah-wh" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path class="mk-wh" d="M0 1.2L9 5L0 8.8Z"/></marker>
+<marker id="ah-tr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path class="mk-tr" d="M0 1.2L9 5L0 8.8Z"/></marker>
+<marker id="ah-pk" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path class="mk-pk" d="M0 1.2L9 5L0 8.8Z"/></marker>
+<marker id="ah-rt" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path class="mk-rt" d="M0 1.2L9 5L0 8.8Z"/></marker>
+<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hatch-bg"/><line x1="0" y1="0" x2="0" y2="6" class="hatch-ln"/></pattern>
+</defs></svg>
+
+<header class="hero">
+  <h1>Sustainable Supply Chain</h1>
+  <p class="lede">A five-year plan to cut the carbon in an Indian FMCG and e-commerce supply chain. Blue Yonder set the brief at Inter IIT Tech Meet, and this was our team’s answer.</p>
+  <dl class="facts">
+    <div><dt>Event</dt><dd>Inter IIT Tech Meet</dd></div>
+    <div><dt>Brief</dt><dd>Blue Yonder, sustainable supply chain</dd></div>
+    <div><dt>Team</dt><dd>Team 11, IIT Guwahati</dd></div>
+    <div><dt>Output</dt><dd>A 10-page report: analysis, five solutions and a five-year plan</dd></div>
+  </dl>
+</header>
+
+<figure class="fig hero-fig" id="fig-chain" data-fluid-quiet>
+  <div class="fig-bar">
+    <span class="fig-n">Fig 1 · Carbon by stage</span>
+    <div class="seg" role="group" aria-label="Show a solution">
+      <button type="button" data-sol="all" aria-pressed="true">All stages</button>
+      <button type="button" data-sol="lastmile" aria-pressed="false">Last mile</button>
+      <button type="button" data-sol="warehouse" aria-pressed="false">Warehouse</button>
+      <button type="button" data-sol="tertiary" aria-pressed="false">Tertiary packaging</button>
+      <button type="button" data-sol="bag" aria-pressed="false">Delivery bag</button>
+      <button type="button" data-sol="waste" aria-pressed="false">Waste</button>
+    </div>
+  </div>
+  <div class="plot diagram" data-fig="chain"></div>
+  <div class="fig-foot">
+    <ul class="key" aria-label="Domains"><li><i class="k-wh"></i>Warehousing</li><li><i class="k-tr"></i>Transportation</li><li><i class="k-pk"></i>Packaging</li><li><i class="k-rt"></i>Returns</li></ul>
+    <p class="readout" aria-live="polite" data-read="chain">Last-mile delivery is the largest source in the chain.</p>
+  </div>
+  <figcaption>The supply chain from plant to front door. Circle size is each stage’s relative emissions, as our analysis drew them. Pick a solution to see the stages it acts on.</figcaption>
+</figure>
+
+<nav class="toc" aria-label="On this page">
+  <p class="toc-h">Brief</p>
+  <ol>
+    <li><a href="#brief">Brief</a></li>
+    <li><a href="#scale">Scale</a></li>
+    <li><a href="#domains">Four domains</a></li>
+  </ol>
+  <p class="toc-h">Problems</p>
+  <ol>
+    <li><a href="#problems">Nine problems</a></li>
+    <li><a href="#priorities">Priorities</a></li>
+  </ol>
+  <p class="toc-h">Solutions</p>
+  <ol>
+    <li><a href="#last-mile">Last mile</a></li>
+    <li><a href="#warehouse">Warehouse</a></li>
+    <li><a href="#tertiary">Tertiary packaging</a></li>
+    <li><a href="#bag">Delivery bag</a></li>
+    <li><a href="#waste">Waste</a></li>
+  </ol>
+  <p class="toc-h">Plan</p>
+  <ol>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#rollout">Rollout</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="#outcome">Outcome</a></li>
+  </ol>
+</nav>
+
+<article>
+
+<section id="brief">
+  <div class="prose">
+    <h2>Brief</h2>
+    <p>Online sales grew fast during the pandemic. Retailers chose speed and low cost over carbon, and supply chain emissions rose.</p>
+    <p>Blue Yonder asked for a five-year plan, backed by data, to move FMCG and e-commerce companies towards a carbon-neutral supply chain without losing efficiency, in line with India’s COP26 targets.</p>
+  </div>
+  <div class="targets">
+    <div><b>2070</b><p>Net zero emissions</p></div>
+    <div><b>45%</b><p>Lower emissions intensity by 2030, from 2005 levels</p></div>
+    <div><b>1 billion t</b><p>Less projected CO₂ between 2021 and 2030</p></div>
+  </div>
+  <p class="src">India’s COP26 targets, from its national statement in Glasgow, November 2021. Source: <a href="https://www.energypolicy.columbia.edu/publications/evaluating-india-s-cop26-climate-commitments-qa-dr-kaushik-deb-and-mahak-agrawal" target="_blank" rel="noopener">Columbia Center on Global Energy Policy</a>. Added for this page.</p>
+</section>
+
+<section id="scale">
+  <div class="prose">
+    <h2>Scale</h2>
+    <p>The world emits about 35 billion tonnes of CO₂ a year. China, the United States and India together emit just over half of it.</p>
+  </div>
+  <figure class="fig" id="fig-waffle" data-fluid-quiet>
+    <div class="fig-bar"><span class="fig-n">Fig 2 · CO₂ emissions a year</span></div>
+    <div class="waffle">
+      <div class="plot" data-fig="waffle"></div>
+      <div class="waffle-side">
+        <p class="big-n">35,000<span>million tonnes</span></p>
+        <ul class="w-legend" data-legend="waffle">
+          <li data-k="0" tabindex="0"><i class="w0"></i><span>China</span><b>11,680</b><em>33%</em></li>
+          <li data-k="1" tabindex="0"><i class="w1"></i><span>United States</span><b>4,535</b><em>13%</em></li>
+          <li data-k="2" tabindex="0"><i class="w2"></i><span>India</span><b>2,412</b><em>7%</em></li>
+          <li data-k="3" tabindex="0"><i class="w3"></i><span>Rest of the world</span><b>16,373</b><em>47%</em></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fig-foot"><p class="hint">Each square is 1% of the world’s emissions. Hover a country.</p><p class="readout" aria-live="polite" data-read="waffle"></p></div>
+  </figure>
+  <div class="stats two">
+    <div class="stat"><b>30%</b><p>of gross merchandise value is lost to cancellations and returns</p></div>
+    <div class="stat"><b>660,788 t</b><p>of plastic waste is produced in India each year</p></div>
+  </div>
+</section>
+
+<section id="domains">
+  <div class="prose">
+    <h2>Four domains</h2>
+    <p>We split the supply chain into warehousing, transportation, returns and packaging, and mapped the stages in each. A change in one domain shows up in the others.</p>
+  </div>
+  <figure class="fig" id="fig-domains" data-fluid-quiet>
+    <div class="fig-bar">
+      <span class="fig-n">Fig 3 · Stages</span>
+      <div class="seg" role="group" aria-label="Domain">
+        <button type="button" data-dom="wh" aria-pressed="true"><i class="k-wh"></i>Warehousing</button>
+        <button type="button" data-dom="tr" aria-pressed="false"><i class="k-tr"></i>Transportation</button>
+        <button type="button" data-dom="rt" aria-pressed="false"><i class="k-rt"></i>Returns</button>
+        <button type="button" data-dom="pk" aria-pressed="false"><i class="k-pk"></i>Packaging</button>
+      </div>
+    </div>
+    <div class="plot diagram stack" data-fig="domains"></div>
+    <div class="fig-foot"><p class="readout left" aria-live="polite" data-read="domains"></p></div>
+  </figure>
+</section>
+
+<div class="part" id="part-problems">
+  <h2>Problems</h2>
+  <p>Nine problems across warehousing, packaging and transport. We read each one four ways: its impact, its cost, its carbon and what it means for the customer.</p>
+</div>
+
+<section id="problems">
+  <div class="prose">
+    <h2>Nine problems</h2>
+    <p>Switch the lens to read the same nine problems another way.</p>
+  </div>
+  <div class="lens-bar" data-fluid-quiet>
+    <div class="seg" role="group" aria-label="Lens">
+      <button type="button" data-lens="impact" aria-pressed="true">Impact</button>
+      <button type="button" data-lens="cost" aria-pressed="false">Cost</button>
+      <button type="button" data-lens="co2" aria-pressed="false">CO₂</button>
+      <button type="button" data-lens="customer" aria-pressed="false">Customer</button>
+    </div>
+  </div>
+  <div class="matrix" data-lens="impact">
+    <div class="m-row">
+      <h3 class="m-dom"><i class="k-wh"></i>Warehousing</h3>
+      <div class="m-card wh">
+        <h4>Lack of digitisation</h4>
+        <p data-l="impact">As operations grow, data errors lower productivity.</p>
+        <p data-l="cost">Paper-based processes raise overhead by up to <b>35%</b>.</p>
+        <p data-l="co2">Physical documents emit <b>twice</b> as much as digital records.</p>
+        <p data-l="customer">Customers want timely updates, and only digital channels can give them.</p>
+      </div>
+      <div class="m-card wh">
+        <h4>Lack of automation</h4>
+        <p data-l="impact">Manual tasks take longer and create backlogs in loading and packing.</p>
+        <p data-l="cost">Most warehouses need some automation, which can cut workflow emissions by up to <b>45%</b>.</p>
+        <p data-l="co2">Human errors stack up into more returns and slowdowns, and more emissions per product.</p>
+        <p data-l="customer">Automated tasks damage less and send fewer wrong products.</p>
+      </div>
+      <div class="m-card wh">
+        <h4>Poor use of storage</h4>
+        <p data-l="impact">Without real-time data, operations lose at least <b>10%</b> of their efficiency.</p>
+        <p data-l="cost">Poor inventory management can waste up to <b>75%</b> in energy, labour and other costs.</p>
+        <p data-l="co2">About <b>23%</b> more emissions from wasted energy.</p>
+        <p data-l="customer">Better use of storage shortens the time between picking and dispatch.</p>
+      </div>
+    </div>
+    <div class="m-row">
+      <h3 class="m-dom"><i class="k-pk"></i>Packaging</h3>
+      <div class="m-card pk">
+        <h4>Single-use plastic</h4>
+        <p data-l="impact">Its carbon footprint is low, but it leaches into the ground and water.</p>
+        <p data-l="cost">Cheap to pack with, but only <b>9%</b> of it is recycled.</p>
+        <p data-l="co2">Single-use plastics cause <b>40%</b> of plastic pollution each year.</p>
+        <p data-l="customer" class="none">Not covered in the report.</p>
+      </div>
+      <div class="m-card pk">
+        <h4>Packaging design</h4>
+        <p data-l="impact">Packs are made to be thrown away, not reused.</p>
+        <p data-l="cost">Current packing materials are very cheap.</p>
+        <p data-l="co2">Each pack emits little, but the volume adds up.</p>
+        <p data-l="customer">Packs are hard to open and reuse, though customers prefer to reuse them.</p>
+      </div>
+      <div class="m-card pk">
+        <h4>No circular alternatives</h4>
+        <p data-l="impact">Over <b>80%</b> of plastic packaging can be recycled, yet over <b>90%</b> of it is burned or sent to landfill.</p>
+        <p data-l="cost">Recycling needs high upfront capital, so other circular methods are worth finding.</p>
+        <p data-l="co2">Burning PVC, HDPE and LDPE releases toxic gases such as dioxins.</p>
+        <p data-l="customer">Reuse extends the life of packaging and saves energy.</p>
+      </div>
+    </div>
+    <div class="m-row">
+      <h3 class="m-dom"><i class="k-tr"></i>Transport</h3>
+      <div class="m-card tr">
+        <h4>Unoptimised last-mile routes</h4>
+        <p data-l="impact">Deliveries fail on routes that are already inefficient.</p>
+        <p data-l="cost">The last mile is <b>53%</b> of total shipping cost.</p>
+        <p data-l="co2">Trial-and-error routing during the online sales surge raised emissions by <b>25%</b>.</p>
+        <p data-l="customer">Shorter delivery times keep customers.</p>
+      </div>
+      <div class="m-card tr">
+        <h4>Unused truck space</h4>
+        <p data-l="impact">Less-than-truckload shipping needs more resources to keep packages safe.</p>
+        <p data-l="cost">Low space use can raise transport charges by up to <b>33%</b>.</p>
+        <p data-l="co2">Without full loads, each product sold carries more carbon.</p>
+        <p data-l="customer" class="none">Not covered in the report.</p>
+      </div>
+      <div class="m-card tr">
+        <h4>Last-mile pickups</h4>
+        <p data-l="impact">Pickup speed comes before carbon efficiency.</p>
+        <p data-l="cost">Drivers make several trips to keep customers happy and limit lost value.</p>
+        <p data-l="co2">Reverse logistics add emissions.</p>
+        <p data-l="customer"><b>92%</b> of customers stay after a good returns experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="priorities">
+  <div class="prose">
+    <h2>Priorities</h2>
+    <p>We ranked the problems by impact and solved the biggest ones. Five solutions cover all nine problems, and most problems get more than one.</p>
+  </div>
+  <figure class="fig" id="fig-priorities" data-fluid-quiet>
+    <div class="fig-bar"><span class="fig-n">Fig 4 · Problems to solutions</span></div>
+    <div class="plot diagram" data-fig="priorities"></div>
+    <div class="fig-foot"><p class="hint">Hover a problem or a solution.</p><p class="readout" aria-live="polite" data-read="priorities">9 problems, 5 solutions</p></div>
+  </figure>
+</section>
+
+<div class="part" id="part-solutions">
+  <h2>Five solutions</h2>
+  <p>Each solution came with impact metrics and a check of its strategic fit: feasibility, adaptability, flexibility, sustainability, impact on the market and ease of integration.</p>
+</div>
+
+<section id="last-mile" class="sol">
+  <div class="sol-head">
+    <span class="sol-n">1</span>
+    <div class="prose">
+      <h2>Last mile optimisation</h2>
+      <p>Drivers cover extra miles and wait at doors, and many deliveries fail because nobody is home at the time.</p>
+      <p>Customers pick a delivery slot when they order. A WhatsApp message the day before lets them confirm, change the slot or collect from the dispatch centre. Routing software then re-plans each day’s routes around their answers, roadblocks and traffic.</p>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>20–25%</b><p>less carbon</p></div>
+    <div class="stat"><b>17%</b><p>lower costs</p></div>
+    <div class="stat"><b>26%</b><p>higher net profit</p></div>
+    <div class="stat"><b>100%</b><p>of cancellations at the doorstep avoided</p></div>
+  </div>
+  <figure class="fig" id="fig-reply" data-fluid-quiet>
+    <div class="fig-bar">
+      <span class="fig-n">Fig 5 · The day-before message</span>
+      <div class="seg" role="group" aria-label="Customer reply">
+        <button type="button" data-reply="confirm" aria-pressed="true">Confirms</button>
+        <button type="button" data-reply="change" aria-pressed="false">Changes slot</button>
+        <button type="button" data-reply="pickup" aria-pressed="false">Picks up</button>
+        <button type="button" data-reply="none" aria-pressed="false">No reply</button>
+      </div>
+    </div>
+    <div class="reply">
+      <div class="phone" aria-label="WhatsApp chat with the retailer">
+        <div class="ph-top"><span class="ph-av">xyz</span><span class="ph-name">xyz company<small>Business account</small></span></div>
+        <div class="ph-chat" data-chat></div>
+      </div>
+      <div class="plot diagram" data-fig="reply"></div>
+    </div>
+    <div class="fig-foot"><p class="hint">Pick how the customer replies.</p><p class="readout" aria-live="polite" data-read="reply"></p></div>
+    <figcaption>If the customer doesn’t reply, the delivery moves to the next day. On the third day an automated call asks them to confirm, and the order is cancelled before it leaves if they don’t.</figcaption>
+  </figure>
+  <figure class="fig" id="fig-route" data-fluid-quiet>
+    <div class="fig-bar">
+      <span class="fig-n">Fig 6 · A delivery day</span>
+      <div class="seg" role="group" aria-label="Route plan">
+        <button type="button" data-route="fixed" aria-pressed="true">Fixed route</button>
+        <button type="button" data-route="slots" aria-pressed="false">Confirmed slots</button>
+      </div>
+    </div>
+    <div class="plot diagram" data-fig="route"></div>
+    <div class="fig-foot">
+      <ul class="key" aria-label="Stops"><li><i class="k-dot"></i>Delivered</li><li><i class="k-fail"></i>Nobody home</li><li><i class="k-pick"></i>Collects at dispatch</li><li><i class="k-move"></i>Moved to tomorrow</li><li><i class="k-late"></i>Later slot</li></ul>
+      <p class="readout" aria-live="polite" data-read="route"></p>
+    </div>
+    <figcaption>An illustrative day with 14 orders. Three customers are out. On a fixed route the van finds out at the door and comes back the next day; with confirmed slots it already knows. Distances are measured along the streets in the drawing.</figcaption>
+  </figure>
+  <div class="fit">
+    <h3>Strategic fit</h3>
+    <dl>
+      <div><dt>Feasibility</dt><dd>App changes for customers and drivers, routing in the cloud and WhatsApp in the backend.</dd></div>
+      <div><dt>Adaptability</dt><dd>Drivers learn live changes to drop-offs. Some customers may find the reminder annoying.</dd></div>
+      <div><dt>Flexibility</dt><dd>Digital, so it holds up in a pandemic. In a loss year, companies may cut spending on it.</dd></div>
+      <div><dt>Sustainability</dt><dd>The software needs regular updates, at a cost.</dd></div>
+      <div><dt>Impact on market</dt><dd>More deliveries a day, informed customers, and less spent on fuel and labour.</dd></div>
+      <div><dt>Ease of integration</dt><dd>Changes the delivery software that 3PLs already use. Needs internet on the road.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="warehouse" class="sol">
+  <div class="sol-head">
+    <span class="sol-n">2</span>
+    <div class="prose">
+      <h2>Warehouse and inventory automation</h2>
+      <p>Manual work slows goods down until they pile up. Picking alone is more than 55% of labour cost, and wrong picks add more.</p>
+      <p>A warehouse management system plans storage and picking from storage capacity, stock levels, supplier lead times, seasonal trends and upcoming campaigns.</p>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>2×</b><p>less carbon than manual management</p></div>
+    <div class="stat"><b>30%</b><p>cost saving from forecast demand</p></div>
+    <div class="stat"><b>35%</b><p>better use of labour</p></div>
+    <div class="stat"><b>99%+</b><p>accuracy in picking and labelling</p></div>
+  </div>
+  <figure class="fig" id="fig-wms" data-fluid-quiet>
+    <div class="fig-bar"><span class="fig-n">Fig 7 · Warehouse management system</span></div>
+    <div class="plot diagram" data-fig="wms"></div>
+    <div class="fig-foot"><p class="hint">Hover a function.</p><p class="readout" aria-live="polite" data-read="wms">Six functions turn the inputs into warehouse tasks.</p></div>
+  </figure>
+  <figure class="fig" id="fig-pick" data-fluid-quiet>
+    <div class="fig-bar">
+      <span class="fig-n">Fig 8 · One pick list</span>
+      <div class="seg-pair">
+        <div class="seg" role="group" aria-label="Routing">
+          <button type="button" data-pick-route="s" aria-pressed="true">Aisle by aisle</button>
+          <button type="button" data-pick-route="opt" aria-pressed="false">Optimised path</button>
+        </div>
+        <div class="seg" role="group" aria-label="Product positioning">
+          <button type="button" data-pick-slot="random" aria-pressed="true">Any free slot</button>
+          <button type="button" data-pick-slot="velocity" aria-pressed="false">Fast movers near dock</button>
+        </div>
+      </div>
+    </div>
+    <div class="plot diagram" data-fig="pick"></div>
+    <div class="fig-foot"><p class="hint">Ten items, from the dock and back.</p><p class="readout" aria-live="polite" data-read="pick"></p></div>
+    <figcaption>Path optimisation and product positioning, two of the six functions, on an illustrative floor. The optimised path is the shortest possible tour of the ten picks, solved exactly. Aisle by aisle walks every aisle that holds an item, end to end.</figcaption>
+  </figure>
+  <div class="fit">
+    <h3>Strategic fit</h3>
+    <dl>
+      <div><dt>Feasibility</dt><dd>IoT devices, cloud storage and training for staff.</dd></div>
+      <div><dt>Adaptability</dt><dd>Staff reskill for the new system and learn its performance rates.</dd></div>
+      <div><dt>Flexibility</dt><dd>May not pay off for small businesses, and needs reconfiguring if the business model changes.</dd></div>
+      <div><dt>Sustainability</dt><dd>The carbon saving grows with demand.</dd></div>
+      <div><dt>Impact on market</dt><dd>Fewer wrong products, better availability and real-time data on buying trends. It needs fewer staff, which can mean layoffs.</dd></div>
+      <div><dt>Ease of integration</dt><dd>Connects to transport and packaging, and works with the machinery already in the warehouse.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="tertiary" class="sol">
+  <div class="sol-head">
+    <span class="sol-n">3</span>
+    <div class="prose">
+      <h2>Sustainable tertiary packaging</h2>
+      <p>Wooden pallets take 14.43% of the space in a truck. They are heavy and bulky, and that adds to the cost of every trip.</p>
+      <p>Slip sheets of recycled cardboard replace them. A slip sheet is a sixteenth of a pallet’s thickness, so the space goes back to cartons, and loading and unloading take half the time. Stretch film gives way to recyclable PLA film.</p>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>20%</b><p>less carbon, from better fuel efficiency</p></div>
+    <div class="stat"><b>88.33%</b><p>lower cost, a slip sheet against a pallet</p></div>
+    <div class="stat"><b>15%</b><p>lower transport cost</p></div>
+    <div class="stat"><b>17%</b><p>more cartons per trip</p></div>
+  </div>
+  <figure class="fig" id="fig-truck" data-fluid-quiet>
+    <div class="fig-bar">
+      <span class="fig-n">Fig 9 · One truckload</span>
+      <div class="seg" role="group" aria-label="Load base">
+        <button type="button" data-load="pallet" aria-pressed="true">Wooden pallets</button>
+        <button type="button" data-load="slip" aria-pressed="false">Slip sheets</button>
+      </div>
+    </div>
+    <div class="plot diagram" data-fig="truck"></div>
+    <div class="vbar" aria-hidden="true"><span class="vb-base"><b data-vb="base">14.43%</b></span><span class="vb-load"><b data-vb="load">85.57%</b></span></div>
+    <div class="vbar-key"><span><i class="k-base"></i><em data-vb="base-name">Pallets</em></span><span><i class="k-load"></i>Cartons</span><span class="vbar-note">Share of the load space</span></div>
+    <div class="fig-foot"><p class="hint">Swap the pallets for slip sheets.</p><p class="readout" aria-live="polite" data-read="truck"></p></div>
+    <figcaption>Pallets take 14.43% of the load space and slip sheets about 0.9%, so cartons go from 85.57% of it to 99.1%. The truck is a schematic, not to scale.</figcaption>
+  </figure>
+  <ul class="notes">
+    <li><span>1</span><div><b>Push-pull forklifts</b>An attachment grips the sheet’s lip and pulls the load on. It fits any forklift.</div></li>
+    <li><span>2</span><div><b>One week of training</b>Forklift operators learn the new attachment in a week.</div></li>
+    <li><span>3</span><div><b>Wider aisles</b>Aisles need to be 6–7 inches wider for the modified forklifts.</div></li>
+    <li><span>4</span><div><b>Pallets kept</b>Pallets taken out of trucks are reused for storage in warehouses.</div></li>
+  </ul>
+  <div class="fit">
+    <h3>Strategic fit</h3>
+    <dl>
+      <div><dt>Feasibility</dt><dd>Push-pull attachments for forklifts, and training to use them.</dd></div>
+      <div><dt>Adaptability</dt><dd>Operators adapt in a week. Warehouse staff learn to handle slip sheets.</dd></div>
+      <div><dt>Flexibility</dt><dd>Moisture damages fibreboard, as heavy sanitising did during COVID. Slip sheets are cheap, so a financial crisis doesn’t stop them.</dd></div>
+      <div><dt>Sustainability</dt><dd>Made from repurposed cardboard, so supply is not a constraint.</dd></div>
+      <div><dt>Impact on market</dt><dd>More stock per trip and faster loading mean more stock for sale and more orders completed.</dd></div>
+      <div><dt>Ease of integration</dt><dd>Cartons stack on a slip sheet as they do on a pallet. Reused pallets in storage need extra safety checks.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="bag" class="sol">
+  <div class="sol-head">
+    <span class="sol-n">4</span>
+    <div class="prose">
+      <h2>Convertible delivery bag</h2>
+      <p>Packaging goes straight to landfill or is burned. There is no loop that brings it back.</p>
+      <p>At the fulfilment centre the product goes into a plastic bag, inside a compressible, recyclable cardboard box. The box protects it as far as the dispatch centre, then rides back for several more trips before it is recycled. The customer gets the bag, which turns inside out into a reusable handbag.</p>
+    </div>
+  </div>
+  <div class="stats three">
+    <div class="stat"><b>21%</b><p>less carbon per delivery</p></div>
+    <div class="stat"><b>10–20%</b><p>higher packaging cost</p></div>
+    <div class="stat"><b>Green Points</b><p>for bags returned to the delivery person</p></div>
+  </div>
+  <div class="bag-row">
+    <figure class="fig" id="fig-flip" data-fluid-quiet>
+      <div class="fig-bar"><span class="fig-n">Fig 10 · The bag</span></div>
+      <div class="flip-stage">
+        <button type="button" class="flip" aria-pressed="false" aria-label="Turn the bag inside out">
+          <span class="flip-in">
+            <span class="face f-front"><span class="pouch"><span class="seal"></span><span class="logo">xyz company</span><span class="tear"></span></span></span>
+            <span class="face f-back"><span class="tote"><span class="handle"></span><span class="tote-txt">Carry me again</span></span></span>
+          </span>
+        </button>
+      </div>
+      <div class="fig-foot"><p class="hint">Click to turn it inside out.</p><p class="readout" aria-live="polite" data-read="flip">Delivered</p></div>
+    </figure>
+    <figure class="fig" id="fig-loop" data-fluid-quiet>
+      <div class="fig-bar"><span class="fig-n">Fig 11 · Two loops</span></div>
+      <div class="plot diagram" data-fig="loop"></div>
+      <div class="fig-foot"><ul class="key"><li><i class="k-pk"></i>Cardboard box</li><li><i class="k-ink"></i>Bag</li></ul></div>
+    </figure>
+  </div>
+  <p class="cap">Boxes loop between the fulfilment and dispatch centres on trucks that would return empty. Bags go home with the customer. Fragile products get an extra layer of padding.</p>
+  <div class="fit">
+    <h3>Strategic fit</h3>
+    <dl>
+      <div><dt>Feasibility</dt><dd>Design and production of the new bags, and teaching customers how the system works.</dd></div>
+      <div><dt>Adaptability</dt><dd>Workers pack each product twice and separate the bag at dispatch. Drivers collect returned bags.</dd></div>
+      <div><dt>Flexibility</dt><dd>In a financial crunch, companies may not pay for the extra layer of packaging.</dd></div>
+      <div><dt>Sustainability</dt><dd>Regular R&amp;D keeps lowering the cost and moving to better materials.</dd></div>
+      <div><dt>Impact on market</dt><dd>Customers get a durable, good-looking bag and Green Points for returning it.</dd></div>
+      <div><dt>Ease of integration</dt><dd>Boxes go back on trucks returning to the fulfilment centre. Unpacking has to keep them reusable.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="waste" class="sol">
+  <div class="sol-head">
+    <span class="sol-n">5</span>
+    <div class="prose">
+      <h2>Systematic waste management</h2>
+      <p>Deadstock, returns and waste are not handled well. Deadstock averages 20% in FMCG, and adds 16 million tonnes of CO₂ a year in India.</p>
+      <p>Each product category gets its own disposition. HDPE and LDPE plastic from returns and deadstock goes to the government to build roads, in exchange for tradable carbon credits.</p>
+    </div>
+  </div>
+  <div class="stats three">
+    <div class="stat"><b>3.5 t</b><p>of carbon credits per km of road</p></div>
+    <div class="stat"><b>1 t</b><p>of plastic waste per km of road</p></div>
+    <div class="stat"><b>3×</b><p>the life of a conventional road</p></div>
+  </div>
+  <figure class="fig" id="fig-disp" data-fluid-quiet>
+    <div class="fig-bar">
+      <span class="fig-n">Fig 12 · Disposition by category</span>
+      <div class="seg" role="group" aria-label="Product category">
+        <button type="button" data-cat="food" aria-pressed="true">Food and beverages</button>
+        <button type="button" data-cat="care" aria-pressed="false">Personal and home care</button>
+        <button type="button" data-cat="paper" aria-pressed="false">Paper and stationery</button>
+      </div>
+    </div>
+    <div class="plot diagram" data-fig="disp"></div>
+    <div class="fig-foot"><p class="hint">Pick a category.</p><p class="readout" aria-live="polite" data-read="disp"></p></div>
+  </figure>
+  <figure class="fig" id="fig-road" data-fluid-quiet>
+    <div class="fig-bar"><span class="fig-n">Fig 13 · Plastic into road</span></div>
+    <div class="road-ctl">
+      <label for="road-t">Plastic collected</label>
+      <input type="range" id="road-t" min="10" max="500" step="10" value="120">
+      <output for="road-t" data-road="t">120 t</output>
+    </div>
+    <div class="plot diagram" data-fig="road"></div>
+    <div class="road-out">
+      <div><b data-road="km">120</b><p>km of road</p></div>
+      <div><b data-road="cc">420</b><p>tonnes of carbon credits</p></div>
+    </div>
+    <figcaption>One tonne of HDPE and LDPE makes one kilometre of road, and earns 3.5 tonnes of carbon credits. Plastic roads stay smooth, need less maintenance, absorb sound, don’t soak up water and resist wear.</figcaption>
+  </figure>
+  <p class="note"><span class="note-i" aria-hidden="true">!</span><span>Once laid, the road’s materials can’t be separated again. The first rain can start leaching, and the plastic forms a sticky layer.</span></p>
+  <div class="fit">
+    <h3>Strategic fit</h3>
+    <dl>
+      <div><dt>Feasibility</dt><dd>Transport to collect the waste and take it to government centres, and paid sorting.</dd></div>
+      <div><dt>Adaptability</dt><dd>Transport moves from landfill runs to government centres. The government needs room for the plastic.</dd></div>
+      <div><dt>Flexibility</dt><dd>Protective equipment in an environmental crisis. In a political crisis, priority roads are remade with plastic first.</dd></div>
+      <div><dt>Sustainability</dt><dd>Roads last longer, but the plastic in them can’t be recovered.</dd></div>
+      <div><dt>Impact on market</dt><dd>Cheaper roads, tradable credits for the company, and consumers notice.</dd></div>
+      <div><dt>Ease of integration</dt><dd>Uses collection runs and sorting the company already pays for.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<div class="part" id="part-plan">
+  <h2>Plan</h2>
+  <p>The five solutions roll out over five years. Software changes go first, and the new packaging and waste programmes follow.</p>
+</div>
+
+<section id="timeline">
+  <div class="prose">
+    <h2>Timeline</h2>
+    <p>Last-mile changes and warehouse automation start in the first year, while the delivery bag is in R&amp;D. Tertiary packaging follows in year two and waste management in year three.</p>
+  </div>
+  <figure class="fig" id="fig-gantt" data-fluid-quiet>
+    <div class="fig-bar"><span class="fig-n">Fig 14 · Five years</span></div>
+    <div class="plot diagram" data-fig="gantt"></div>
+    <div class="fig-foot"><p class="hint">Drag across the years.</p><p class="readout" aria-live="polite" data-read="gantt"></p></div>
+    <figcaption>Percentages are the share of the network that switches over in that year.</figcaption>
+  </figure>
+</section>
+
+<section id="rollout">
+  <div class="prose">
+    <h2>Rollout</h2>
+    <p>Tertiary packaging and automation reach warehouses by grade, the largest first. The delivery bag rolls out by product type, by volume.</p>
+  </div>
+  <figure class="fig" id="fig-rollout" data-fluid-quiet>
+    <div class="fig-bar"><span class="fig-n">Fig 15 · Share switched over each year</span></div>
+    <div class="multiples" data-fig="rollout"></div>
+    <div class="fig-foot"><p class="hint">Hover a bar.</p><p class="readout" aria-live="polite" data-read="rollout">Year 1 is each solution’s first year of rollout.</p></div>
+  </figure>
+</section>
+
+<section id="impact">
+  <div class="prose">
+    <h2>Impact</h2>
+    <p>Every metric from the report, by solution. Each one is measured against its own baseline, so they don’t add up.</p>
+  </div>
+  <div class="itable-wrap">
+    <table class="itable">
+      <thead><tr><th scope="col">Solution</th><th scope="col">Carbon</th><th scope="col">Cost</th><th scope="col">Other</th></tr></thead>
+      <tbody>
+        <tr><th scope="row"><span class="sol-n s">1</span>Last mile optimisation</th><td><b>20–25%</b> less</td><td><b>17%</b> saved</td><td><b>26%</b> more net profit, no cancellations at the door</td></tr>
+        <tr><th scope="row"><span class="sol-n s">2</span>Warehouse and inventory automation</th><td><b>2×</b> less than manual</td><td><b>30%</b> saved from forecast demand</td><td><b>35%</b> better labour use, <b>99%+</b> picking accuracy</td></tr>
+        <tr><th scope="row"><span class="sol-n s">3</span>Sustainable tertiary packaging</th><td><b>20%</b> less</td><td><b>88.33%</b> lower than pallets, <b>15%</b> lower transport</td><td><b>17%</b> more cartons per trip, loading in half the time</td></tr>
+        <tr><th scope="row"><span class="sol-n s">4</span>Convertible delivery bag</th><td><b>21%</b> less per delivery</td><td><b>10–20%</b> higher</td><td>Boxes reused for several trips, bags reused at home</td></tr>
+        <tr><th scope="row"><span class="sol-n s">5</span>Systematic waste management</th><td><b>3.5 t</b> credits per km of road</td><td>Collection and sorting</td><td>Roads last <b>3×</b> longer</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="outcome">
+  <div class="prose">
+    <h2>Outcome</h2>
+    <p>We analysed each stage of the supply chain, ranked its problems by impact and solved the biggest ones. The plan moves the whole chain towards carbon efficiency, with the break-even point of each solution checked and the added cost kept low.</p>
+  </div>
+</section>
+
+<section class="next">
+  <a class="next-card" href="../paradime/" data-fluid="../../thumbs/paradime.png">
+    <span class="next-text"><span class="next-label">Next project</span><span class="next-title">Paradime Marketplace</span><span class="next-line">A community and marketplace for a dbt code editor. Gold at Inter IIT Tech Meet 11.0.</span><span class="next-go">Read the case study →</span></span>
+    <img src="../../thumbs/src/paradime.png" alt="" loading="lazy">
+  </a>
+</section>
+
+</article>
+<footer><a href="../../">All projects</a></footer>
+</main>
+<script src="icons.js?v=1"></script>
+<script src="by.js?v=1" defer></script>
+<script src="../../fluid.js" defer></script>
+</body></html>

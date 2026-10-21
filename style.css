@@ -1,6 +1,8 @@
-:root{--bg:#fff;--text:#3a3a3a;--strong:#111;--line:#aaa;--focus:#666;--muted:#999;--soft:#777;--softer:#888;color-scheme:light;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-synthesis:none;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121212;--text:#d2d2d2;--strong:#fff;--line:#555;--focus:#aaa;--muted:#6f6f6f;--soft:#999;--softer:#8a8a8a;color-scheme:dark}}
-:root[data-theme=dark]{--bg:#121212;--text:#d2d2d2;--strong:#fff;--line:#555;--focus:#aaa;--muted:#6f6f6f;--soft:#999;--softer:#8a8a8a;color-scheme:dark}
+:root{--bg:#fff;--text:#3a3a3a;--strong:#111;--line:#aaa;--focus:#666;--muted:#999;--soft:#777;--softer:#888;--title:#21201c;--body:#63635e;color-scheme:light;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-synthesis:none;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+/* Home: warm off-white page. Sits before the dark rules, which have equal specificity and so still win. */
+:root:has(.home){--bg:#fdfdfc}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121212;--text:#d2d2d2;--strong:#fff;--line:#555;--focus:#aaa;--muted:#6f6f6f;--soft:#999;--softer:#8a8a8a;--title:#ededed;--body:#a1a1a0;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#121212;--text:#d2d2d2;--strong:#fff;--line:#555;--focus:#aaa;--muted:#6f6f6f;--soft:#999;--softer:#8a8a8a;--title:#ededed;--body:#a1a1a0;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0}
 main{max-width:688px;padding:128px 24px 40px;margin:0 auto;line-height:1.75}
@@ -21,6 +23,19 @@ a:focus-visible{outline:2px solid var(--focus);outline-offset:5px;border-radius:
 .home{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
 .home .intro p{margin-bottom:0}
 .home footer{margin-top:auto;padding-top:100px}
+/* Home type: Inter variable (rsms.me, linked in index.html), one 16px size. Titles and labels take the dark tone and
+   weight 500, descriptions and body the grey; line height 1.5 for title + description pairs, 1.65 for paragraphs.
+   Sections are spaced well apart so the gaps do the grouping. */
+body:has(.home){font-family:InterVariable,Inter,Arial,Helvetica,sans-serif;font-feature-settings:"cv01","ss03"}
+.home{line-height:1.65;color:var(--body)}
+.home h1{color:var(--title);margin-bottom:0}
+.home .collections{grid-template-columns:1fr;gap:112px;margin-top:112px}
+.home :is(.collections,.about,.contact) h2{font-size:16px;line-height:24px;font-weight:500;color:var(--title);margin-bottom:24px}
+.home .collections article{margin-bottom:36px;line-height:1.5}
+.home .collections article:last-child{margin-bottom:0}
+.home .collections h3{color:var(--title)}
+.home .collections h3 a:hover,.home .about a:hover,.home .contact a:hover{color:var(--title);text-decoration-color:var(--title)}
+.home :is(.about,.contact){margin-top:112px}
 .about h2,.contact h2{font-size:14px;line-height:20px;margin-bottom:24px}
 .about p{margin-bottom:16px}
 .about p:last-child,.contact p{margin:0}
@@ -37,7 +52,7 @@ footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);fo
 :root[data-particles=off] canvas.fluid{display:none}
 .theme-toggle:hover{color:var(--strong);text-decoration-color:var(--strong)}
 .theme-toggle:focus-visible{outline:2px solid var(--focus);outline-offset:4px;border-radius:1px}
-@media(max-width:600px){main{padding-top:72px;padding-inline:28px}.collections{grid-template-columns:1fr;gap:28px;margin-top:48px}.collections h2{margin-bottom:16px}.collections article:last-child{margin-bottom:0}footer{margin-top:72px}.back{margin-bottom:40px}.project footer{margin-top:72px}.home footer{padding-top:72px}}
+@media(max-width:600px){main{padding-top:72px;padding-inline:28px}.collections{grid-template-columns:1fr;gap:28px;margin-top:48px}.home .collections{gap:72px;margin-top:72px}.home :is(.about,.contact){margin-top:72px}.home :is(.collections,.about,.contact) h2{margin-bottom:16px}.collections h2{margin-bottom:16px}.collections article:last-child{margin-bottom:0}footer{margin-top:72px}.back{margin-bottom:40px}.project footer{margin-top:72px}.home footer{padding-top:72px}}
 /* Touch: a press on a thumbnail link develops its image (fluid.js), so no link callout or grey tap box over it. */
 @media(hover:none){a[data-fluid]{-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}}
 @media(prefers-reduced-motion:reduce){a{transition:none}}

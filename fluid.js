@@ -36,6 +36,7 @@
     idleMs: 6000,
     intent: { dwellMs: 180, maxSpeed: 0.35 }, // hover must settle before an image forms
     image: { width: 400, height: 250, offsetX: 28, offsetY: 20, formRate: 12, follow: 0.18 },
+    dock: { height: 150, gap: 32 }, // docked previews: 240x150, this far right of the text
     // Touch: a press develops the image above the finger; a tap waits this
     // long for it to form before following the link.
     touch: { gap: 36, margin: 24, settleMs: 260, slop: 24, ripple: 0.05 }
@@ -386,28 +387,28 @@
 
   // The hovered image sits beside the cursor (flipping sides near the edges)
   // and eases after it, so moving drags the picture through the ink. A link
-  // with data-fluid-dock instead docks its image just right of its entry.
+  // with data-fluid-dock instead docks its image to the right of its entry,
+  // top-aligned with it. Every docked entry shares one x, just past the
+  // longest docked line, so the previews line up in a column.
   const hover = { entry: null, dock: null, touch: false, x: 0, y: 0, placed: false };
 
   function dockRect (article) {
     const { width, height } = config.image;
-    const section = article.closest('section') || article;
-    const top = section.getBoundingClientRect().top;
-    const next = section.nextElementSibling;
-    const bottom = next ? next.getBoundingClientRect().top - 12 : article.getBoundingClientRect().bottom;
+    const h = config.dock.height;
+    const w = h * width / height;
     // right edge of the text itself (block boxes would report the full column)
     let textRight = 0;
     const range = document.createRange();
-    const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
-    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      range.selectNodeContents(node);
-      for (const r of range.getClientRects()) textRight = Math.max(textRight, r.right);
+    for (const link of document.querySelectorAll('[data-fluid-dock]')) {
+      const walker = document.createTreeWalker(link.closest('article') || link, NodeFilter.SHOW_TEXT);
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        range.selectNodeContents(node);
+        for (const r of range.getClientRects()) textRight = Math.max(textRight, r.right);
+      }
     }
-    // sized to the entry's own row, so it never covers the rows below
-    const h = Math.min(height, bottom - top);
-    const w = h * width / height;
-    if (h < 80 || textRight + 16 + w > innerWidth - 12) return null;
-    return { x: textRight + 16, y: top, w, h };
+    const x = textRight + config.dock.gap;
+    if (x + w > innerWidth - 12) return null;
+    return { x, y: article.getBoundingClientRect().top, w, h };
   }
 
   function stamp (dt) {

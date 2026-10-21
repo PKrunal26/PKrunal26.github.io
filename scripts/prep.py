@@ -35,6 +35,8 @@ PROJECTS = {
     "tessell": dict(file="tessell-logo.png", crop=(-100, -20, 252, 200), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
     "bengaluru": dict(file="bengaluru-map.png", crop=(-56, -16, 264, 184), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
     "iitg": dict(file="iitg-logo.png", crop=(-100, -20, 252, 200), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
+    # Atlassian mark: official SVG from the atlassian.com header (thumbs/src/atlassian-logo.svg), rendered with headless Chrome
+    "atlassian": dict(file="atlassian-logo.png", crop=(-100, -20, 252, 200), dark=False, contrast=1.0, paper=1.0, clear_pad=True),
 }
 
 

@@ -4,7 +4,10 @@
 // The page's letters push the flow away (a soft repulsion field) and the
 // trail never sits on a glyph. Hovering a link with data-fluid stamps that image into the dye
 // on top of everything; it re-forms while hovered and swirls away after.
-(() => {
+// It starts once the page has loaded and gone idle, so compiling shaders,
+// building the letter mask and fetching the previews never hold up first
+// paint. (Without requestIdleCallback, setTimeout runs it right after load.)
+addEventListener('load', () => (self.requestIdleCallback || setTimeout)(() => {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const canvas = document.createElement('canvas');
@@ -836,4 +839,4 @@
     if (event.persisted) { press = null; hover.entry = null; }
   });
   if (resize()) render();
-})();
+}, { timeout: 1500 }), { once: true });

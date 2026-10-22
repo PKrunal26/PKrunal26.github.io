@@ -33,7 +33,7 @@ function view(name,focus=false){
 function page(name,project){
   $('#home-page').hidden=name!=='home';$('#project-page').hidden=name!=='project';
   $$('[data-page]').forEach(el=>el.setAttribute('aria-pressed',el.dataset.page===name));
-  if(project){$('#project-name').textContent=project;$('#project-category').textContent=project==='Escher'?'Work':project==='Vietnam Trip'?'Travel':'Personal project';}
+  if(project){$('#project-name').textContent=project;$('#project-category').textContent=project==='Escher'?'Work':'Personal project';}
 }
 $$('[data-preset]').forEach(el=>el.addEventListener('click',()=>{state={direction:el.dataset.preset,...presets[el.dataset.preset]};update();}));
 ['type','art','paper'].forEach(key=>$('#'+key).addEventListener('change',event=>{state[key]=event.target.value;update();}));

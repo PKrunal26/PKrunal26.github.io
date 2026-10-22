@@ -1,0 +1,6 @@
+/* Inter 4.1 variable, self-hosted and subset to Latin, Greek, punctuation, arrows and math (see Inter-LICENSE.txt).
+   Both family names map to the variable files so InterVariable and Inter stacks resolve the same way. */
+@font-face{font-family:InterVariable;font-style:normal;font-weight:100 900;font-display:swap;src:url("InterVariable.woff2") format("woff2")}
+@font-face{font-family:InterVariable;font-style:italic;font-weight:100 900;font-display:swap;src:url("InterVariable-Italic.woff2") format("woff2")}
+@font-face{font-family:Inter;font-style:normal;font-weight:100 900;font-display:swap;src:url("InterVariable.woff2") format("woff2")}
+@font-face{font-family:Inter;font-style:italic;font-weight:100 900;font-display:swap;src:url("InterVariable-Italic.woff2") format("woff2")}

@@ -1,44 +1,79 @@
-/* CV page. Type, colours and section spacing come from the home page (.home in style.css); this adds the timeline,
-   the journey rail, and the label rows for awards and skills. --when is the date column the three share. */
-.cv{--rule:color-mix(in srgb,var(--line) 55%,var(--bg));--grid:color-mix(in srgb,var(--line) 26%,var(--bg));--when:136px}
+/* CV page. Type, colours and section spacing come from the home page (.home in style.css); this adds the stats, the
+   timeline, the journey rail, and the label rows for awards and skills. --when is the date column they share. */
+.cv{--rule:color-mix(in srgb,var(--line) 55%,var(--bg));--grid:color-mix(in srgb,var(--line) 26%,var(--bg));--when:136px;--ease:cubic-bezier(.22,1,.36,1)}
 html:has(.cv){scroll-behavior:smooth}
 .cv h1 a{text-decoration-color:transparent}
 .cv a:hover{color:var(--title);text-decoration-color:var(--title)}
 .cv section{margin-top:112px}
 .cv section>h2{font-size:16px;line-height:24px;font-weight:500;color:var(--title);margin-bottom:24px}
-.cv .download{display:flex;align-items:baseline;gap:12px;margin-top:28px}
+.cv .about .download{display:flex;align-items:baseline;gap:12px;margin-top:36px}
 .cv .download a{color:var(--title);font-weight:500}
 .cv .download span{font-size:13px;color:var(--muted)}
 
-/* Timeline: one shared axis, a bar per place. cv.js sets --a and --b (start and end as 0-1 of the axis), adds the year
-   lines and labels, and grows the bars in. An ongoing bar fades out into a 2px Bayer dither instead of ending. */
-.cv .span{margin:0 0 80px;font-size:14px;line-height:20px}
+/* Stats: four numbers under the intro. cv.js counts them up once they are fully in view. */
+.cv .stats{list-style:none;margin:36px 0 0;padding:20px 0 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.stats li{display:flex;flex-direction:column;gap:6px;line-height:1.4}
+.stats b{font-size:24px;line-height:32px;font-weight:500;letter-spacing:-.01em;color:var(--title);font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--soft)}
+
+/* Timeline: one shared axis, a bar per place, latest on top. cv.js sets --a and --b (start and end as 0-1 of the axis)
+   and --s (where a step up happens, as a share of the bar), adds the year lines and labels, and grows the bars in.
+   An ongoing bar fades out into a 2px Bayer dither instead of ending. Campus roles sit below as thinner bars. */
+.cv .span{margin:0 0 88px;font-size:14px;line-height:20px}
 .span-row,.span-axis{display:grid;grid-template-columns:var(--when) minmax(0,1fr) 112px;align-items:center}
 .span-row{height:36px;color:var(--body);text-decoration:none}
 .span-name{color:var(--title)}
 .span-when{color:var(--muted);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
 .span-track{position:relative;align-self:stretch}
 .span-track i{position:absolute;top:0;bottom:0;width:1px;background:var(--grid)}
-.span-bar{position:absolute;top:50%;left:calc(var(--a) * 100%);width:calc((var(--b) - var(--a)) * 100%);min-width:6px;height:6px;margin-top:-3px;border-radius:3px;background:var(--title);opacity:.7;transform-origin:left center;transition:opacity .2s}
+.span-bar{position:absolute;top:50%;left:calc(var(--a) * 100%);width:calc((var(--b) - var(--a)) * 100%);min-width:6px;height:6px;margin-top:-3px;border-radius:3px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--title) 38%,var(--bg)) 0 var(--s,0%),var(--title) var(--s,0%));opacity:.7;transform-origin:left center;transition:opacity .2s}
 .span-bar.on{border-radius:3px 0 0 3px;
   -webkit-mask:linear-gradient(#000 0 0) left/calc(100% - 40px) 100% no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6'%3E%3Cpath d='M0 0h2v2h-2zM2 0h2v2h-2zM4 0h2v2h-2zM6 0h2v2h-2zM8 0h2v2h-2zM10 0h2v2h-2zM12 0h2v2h-2zM16 0h2v2h-2zM18 0h2v2h-2zM20 0h2v2h-2zM24 0h2v2h-2zM28 0h2v2h-2zM32 0h2v2h-2zM0 2h2v2h-2zM2 2h2v2h-2zM6 2h2v2h-2zM10 2h2v2h-2zM14 2h2v2h-2zM18 2h2v2h-2zM22 2h2v2h-2zM26 2h2v2h-2zM0 4h2v2h-2zM2 4h2v2h-2zM4 4h2v2h-2zM6 4h2v2h-2zM8 4h2v2h-2zM12 4h2v2h-2zM14 4h2v2h-2zM16 4h2v2h-2zM20 4h2v2h-2zM24 4h2v2h-2zM28 4h2v2h-2zM36 4h2v2h-2z'/%3E%3C/svg%3E") right/40px 6px no-repeat;
   mask:linear-gradient(#000 0 0) left/calc(100% - 40px) 100% no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6'%3E%3Cpath d='M0 0h2v2h-2zM2 0h2v2h-2zM4 0h2v2h-2zM6 0h2v2h-2zM8 0h2v2h-2zM10 0h2v2h-2zM12 0h2v2h-2zM16 0h2v2h-2zM18 0h2v2h-2zM20 0h2v2h-2zM24 0h2v2h-2zM28 0h2v2h-2zM32 0h2v2h-2zM0 2h2v2h-2zM2 2h2v2h-2zM6 2h2v2h-2zM10 2h2v2h-2zM14 2h2v2h-2zM18 2h2v2h-2zM22 2h2v2h-2zM26 2h2v2h-2zM0 4h2v2h-2zM2 4h2v2h-2zM4 4h2v2h-2zM6 4h2v2h-2zM8 4h2v2h-2zM12 4h2v2h-2zM14 4h2v2h-2zM16 4h2v2h-2zM20 4h2v2h-2zM24 4h2v2h-2zM28 4h2v2h-2zM36 4h2v2h-2z'/%3E%3C/svg%3E") right/40px 6px no-repeat}
 .span-row:hover .span-bar,.span-row:focus-visible .span-bar{opacity:1}
 .span-row:hover .span-name{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.span-group{margin:16px 0 0;padding-top:12px;border-top:1px solid var(--grid);font-size:12px;line-height:16px;color:var(--muted)}
+.span-row.minor{height:28px;font-size:13px}
+.span-row.minor .span-name{color:var(--body)}
+.span-row.minor .span-bar{height:4px;margin-top:-2px;border-radius:2px;opacity:.45}
+.span-row.minor:hover .span-bar,.span-row.minor:focus-visible .span-bar{opacity:.9}
+/* On a narrow screen the chart keeps its width and scrolls sideways under the pinned names, with a bar that stays
+   visible (touch browsers hide native scrollbars) and a fade on the side with more to see. cv.js adds the bar. */
+.span-scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+.span-scroll::-webkit-scrollbar{display:none}
+.span-scroll.wide:not(.at-end){-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent)}
+.span-scroll.wide .span-name{position:sticky;left:0;z-index:2;align-self:stretch;display:flex;align-items:center;background:var(--bg)}
+.span-scroll.wide .span-group span{position:sticky;left:0;display:inline-block}
+.span-name{white-space:nowrap}
+.hs-bar{display:none;position:relative;height:20px;margin:10px 0 0;cursor:pointer;touch-action:none}
+.span-scroll.wide+.hs-bar{display:block}
+.hs-bar::before{content:'';position:absolute;left:0;right:0;top:8px;height:4px;border-radius:2px;background:var(--grid)}
+.hs-bar i{position:absolute;left:0;top:6px;display:block;height:8px;border-radius:4px;background:var(--soft);transition:background .2s}
+.hs-bar:active i{background:var(--title)}
 .span-axis{height:28px}
 .span-axis b{position:absolute;bottom:0;padding-left:5px;font-weight:400;font-size:12px;line-height:16px;color:var(--muted);font-variant-numeric:tabular-nums}
+.span figcaption{margin-top:14px;padding-left:var(--when);font-size:12px;line-height:16px;color:var(--muted)}
 .span.anim .span-bar{transform:scaleX(0)}
-.span.anim.drawn .span-bar{transform:none;transition:transform 1.1s cubic-bezier(.22,1,.36,1) calc(var(--i) * .14s),opacity .2s}
+.span.anim.drawn .span-bar{transform:none;transition:transform 1.1s var(--ease) calc(var(--i) * .07s),opacity .2s}
 
-/* Journey: date column, then a rail with a dot at each stop. Filled dots are where I am now. */
-.steps{list-style:none;margin:0;padding:0}
+/* Journey: date column, then a rail with a dot at each stop, latest first. The date holds still while its stop is
+   read. cv.js fills the rail down to a reading line (--fill), marks the stops it has passed, and lights the date of
+   the current one. The fill's leading end breaks up in the same 2px dither as the ongoing bar. */
+.steps{position:relative;list-style:none;margin:0;padding:0}
+.steps::before{content:'';position:absolute;z-index:1;top:0;left:var(--when);width:1px;height:var(--fill,0);background:var(--title);pointer-events:none;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 24px) no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='24'%3E%3Cpath d='M0 0h2v2h-2zM0 2h2v2h-2zM0 4h2v2h-2zM0 6h2v2h-2zM0 10h2v2h-2zM0 12h2v2h-2zM0 16h2v2h-2zM0 20h2v2h-2z'/%3E%3C/svg%3E") left bottom/2px 24px no-repeat;
+  mask:linear-gradient(#000 0 0) top/100% calc(100% - 24px) no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='24'%3E%3Cpath d='M0 0h2v2h-2zM0 2h2v2h-2zM0 4h2v2h-2zM0 6h2v2h-2zM0 10h2v2h-2zM0 12h2v2h-2zM0 16h2v2h-2zM0 20h2v2h-2z'/%3E%3C/svg%3E") left bottom/2px 24px no-repeat}
 .steps>li{display:grid;grid-template-columns:var(--when) minmax(0,1fr);scroll-margin-top:48px}
-.steps .when{margin:0;font-size:14px;line-height:24px;color:var(--muted);font-variant-numeric:tabular-nums}
+.steps .when{position:sticky;top:40px;align-self:start;margin:0;font-size:14px;line-height:24px;color:var(--muted);font-variant-numeric:tabular-nums;transition:color .3s}
+.steps li.current .when{color:var(--title)}
 .steps .what{position:relative;min-width:0;padding:0 0 88px 32px;border-left:1px solid var(--rule)}
 .steps>li:last-child .what{padding-bottom:8px}
-.steps .what::before,.steps .when::before{content:'';position:absolute;left:-4px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)}
+.steps .what::before,.steps .when::before{content:'';position:absolute;z-index:2;left:-4px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)}
 .steps .when::before{display:none}
-.steps .now .what::before,.steps .now .when::before{background:var(--title);box-shadow:none}
+.steps :is(.now,.passed) :is(.what,.when)::before{background:var(--title);box-shadow:none}
+.cv-motion .steps .passed :is(.what,.when)::before{animation:dot-pop .5s var(--ease)}
+@keyframes dot-pop{0%{transform:scale(.6)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
 .steps h3,.steps h4{color:var(--title)}
 .steps h3{font-weight:500}
 .steps .sub{margin:0 0 16px;color:var(--soft)}
@@ -47,6 +82,13 @@ html:has(.cv){scroll-behavior:smooth}
 .steps h4{font:inherit;margin:0}
 .steps article p{margin:0}
 
+/* Campus roles: club, role, years. */
+.roles{list-style:none;margin:6px 0 0;padding:0;font-size:14px}
+.roles li{display:grid;grid-template-columns:128px minmax(0,1fr) auto;gap:16px;padding:7px 0;border-top:1px solid var(--grid);line-height:1.45}
+.roles li:first-child{border-top:0}
+.roles span:first-child{color:var(--title)}
+.roles span:last-child{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+
 /* Awards and skills: label column lined up with the journey dates. */
 .rows{margin:0}
 .rows>div{display:grid;grid-template-columns:var(--when) minmax(0,1fr);margin-bottom:12px;line-height:1.5}
@@ -54,23 +96,29 @@ html:has(.cv){scroll-behavior:smooth}
 .skills .rows dt{color:var(--title)}
 .rows dd{margin:0}
 
+/* Reveal: with motion on (set in the page head), text fades up as it scrolls in. cv.js adds .in, staggered by --d. */
+.cv-motion :is(.cv .about>p,.stats>li,.cv section>h2,.steps .what>*,.rows>div,.cv .contact>p,.span figcaption){opacity:0;transform:translateY(12px);transition:opacity .8s var(--ease) var(--d,0s),transform .8s var(--ease) var(--d,0s)}
+.cv-motion :is(.cv .about>p,.stats>li,.cv section>h2,.steps .what>*,.rows>div,.cv .contact>p,.span figcaption).in{opacity:1;transform:none}
+
 @media(max-width:600px){
   .cv{--when:64px}
   .cv section{margin-top:72px}
   .cv section>h2{margin-bottom:16px}
-  .span-row,.span-axis{grid-template-columns:96px minmax(0,1fr)}
-  .span-when{display:none}
-  .span-axis b{font-size:11px;padding-left:4px}
-  .span-axis b.odd{display:none}
+  .cv .stats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:20px}
+  .span-body{min-width:620px}
+  .span-row,.span-axis{grid-template-columns:128px minmax(0,1fr) 104px}
+  .span figcaption{padding-left:0}
   .cv .span{margin-bottom:56px}
+  .steps::before{left:0}
   .steps>li{grid-template-columns:minmax(0,1fr)}
-  .steps .when{position:relative;padding:0 0 2px 24px;border-left:1px solid var(--rule)}
+  .steps .when{position:relative;top:auto;padding:0 0 2px 24px;border-left:1px solid var(--rule)}
   .steps .when::before{display:block}
   .steps .what{padding:0 0 64px 24px}
   .steps .what::before{display:none}
+  .roles li{grid-template-columns:minmax(0,1fr) auto;row-gap:2px}
+  .roles span:nth-child(2){grid-row:2;grid-column:1/-1;color:var(--soft)}
   .skills .rows>div{grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){
   html:has(.cv){scroll-behavior:auto}
-  .span.anim .span-bar{transform:none}
 }

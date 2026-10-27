@@ -1,0 +1,76 @@
+/* CV page. Type, colours and section spacing come from the home page (.home in style.css); this adds the timeline,
+   the journey rail, and the label rows for awards and skills. --when is the date column the three share. */
+.cv{--rule:color-mix(in srgb,var(--line) 55%,var(--bg));--grid:color-mix(in srgb,var(--line) 26%,var(--bg));--when:136px}
+html:has(.cv){scroll-behavior:smooth}
+.cv h1 a{text-decoration-color:transparent}
+.cv a:hover{color:var(--title);text-decoration-color:var(--title)}
+.cv section{margin-top:112px}
+.cv section>h2{font-size:16px;line-height:24px;font-weight:500;color:var(--title);margin-bottom:24px}
+.cv .download{display:flex;align-items:baseline;gap:12px;margin-top:28px}
+.cv .download a{color:var(--title);font-weight:500}
+.cv .download span{font-size:13px;color:var(--muted)}
+
+/* Timeline: one shared axis, a bar per place. cv.js sets --a and --b (start and end as 0-1 of the axis), adds the year
+   lines and labels, and grows the bars in. An ongoing bar fades out into a 2px Bayer dither instead of ending. */
+.cv .span{margin:0 0 80px;font-size:14px;line-height:20px}
+.span-row,.span-axis{display:grid;grid-template-columns:var(--when) minmax(0,1fr) 112px;align-items:center}
+.span-row{height:36px;color:var(--body);text-decoration:none}
+.span-name{color:var(--title)}
+.span-when{color:var(--muted);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.span-track{position:relative;align-self:stretch}
+.span-track i{position:absolute;top:0;bottom:0;width:1px;background:var(--grid)}
+.span-bar{position:absolute;top:50%;left:calc(var(--a) * 100%);width:calc((var(--b) - var(--a)) * 100%);min-width:6px;height:6px;margin-top:-3px;border-radius:3px;background:var(--title);opacity:.7;transform-origin:left center;transition:opacity .2s}
+.span-bar.on{border-radius:3px 0 0 3px;
+  -webkit-mask:linear-gradient(#000 0 0) left/calc(100% - 40px) 100% no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6'%3E%3Cpath d='M0 0h2v2h-2zM2 0h2v2h-2zM4 0h2v2h-2zM6 0h2v2h-2zM8 0h2v2h-2zM10 0h2v2h-2zM12 0h2v2h-2zM16 0h2v2h-2zM18 0h2v2h-2zM20 0h2v2h-2zM24 0h2v2h-2zM28 0h2v2h-2zM32 0h2v2h-2zM0 2h2v2h-2zM2 2h2v2h-2zM6 2h2v2h-2zM10 2h2v2h-2zM14 2h2v2h-2zM18 2h2v2h-2zM22 2h2v2h-2zM26 2h2v2h-2zM0 4h2v2h-2zM2 4h2v2h-2zM4 4h2v2h-2zM6 4h2v2h-2zM8 4h2v2h-2zM12 4h2v2h-2zM14 4h2v2h-2zM16 4h2v2h-2zM20 4h2v2h-2zM24 4h2v2h-2zM28 4h2v2h-2zM36 4h2v2h-2z'/%3E%3C/svg%3E") right/40px 6px no-repeat;
+  mask:linear-gradient(#000 0 0) left/calc(100% - 40px) 100% no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6'%3E%3Cpath d='M0 0h2v2h-2zM2 0h2v2h-2zM4 0h2v2h-2zM6 0h2v2h-2zM8 0h2v2h-2zM10 0h2v2h-2zM12 0h2v2h-2zM16 0h2v2h-2zM18 0h2v2h-2zM20 0h2v2h-2zM24 0h2v2h-2zM28 0h2v2h-2zM32 0h2v2h-2zM0 2h2v2h-2zM2 2h2v2h-2zM6 2h2v2h-2zM10 2h2v2h-2zM14 2h2v2h-2zM18 2h2v2h-2zM22 2h2v2h-2zM26 2h2v2h-2zM0 4h2v2h-2zM2 4h2v2h-2zM4 4h2v2h-2zM6 4h2v2h-2zM8 4h2v2h-2zM12 4h2v2h-2zM14 4h2v2h-2zM16 4h2v2h-2zM20 4h2v2h-2zM24 4h2v2h-2zM28 4h2v2h-2zM36 4h2v2h-2z'/%3E%3C/svg%3E") right/40px 6px no-repeat}
+.span-row:hover .span-bar,.span-row:focus-visible .span-bar{opacity:1}
+.span-row:hover .span-name{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.span-axis{height:28px}
+.span-axis b{position:absolute;bottom:0;padding-left:5px;font-weight:400;font-size:12px;line-height:16px;color:var(--muted);font-variant-numeric:tabular-nums}
+.span.anim .span-bar{transform:scaleX(0)}
+.span.anim.drawn .span-bar{transform:none;transition:transform 1.1s cubic-bezier(.22,1,.36,1) calc(var(--i) * .14s),opacity .2s}
+
+/* Journey: date column, then a rail with a dot at each stop. Filled dots are where I am now. */
+.steps{list-style:none;margin:0;padding:0}
+.steps>li{display:grid;grid-template-columns:var(--when) minmax(0,1fr);scroll-margin-top:48px}
+.steps .when{margin:0;font-size:14px;line-height:24px;color:var(--muted);font-variant-numeric:tabular-nums}
+.steps .what{position:relative;min-width:0;padding:0 0 88px 32px;border-left:1px solid var(--rule)}
+.steps>li:last-child .what{padding-bottom:8px}
+.steps .what::before,.steps .when::before{content:'';position:absolute;left:-4px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)}
+.steps .when::before{display:none}
+.steps .now .what::before,.steps .now .when::before{background:var(--title);box-shadow:none}
+.steps h3,.steps h4{color:var(--title)}
+.steps h3{font-weight:500}
+.steps .sub{margin:0 0 16px;color:var(--soft)}
+.steps .what>p:not(.sub){margin:0 0 8px}
+.steps article{margin-top:24px;line-height:1.5}
+.steps h4{font:inherit;margin:0}
+.steps article p{margin:0}
+
+/* Awards and skills: label column lined up with the journey dates. */
+.rows{margin:0}
+.rows>div{display:grid;grid-template-columns:var(--when) minmax(0,1fr);margin-bottom:12px;line-height:1.5}
+.rows dt{color:var(--muted);font-variant-numeric:tabular-nums}
+.skills .rows dt{color:var(--title)}
+.rows dd{margin:0}
+
+@media(max-width:600px){
+  .cv{--when:64px}
+  .cv section{margin-top:72px}
+  .cv section>h2{margin-bottom:16px}
+  .span-row,.span-axis{grid-template-columns:96px minmax(0,1fr)}
+  .span-when{display:none}
+  .span-axis b{font-size:11px;padding-left:4px}
+  .span-axis b.odd{display:none}
+  .cv .span{margin-bottom:56px}
+  .steps>li{grid-template-columns:minmax(0,1fr)}
+  .steps .when{position:relative;padding:0 0 2px 24px;border-left:1px solid var(--rule)}
+  .steps .when::before{display:block}
+  .steps .what{padding:0 0 64px 24px}
+  .steps .what::before{display:none}
+  .skills .rows>div{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  html:has(.cv){scroll-behavior:auto}
+  .span.anim .span-bar{transform:none}
+}

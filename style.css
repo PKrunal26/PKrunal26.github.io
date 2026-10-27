@@ -42,6 +42,10 @@ body:has(.home){font-family:InterVariable,Inter,Arial,Helvetica,sans-serif;font-
 .soon{font-size:12px;color:var(--muted);margin-left:8px;white-space:nowrap}
 footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:12px;line-height:1.75;margin-top:100px}
 .back{display:inline-block;font-size:14px;color:var(--soft);margin-bottom:52px}
+/* Case studies: the site name heads the contents rail, so home stays one click away after the top link scrolls off.
+   :is() lifts it over each page's own ".x .toc a" rule. */
+:is(nav,aside).toc>a.toc-home{display:block;width:max-content;max-width:100%;margin:0 0 28px;padding:0;border:0;font-size:14px;line-height:1.4;font-weight:500;color:var(--strong);text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;text-decoration-thickness:1px;transition:text-decoration-color .2s}
+:is(nav,aside).toc>a.toc-home:hover{text-decoration-color:currentColor}
 .project h1{margin-bottom:4px}
 .project .category{font-size:14px;color:var(--softer);margin-bottom:44px}
 .project .empty{color:var(--soft)}
